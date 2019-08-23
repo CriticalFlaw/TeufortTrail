@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TeufortTrail.Screens.MainMenu;
 using WolfCurses;
 
 namespace TeufortTrail
@@ -15,7 +16,7 @@ namespace TeufortTrail
             {
                 var windowList = new List<Type>
                 {
-                    // TODO: Add screen types
+                    typeof(MainMenu)
                 };
 
                 return windowList;
@@ -36,11 +37,8 @@ namespace TeufortTrail
         protected override void OnFirstTick()
         {
             TotalTurns = 0;
-
-            // TODO: Initialize screens
-
-            // Reset the Window Manager
             base.Restart();
+            WindowManager.Add(typeof(MainMenu));
         }
 
         protected override void OnPreDestroy()

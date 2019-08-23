@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Screens\Menu\MainMenu.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="WolfCurses" Version="2018.9.12.1" />
   </ItemGroup>
 
