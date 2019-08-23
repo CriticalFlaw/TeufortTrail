@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using TeufortTrail.Entities.Person;
 using TeufortTrail.Entities.Vehicle;
+using TeufortTrail.Events.Trail;
 using TeufortTrail.Screens.MainMenu;
+using TeufortTrail.Screens.Travel;
 using WolfCurses;
 
 namespace TeufortTrail
@@ -11,6 +13,7 @@ namespace TeufortTrail
     {
         public static GameCore Instance { get; private set; }
         public Vehicle Vehicle { get; private set; }
+        public TrailModule Trail { get; private set; }
         public int TotalTurns { get; private set; }
 
         public override IEnumerable<Type> AllowedWindows
@@ -19,6 +22,7 @@ namespace TeufortTrail
             {
                 var windowList = new List<Type>
                 {
+                    typeof(Travel),
                     typeof(MainMenu)
                 };
 
@@ -34,21 +38,31 @@ namespace TeufortTrail
 
         public override string OnPreRender()
         {
-            return $"Turns: {TotalTurns:D4}\nLocation: UNKNOWN";
+            return $"Turns: {TotalTurns:D4}\nLocation: {Trail?.CurrentLocation?.Status}\nVehicle: {Vehicle?.Status}";
         }
 
         protected override void OnFirstTick()
         {
             TotalTurns = 0;
+
             Vehicle = new Vehicle();
+            Trail = new TrailModule();
+
+            // Reset the Window Manager
             base.Restart();
+
+            WindowManager.Add(typeof(Travel));
             WindowManager.Add(typeof(MainMenu));
         }
 
         protected override void OnPreDestroy()
         {
             TotalTurns = 0;
+
+            Trail.Destroy();
+
             Vehicle = null;
+            Trail = null;
             Instance = null;
         }
 

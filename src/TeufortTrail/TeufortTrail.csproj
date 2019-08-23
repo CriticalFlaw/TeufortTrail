@@ -6,22 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Events\**" />
-    <Compile Remove="Screens\**" />
-    <EmbeddedResource Remove="Events\**" />
-    <EmbeddedResource Remove="Screens\**" />
-    <None Remove="Events\**" />
-    <None Remove="Screens\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Screens\Menu\ClassSelect.cs" />
-    <Compile Include="Screens\Menu\ConfimParty.cs" />
-    <Compile Include="Screens\Menu\MainMenu.cs" />
-    <Compile Include="Screens\Menu\StorySetup.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="WolfCurses" Version="2018.9.12.1" />
   </ItemGroup>
 
