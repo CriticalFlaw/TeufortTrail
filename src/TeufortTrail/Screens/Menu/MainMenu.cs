@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Person;
 using WolfCurses;
 using WolfCurses.Utility;
@@ -43,6 +44,7 @@ namespace TeufortTrail.Screens.MainMenu
         public int PlayerIndex { get; set; }
         public Classes PlayerClass { get; set; }
         public List<Classes> PartyClasses { get; set; }
+        public List<Item> StartingInventory { get; set; }
         public int StartingMoney { get; set; }
 
         public NewGameInfo()
@@ -50,6 +52,7 @@ namespace TeufortTrail.Screens.MainMenu
             PlayerIndex = 0;
             PlayerClass = Classes.Scout;
             PartyClasses = new List<Classes>();
+            StartingInventory = new List<Item>();
             StartingMoney = 0;
         }
     }

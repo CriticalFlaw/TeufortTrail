@@ -1,4 +1,5 @@
 ﻿using System;
+using TeufortTrail.Entities.Item;
 
 namespace TeufortTrail.Entities.Person
 {
@@ -23,6 +24,16 @@ namespace TeufortTrail.Entities.Person
 
         public void OnTick(bool systemTick, bool skipDay)
         {
+        }
+
+        private void ConsumeFood()
+        {
+            if (IsDead || Status == (int)HealthStatus.Dead) return;
+
+            if (GameCore.Instance.Vehicle.Inventory[Categories.Food].Quantity > 0)
+                Heal();
+            else
+                Damage(10, 50);
         }
 
         private void Heal()
