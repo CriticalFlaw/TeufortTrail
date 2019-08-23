@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29209.62
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeufortTrail", "TeufortTrail\TeufortTrail.csproj", "{567686F7-0F77-4FD5-8784-B9BA7CB3FDFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{567686F7-0F77-4FD5-8784-B9BA7CB3FDFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{567686F7-0F77-4FD5-8784-B9BA7CB3FDFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{567686F7-0F77-4FD5-8784-B9BA7CB3FDFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{567686F7-0F77-4FD5-8784-B9BA7CB3FDFB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67BCC7D1-764B-4169-92BF-413DC720CDC5}
+	EndGlobalSection
+EndGlobal
