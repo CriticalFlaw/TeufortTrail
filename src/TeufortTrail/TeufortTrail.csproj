@@ -6,19 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Entities\**" />
     <Compile Remove="Events\**" />
     <Compile Remove="Screens\**" />
-    <EmbeddedResource Remove="Entities\**" />
     <EmbeddedResource Remove="Events\**" />
     <EmbeddedResource Remove="Screens\**" />
-    <None Remove="Entities\**" />
     <None Remove="Events\**" />
     <None Remove="Screens\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Entities\Person\Person.cs" />
     <Compile Include="Screens\Menu\ClassSelect.cs" />
     <Compile Include="Screens\Menu\ConfimParty.cs" />
     <Compile Include="Screens\Menu\MainMenu.cs" />
