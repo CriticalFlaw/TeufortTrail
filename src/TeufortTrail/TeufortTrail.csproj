@@ -18,7 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Entities\Person\Person.cs" />
+    <Compile Include="Screens\Menu\ClassSelect.cs" />
+    <Compile Include="Screens\Menu\ConfimParty.cs" />
     <Compile Include="Screens\Menu\MainMenu.cs" />
+    <Compile Include="Screens\Menu\StorySetup.cs" />
   </ItemGroup>
 
   <ItemGroup>

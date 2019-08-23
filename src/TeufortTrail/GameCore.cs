@@ -51,5 +51,15 @@ namespace TeufortTrail
         {
             TotalTurns++;
         }
+
+        internal void SetStartInfo(NewGameInfo startInfo)
+        {
+            var crewNumber = 1;
+            foreach (var _class in startInfo.PartyClasses)
+            {
+                var personLeader = (startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1);
+                crewNumber++;
+            }
+        }
     }
 }
