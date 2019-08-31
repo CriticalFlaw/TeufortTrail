@@ -10,20 +10,36 @@ namespace TeufortTrail.Screens.Travel
     [ParentWindow(typeof(Travel))]
     public sealed class LocationArrived : InputForm<TravelInfo>
     {
+        #region VARIABLES
+
         private StringBuilder _locationArrived;
 
+        /// <summary>
+        /// Defines the kind of dialog prompt this screen will be (Yes/No or Press Any Key)
+        /// </summary>
         protected override DialogType DialogType => (GameCore.Instance.Trail.IsFirstLocation) ? DialogType.Prompt : DialogType.YesNo;
 
+        #endregion VARIABLES
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.LocationArrived" /> class.
+        /// </summary>
         public LocationArrived(IWindow window) : base(window)
         {
         }
 
+        /// <summary>
+        /// Called when the screen has been created.
+        /// </summary>
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
             GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
         }
 
+        /// <summary>
+        /// Called when the screen needs a prompt to be displayed to the player.
+        /// </summary>
         protected override string OnDialogPrompt()
         {
             var game = GameCore.Instance;
@@ -38,6 +54,9 @@ namespace TeufortTrail.Screens.Travel
             return _locationArrived.ToString();
         }
 
+        /// <summary>
+        /// Process the player's response to the prompt message.
+        /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
             if (GameCore.Instance.Trail.IsFirstLocation)

@@ -9,13 +9,36 @@ using WolfCurses;
 
 namespace TeufortTrail
 {
+    /// <summary>
+    /// The core game singleton. Processes various game entities, ticks, inputs, modules, etc.
+    /// </summary>
     public class GameCore : SimulationApp
     {
+        #region VARIABLES
+
+        /// <summary>
+        /// Singleton instance for the entire game simulation, does not block the calling thread though only listens for commands.
+        /// </summary>
         public static GameCore Instance { get; private set; }
+
+        /// <summary>
+        ///  Defines the current vehicle in which player and their party members are travelling.
+        /// </summary>
         public Vehicle Vehicle { get; private set; }
+
+        /// <summary>
+        ///  Defines the complete trail and all points of interaction the player will encounter.
+        /// </summary>
         public TrailBase Trail { get; private set; }
+
+        /// <summary>
+        ///  Total number of turns that have been taken.
+        /// </summary>
         public int TotalTurns { get; private set; }
 
+        /// <summary>
+        /// Determines the screen types that will be loaded and used by the window manager.
+        /// </summary>
         public override IEnumerable<Type> AllowedWindows
         {
             get
@@ -30,23 +53,35 @@ namespace TeufortTrail
             }
         }
 
+        #endregion VARIABLES
+
+        /// <summary>
+        /// Create a new instance of the game core. Checks if an instance already exists.
+        /// </summary>
         public static void Create()
         {
             if (Instance != null) throw new InvalidOperationException("A game instance already exists!");
             Instance = new GameCore();
         }
 
+        /// <summary>
+        /// Called by the text user interface to display any headings before the rest of the content.
+        /// </summary>
+        /// <returns></returns>
         public override string OnPreRender()
         {
             return $"Turns: {TotalTurns:D4}\nLocation: {Trail?.CurrentLocation?.Status}\nVehicle: {Vehicle?.Status}";
         }
 
+        /// <summary>
+        /// Called on the first ever game tick. Meant to be used to setup and load basic resources.
+        /// </summary>
         protected override void OnFirstTick()
         {
             TotalTurns = 0;
 
-            Vehicle = new Vehicle();
             Trail = new TrailBase();
+            Vehicle = new Vehicle();
 
             // Reset the Window Manager
             base.Restart();
@@ -55,6 +90,9 @@ namespace TeufortTrail
             WindowManager.Add(typeof(MainMenu));
         }
 
+        /// <summary>
+        /// Called right before the game destroys itself.
+        /// </summary>
         protected override void OnPreDestroy()
         {
             TotalTurns = 0;
@@ -66,11 +104,18 @@ namespace TeufortTrail
             Instance = null;
         }
 
+        /// <summary>
+        /// Increment the turn number.
+        /// </summary>
         public void TakeTurn()
         {
             TotalTurns++;
         }
 
+        /// <summary>
+        /// Loads in the main game screens.
+        /// </summary>
+        /// <param name="startInfo"></param>
         internal void SetStartInfo(NewGameInfo startInfo)
         {
             var crewNumber = 1;

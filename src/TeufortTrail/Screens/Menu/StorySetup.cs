@@ -9,13 +9,23 @@ namespace TeufortTrail.Screens.MainMenu
     [ParentWindow(typeof(MainMenu))]
     public sealed class StorySetup : InputForm<NewGameInfo>
     {
+        #region VARIABLES
+
         private StringBuilder _storyHelp;
 
+        #endregion VARIABLES
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.MainMenu.StorySetup" /> class.
+        /// </summary>
         public StorySetup(IWindow window) : base(window)
         {
             GameCore.Instance.SetStartInfo(UserData);
         }
 
+        /// <summary>
+        /// Called when the screen needs a prompt to be displayed to the player.
+        /// </summary>
         protected override string OnDialogPrompt()
         {
             _storyHelp = new StringBuilder();
@@ -27,6 +37,9 @@ namespace TeufortTrail.Screens.MainMenu
             return _storyHelp.ToString();
         }
 
+        /// <summary>
+        /// Process the player's response to the prompt message.
+        /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
             ParentWindow.RemoveWindowNextTick();

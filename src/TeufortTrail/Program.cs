@@ -3,6 +3,9 @@ using System.Threading;
 
 namespace TeufortTrail
 {
+    /// <summary>
+    /// The Teufort Trail
+    /// </summary>
     internal static class Program
     {
         public static int Main()
@@ -50,6 +53,10 @@ namespace TeufortTrail
             return 0;
         }
 
+        /// <summary>
+        /// Outputs all the queued game text to the screen.
+        /// </summary>
+        /// <param name="input"></param>
         private static void ScreenBufferDirtyEvent(string input)
         {
             var content = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
@@ -65,6 +72,11 @@ namespace TeufortTrail
             }
         }
 
+        /// <summary>
+        /// Called when the player presses the escape shortcut to get out of the game.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             e.Cancel = true;

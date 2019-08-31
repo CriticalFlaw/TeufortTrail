@@ -13,12 +13,22 @@ namespace TeufortTrail.Screens.Travel.Store
     [ParentWindow(typeof(Travel))]
     public sealed class Store : Form<TravelInfo>
     {
+        #region VARIABLES
+
         private StringBuilder _store;
 
+        #endregion VARIABLES
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Store.Store" /> class.
+        /// </summary>
         public Store(IWindow window) : base(window)
         {
         }
 
+        /// <summary>
+        /// Called when this screen has been created and now needs information to be displayed.
+        /// </summary>
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
@@ -46,6 +56,10 @@ namespace TeufortTrail.Screens.Travel.Store
             _store.AppendLine("--------------------------------");
         }
 
+        /// <summary>
+        /// Called when the user has inputted something that needs to be processed.
+        /// </summary>
+        /// <param name="input">User input</param>
         public override void OnInputBufferReturned(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return;
@@ -85,11 +99,17 @@ namespace TeufortTrail.Screens.Travel.Store
             }
         }
 
+        /// <summary>
+        /// Returns the text-only representation of the current game screen.
+        /// </summary>
         public override string OnRenderForm()
         {
             return _store.ToString();
         }
 
+        /// <summary>
+        /// Called when the player has chosen to leave the store.
+        /// </summary>
         private void LeaveStore()
         {
             if (GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached))
@@ -104,8 +124,18 @@ namespace TeufortTrail.Screens.Travel.Store
 
     public sealed class StoreGenerator
     {
+        #region VARIABLES
+
+        /// <summary>
+        /// Defines the store item the player has chosen to purchase.
+        /// </summary>
         public Item SelectedItem { get; set; }
 
+        #endregion VARIABLES
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Store.StoreGenerator" /> class.
+        /// </summary>
         public StoreGenerator()
         {
         }

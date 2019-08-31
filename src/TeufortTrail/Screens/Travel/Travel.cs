@@ -10,6 +10,9 @@ namespace TeufortTrail.Screens.Travel
 {
     public sealed class Travel : Window<TravelCommands, TravelInfo>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Travel" /> class.
+        /// </summary>
         public Travel(SimulationApp app) : base(app)
         {
         }
@@ -19,6 +22,9 @@ namespace TeufortTrail.Screens.Travel
             SetForm(typeof(StoreWelcome));
         }
 
+        /// <summary>
+        /// Called when the player has chosen to continue on the trail.
+        /// </summary>
         internal void ContinueTrail()
         {
             if (GameCore.Instance.Trail.CurrentLocation is Town)
@@ -26,6 +32,9 @@ namespace TeufortTrail.Screens.Travel
         }
     }
 
+    /// <summary>
+    /// Defines the options available to the player while they are at a location.
+    /// </summary>
     public enum TravelCommands
     {
         [Description("Continue on the trail")] ContinueOnTrail = 1,
@@ -35,15 +44,27 @@ namespace TeufortTrail.Screens.Travel
         [Description("Check supplies")] CheckSupplies = 5
     }
 
+    /// <summary>
+    /// Retrieves the current party status information such as how many resources are left and how long until the next stop.
+    /// </summary>
     public sealed class TravelInfo : WindowData
     {
+        /// <summary>
+        /// References the store object used for keeping tracking of on-going purchase transactions.
+        /// </summary>
         public StoreGenerator Store { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.TravelInfo" /> class.
+        /// </summary>
         public TravelInfo()
         {
             Store = new StoreGenerator();
         }
 
+        /// <summary>
+        /// Retrieves the current party status, resources and distance until next location.
+        /// </summary>
         public static string PartyStatus
         {
             get

@@ -9,12 +9,22 @@ namespace TeufortTrail.Screens.Travel.Store
     [ParentWindow(typeof(Travel))]
     public sealed class StoreWelcome : InputForm<TravelInfo>
     {
+        #region VARIABLES
+
         private StringBuilder _storeWelcome;
 
+        #endregion VARIABLES
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Store.StoreWelcome" /> class.
+        /// </summary>
         public StoreWelcome(IWindow window) : base(window)
         {
         }
 
+        /// <summary>
+        /// Called when the screen needs a prompt to be displayed to the player.
+        /// </summary>
         protected override string OnDialogPrompt()
         {
             _storeWelcome = new StringBuilder();
@@ -31,6 +41,9 @@ namespace TeufortTrail.Screens.Travel.Store
             return _storeWelcome.ToString();
         }
 
+        /// <summary>
+        /// Process the player's response to the prompt message.
+        /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
             SetForm(typeof(Store));
