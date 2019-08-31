@@ -28,9 +28,19 @@ namespace TeufortTrail.Screens.MainMenu
         /// </summary>
         protected override string OnDialogPrompt()
         {
+            var _partyList = new StringBuilder();
+            for (var index = 1; index < UserData.PartyClasses.Count - 1; index++)
+            {
+                var isLast = (index == UserData.PartyClasses.Count - 2);
+                _partyList.Append((isLast ? " and " : " ") + UserData.PartyClasses[index] + (isLast ? "." : ","));
+            }
+
             _storyHelp = new StringBuilder();
-            _storyHelp.AppendLine($"{Environment.NewLine}The year is 1972. You must travel with your team");
-            _storyHelp.AppendLine("from Dustbowl, Badlands to Teufort, New Mexico.");
+            _storyHelp.AppendLine($"{Environment.NewLine}The year is 1972. Gray Mann's robot army have captured majority");
+            _storyHelp.AppendLine("of the Southwest. You and your team must travel from Dustbowl");
+            _storyHelp.AppendLine("to Teufort, New Mexico to escapre the mechanical menace.");
+            GameCore.Instance.SetStartInfo(UserData);
+            _storyHelp.AppendLine($"{Environment.NewLine}Your team will consist of:{_partyList}");
             _storyHelp.AppendLine($"{Environment.NewLine}Before leaving Dustbowl you need to buy equipment and");
             _storyHelp.AppendLine($"supplies from the Mann Co. Store. You have {UserData.StartingMoney:C2} in cash,");
             _storyHelp.AppendLine($"but you don't have to spend it all now.{Environment.NewLine}");

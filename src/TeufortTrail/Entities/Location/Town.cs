@@ -5,12 +5,12 @@
         /// <summary>
         /// Determines if this location has a store the player can visit.
         /// </summary>
-        public bool ShoppingAllowed => true;
+        public override bool ShoppingAllowed => true;
 
         /// <summary>
         /// Determines if this location has people the player can talk to.
         /// </summary>
-        public bool TalkingAllowed => true;
+        public override bool TalkingAllowed => true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Location.Town" /> class.

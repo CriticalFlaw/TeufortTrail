@@ -22,6 +22,16 @@
         /// </summary>
         public int TotalDistance { get; set; }
 
+        /// <summary>
+        /// Determines if this location has a store the player can visit.
+        /// </summary>
+        public abstract bool ShoppingAllowed { get; }
+
+        /// <summary>
+        /// Determines if this location has people the player can talk to.
+        /// </summary>
+        public abstract bool TalkingAllowed { get; }
+
         #endregion VARIBLES
 
         /// <summary>

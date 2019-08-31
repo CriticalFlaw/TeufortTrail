@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Travel.Store;
@@ -17,9 +18,53 @@ namespace TeufortTrail.Screens.Travel
         {
         }
 
+        protected override void OnFormChange()
+        {
+            base.OnFormChange();
+            UpdateLocation();
+        }
+
         public override void OnWindowPostCreate()
         {
-            SetForm(typeof(StoreWelcome));
+            UpdateLocation();
+            if (GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached))
+                SetForm(typeof(StoreWelcome));
+        }
+
+        /// <summary>
+        /// Called when the town information including party status and available commands need to be displayed.
+        /// </summary>
+        private void UpdateLocation()
+        {
+            var _menuHeader = new StringBuilder();
+            _menuHeader.Append(TravelInfo.PartyStatus);
+            _menuHeader.Append("You can:");
+            MenuHeader = _menuHeader.ToString();
+
+            ClearCommands();
+            AddCommand(ContinueTrail, TravelCommands.ContinueOnTrail);
+            AddCommand(StopToRest, TravelCommands.StopToRest);
+            AddCommand(CheckSupplies, TravelCommands.CheckSupplies);
+
+            var location = GameCore.Instance.Trail.CurrentLocation;
+            switch (location.Status)
+            {
+                case LocationStatus.Unreached:
+                    break;
+
+                case LocationStatus.Arrived:
+                    // TOOD: Add trading
+                    if (location.TalkingAllowed) AddCommand(TalkToPeople, TravelCommands.TalkToPeople);
+                    if (location.ShoppingAllowed) AddCommand(BuySupplies, TravelCommands.BuySupplies);
+                    break;
+
+                case LocationStatus.Departed:
+                    // TODO: Add trading and food gathering
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         /// <summary>
@@ -27,8 +72,47 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void ContinueTrail()
         {
+            if (GameCore.Instance.Trail.CurrentLocation.Status == LocationStatus.Departed)
+            {
+                SetForm(typeof(Store.Store));   // TEMP
+                return;
+            }
+
+            // TODO: Add other location types
             if (GameCore.Instance.Trail.CurrentLocation is Town)
-                SetForm(typeof(DepartLocation));
+                SetForm(typeof(Store.Store));   // TEMP
+        }
+
+        /// <summary>
+        /// Called when the player has chosen to rest at the current location.
+        /// </summary>
+        internal void StopToRest()
+        {
+            SetForm(typeof(Store.Store));   // TEMP
+        }
+
+        /// <summary>
+        /// Called when the player has chosen check their inventory and party status.
+        /// </summary>
+        internal void CheckSupplies()
+        {
+            SetForm(typeof(Store.Store));   // TEMP
+        }
+
+        /// <summary>
+        /// Called when the player has chosen to talk to the townsfolk for advice.
+        /// </summary>
+        internal void TalkToPeople()
+        {
+            SetForm(typeof(Store.Store));   // TEMP
+        }
+
+        /// <summary>
+        /// Called when the player has chosen to go to the store to buy supplies.
+        /// </summary>
+        internal void BuySupplies()
+        {
+            SetForm(typeof(Store.Store));
         }
     }
 

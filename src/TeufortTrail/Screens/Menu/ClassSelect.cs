@@ -105,7 +105,7 @@ namespace TeufortTrail.Screens.MainMenu
                     break;
             }
 
-            UserData.StartingMoney = 10;
+            UserData.StartingMoney = 1000;
             UserData.PartyClasses.Add(playerChoice);
             var classes = Enum.GetValues(typeof(Classes)).Cast<Classes>().ToList();
             classes.Remove(UserData.PlayerClass);
