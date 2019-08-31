@@ -104,6 +104,40 @@ namespace TeufortTrail.Entities.Item
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Item.Item" /> class from previous instance and with updated quantity.
+        /// </summary>
+        /// <param name="oldItem"></param>
+        /// <param name="newQuantity"></param>
+        public Item(Item oldItem, int newQuantity)
+        {
+            if (newQuantity > oldItem.MaxQuantity)
+                newQuantity = oldItem.MaxQuantity;
+            if (newQuantity < oldItem.MinQuantity)
+                newQuantity = oldItem.MinQuantity;
+
+            Category = oldItem.Category;
+            Name = oldItem.Name;
+            Value = oldItem.Value;
+            Weight = oldItem.Weight;
+            Points = (oldItem.Points <= 0) ? 1 : oldItem.Points;
+            MinQuantity = oldItem.MinQuantity;
+            MaxQuantity = oldItem.MaxQuantity;
+            Quantity = newQuantity;
+            StartingQuantity = oldItem.StartingQuantity;
+        }
+
+        /// <summary>
+        /// Increase the current quantity value by a given amount. Check for maximum and minimum values.
+        /// </summary>
+        /// <param name="amount">Amount the quantity should be increased by.</param>
+        public void AddQuantity(int amount)
+        {
+            var addition = Quantity + amount;
+            Quantity = (addition < 0) ? 0 : Quantity;
+            Quantity = (addition > MaxQuantity) ? MaxQuantity : addition;
+        }
+
+        /// <summary>
         /// Reduce the current quantity value by a given amount. Check for maximum and minimum values.
         /// </summary>
         /// <param name="amount">Amount the quantity should be reduced by.</param>
@@ -111,7 +145,17 @@ namespace TeufortTrail.Entities.Item
         {
             var subtraction = Quantity - amount;
             Quantity = (subtraction <= 0) ? 0 : Quantity;
+            if (Quantity == 0) return;
             Quantity = (subtraction > MaxQuantity) ? MaxQuantity : subtraction;
+            if (Quantity == MaxQuantity) return;
+        }
+
+        /// <summary>
+        /// Force reset the item's quantity to the starting amount.
+        /// </summary>
+        public void ResetQuantity()
+        {
+            Quantity = StartingQuantity;
         }
     }
 

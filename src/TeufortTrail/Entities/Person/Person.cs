@@ -193,7 +193,6 @@ namespace TeufortTrail.Entities.Person
     {
         // TODO: Add descriptons and unique stats to each class.
         Scout = 1,
-
         Soldier = 2,
         Pyro = 3,
         Demoman = 4,

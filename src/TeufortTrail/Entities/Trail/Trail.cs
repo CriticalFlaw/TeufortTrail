@@ -46,6 +46,7 @@ namespace TeufortTrail.Entities.Trail
             MinLength = minLength;
             MaxLength = maxLength;
             _locations = new List<Location.Location>(locations);
+            if (_locations.Count <= 1) throw new ArgumentException("List of locations count not greater than or equal to two!");
         }
     }
 
@@ -68,7 +69,7 @@ namespace TeufortTrail.Entities.Trail
         /// <summary>
         /// Determines the location the player and their party are currently in as a location entity.
         /// </summary>
-        public Location.Location CurrentLocation => Locations[LocationIndex];
+        public Location.Location CurrentLocation => Trail.Locations[LocationIndex];
 
         /// <summary>
         /// Determines if the current location is the first one of the game.

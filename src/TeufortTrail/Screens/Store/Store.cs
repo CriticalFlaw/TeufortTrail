@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Entities.Vehicle;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
@@ -34,10 +35,10 @@ namespace TeufortTrail.Screens.Travel.Store
             base.OnFormPostCreate();
             _store = new StringBuilder();
 
-            // TODO: Add current location and time
+            // TODO: Add current time
             _store.Clear();
             _store.AppendLine("--------------------------------");
-            _store.AppendLine("Mann Co. Store");
+            _store.AppendLine(GameCore.Instance.Trail.CurrentLocation?.Name + " Mann Co. Store");
             _store.AppendLine("--------------------------------");
 
             var storeItems = new List<Categories>(Enum.GetValues(typeof(Categories)).Cast<Categories>());
@@ -45,15 +46,21 @@ namespace TeufortTrail.Screens.Travel.Store
             {
                 var storeItem = storeItems[index];
 
-                if ((storeItem == Categories.Money) || (storeItem == Categories.Person) || (storeItem == Categories.Location))
-                    continue;
+                if ((storeItem == Categories.Vehicle) || (storeItem == Categories.Person) || (storeItem == Categories.Money) || (storeItem == Categories.Location)) continue;
 
-                _store.AppendLine($"  {(int)storeItem}. {storeItem.ToDescriptionAttribute()}");
-                if (index == storeItems.Count - 4)
+                var storeTag = storeItem.ToDescriptionAttribute() + "              " + UserData.Store.Transactions[storeItem].Value.ToString("C2");
+                _store.AppendLine($"  {(int)storeItem}. {storeTag}");
+                if (index == storeItems.Count - 5)
                     _store.AppendLine($"  {storeItems.Count - 2}. Leave store");
             }
 
             _store.AppendLine("--------------------------------");
+            var totalBill = UserData.Store.TotalTransactionCost;
+            var playerBalance = GameCore.Instance.Vehicle.Balance - totalBill;
+
+            _store.Append(GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached)
+                ? $"Total bill:            {totalBill:C2}" + $"{Environment.NewLine}Amount you have:       {playerBalance:C2}"
+                : $"You have {GameCore.Instance.Vehicle.Balance:C2} to spend.");
         }
 
         /// <summary>
@@ -114,6 +121,7 @@ namespace TeufortTrail.Screens.Travel.Store
         {
             if (GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached))
             {
+                UserData.Store.PurchaseItems();
                 GameCore.Instance.Trail.ArriveAtLocation();
                 SetForm(typeof(LocationArrived));
             }
@@ -127,6 +135,11 @@ namespace TeufortTrail.Screens.Travel.Store
         #region VARIABLES
 
         /// <summary>
+        /// Defines the list of currently active transactions.
+        /// </summary>
+        public IDictionary<Categories, Item> Transactions;
+
+        /// <summary>
         /// Defines the store item the player has chosen to purchase.
         /// </summary>
         public Item SelectedItem { get; set; }
@@ -138,6 +151,58 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         public StoreGenerator()
         {
+            Transactions = new Dictionary<Categories, Item>(Vehicle.DefaultInventory);
+        }
+
+        /// <summary>
+        /// Calculate the current transaction cost.
+        /// </summary>
+        public float TotalTransactionCost
+        {
+            get
+            {
+                float totalCost = 0;
+                foreach (var item in Transactions)
+                    totalCost += item.Value.Quantity * item.Value.Value;
+                return totalCost;
+            }
+        }
+
+        /// <summary>
+        /// Add the item to the on-going transaction.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="amount"></param>
+        public void AddItem(Item item, int amount)
+        {
+            Transactions[item.Category] = new Item(item, amount);
+        }
+
+        /// <summary>
+        /// Remove the item from the on-going transaction.
+        /// </summary>
+        /// <param name="item"></param>
+        public void RemoveItem(Item item)
+        {
+            foreach (var transaction in new Dictionary<Categories, Item>(Transactions))
+            {
+                if (!transaction.Key.Equals(item.Category))
+                    continue;
+                Transactions[item.Category].ResetQuantity();
+                break;
+            }
+        }
+
+        /// <summary>
+        /// Purchase the items in the transaction. Adding them to the player inventory.
+        /// </summary>
+        public void PurchaseItems()
+        {
+            if (GameCore.Instance.Vehicle.Balance < TotalTransactionCost)
+                throw new InvalidOperationException("Attempted to purchase items the player does not have enough monies for!");
+            foreach (var transaction in Transactions)
+                GameCore.Instance.Vehicle.PurchaseItem(transaction.Value);
+            Transactions = new Dictionary<Categories, Item>(Vehicle.DefaultInventory);
         }
     }
 }

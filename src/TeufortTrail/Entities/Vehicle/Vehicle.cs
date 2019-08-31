@@ -33,6 +33,23 @@ namespace TeufortTrail.Entities.Vehicle
         public RationLevel Ration { get; private set; }
 
         /// <summary>
+        /// The total cash value amount that the party currently has.
+        /// </summary>
+        public float Balance
+        {
+            get => _inventory[Categories.Money].TotalValue;
+            private set
+            {
+                if (value.Equals(_inventory[Categories.Money].Quantity))
+                    return;
+                if (value <= 0)
+                    _inventory[Categories.Money].ResetQuantity();
+                else
+                    _inventory[Categories.Money] = new Item.Item(_inventory[Categories.Money], (int)value);
+            }
+        }
+
+        /// <summary>
         /// Vehicle party's inventory of resources and money.
         /// </summary>
         public IDictionary<Categories, Item.Item> Inventory => _inventory;
@@ -84,6 +101,7 @@ namespace TeufortTrail.Entities.Vehicle
             Passengers = new List<Person.Person>();
             Status = VehicleStatus.Stopped;
             Ration = RationLevel.Filling;
+            Balance = startingMoney;
         }
 
         /// <summary>
@@ -92,6 +110,16 @@ namespace TeufortTrail.Entities.Vehicle
         internal void AddPerson(Person.Person person)
         {
             Passengers.Add(person);
+        }
+
+        /// <summary>
+        /// Adds a new item to the inventory of the vehicle and subtracts it's cost multiplied by quantity from balance.
+        /// </summary>
+        public void PurchaseItem(Item.Item purchasedItem)
+        {
+            if (Balance < purchasedItem.TotalValue) return;
+            Balance -= purchasedItem.TotalValue;
+            Inventory[purchasedItem.Category].AddQuantity(purchasedItem.Quantity);
         }
     }
 
