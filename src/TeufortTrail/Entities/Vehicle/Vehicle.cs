@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TeufortTrail.Entities.Item;
 
 namespace TeufortTrail.Entities.Vehicle
@@ -91,6 +92,24 @@ namespace TeufortTrail.Entities.Vehicle
             Status = VehicleStatus.Stopped;
         }
 
+        public void OnTick(bool systemTick, bool skipDay)
+        {
+            if (systemTick) return;
+            foreach (var person in Passengers)
+                person.OnTick(false, skipDay);
+            if ((Status != VehicleStatus.Moving) || skipDay) return;
+            Mileage = GetRandomMileage();
+            if (GameCore.Instance.Random.NextBool() && (Mileage > 0)) Mileage /= 2;
+            if (Mileage <= 0) Mileage = 10;
+        }
+
+        private int GetRandomMileage()
+        {
+            var costAnimals = Inventory[Categories.Food].TotalValue;
+            var totalMiles = Mileage + (costAnimals - 110) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
+            return (int)Math.Abs(totalMiles);
+        }
+
         /// <summary>
         /// Reset the vehicle status to the default.
         /// </summary>
@@ -120,6 +139,17 @@ namespace TeufortTrail.Entities.Vehicle
             if (Balance < purchasedItem.TotalValue) return;
             Balance -= purchasedItem.TotalValue;
             Inventory[purchasedItem.Category].AddQuantity(purchasedItem.Quantity);
+        }
+
+        /// <summary>
+        /// Check if the vehicle is currently operational and is able to move.
+        /// </summary>
+        public void CheckStatus()
+        {
+            // TODO: Add a condition to check that would cause the vehicle to be disabled.
+            if (Status == VehicleStatus.Disabled)
+                return;
+            Status = VehicleStatus.Moving;
         }
     }
 

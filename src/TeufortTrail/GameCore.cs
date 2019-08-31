@@ -107,9 +107,9 @@ namespace TeufortTrail
         /// <summary>
         /// Increment the turn number.
         /// </summary>
-        public void TakeTurn()
+        public void TakeTurn(bool skipDay)
         {
-            TotalTurns++;
+            if (!skipDay) TotalTurns++;
         }
 
         /// <summary>

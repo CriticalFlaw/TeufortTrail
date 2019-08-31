@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Entities.Vehicle;
 using TeufortTrail.Screens.Travel;
 
 namespace TeufortTrail.Entities.Trail
@@ -47,6 +49,18 @@ namespace TeufortTrail.Entities.Trail
             MaxLength = maxLength;
             _locations = new List<Location.Location>(locations);
             if (_locations.Count <= 1) throw new ArgumentException("List of locations count not greater than or equal to two!");
+            Length = GenerateDistances(_locations);
+        }
+
+        private int GenerateDistances(IEnumerable<Location.Location> locations)
+        {
+            var _totalTrailLength = 0;
+            foreach (var location in locations)
+            {
+                location.TotalDistance = GameCore.Instance.Random.Next(MinLength, MaxLength);
+                _totalTrailLength += location.TotalDistance;
+            }
+            return _totalTrailLength;
         }
     }
 
@@ -115,6 +129,20 @@ namespace TeufortTrail.Entities.Trail
             NextLocationDistance = 0;
         }
 
+        public override void OnTick(bool systemTick, bool skipDay = false)
+        {
+            if (systemTick) return;
+            var vehicle = GameCore.Instance.Vehicle;
+            CurrentLocation?.OnTick(false);
+            vehicle.OnTick(false, skipDay);
+            if ((vehicle.Status != VehicleStatus.Moving) || skipDay) return;
+            if ((CurrentLocation?.Status == LocationStatus.Arrived) && (NextLocationDistance <= 0)) return;
+            NextLocationDistance -= vehicle.Mileage;
+            if (NextLocationDistance >= 0) return;
+            NextLocationDistance = 0;
+            ArriveAtLocation();
+        }
+
         /// <summary>
         /// Called when it is decided that the player has arrived at the next location.
         /// </summary>
@@ -122,8 +150,7 @@ namespace TeufortTrail.Entities.Trail
         {
             if (LocationIndex > Locations.Count) return;
             NextLocationDistance = CurrentLocation.TotalDistance;
-            if (GameCore.Instance.TotalTurns > 0)
-                LocationIndex++;
+            if (GameCore.Instance.TotalTurns > 0) LocationIndex++;
             CurrentLocation.Status = LocationStatus.Arrived;
             GameCore.Instance.WindowManager.Add(typeof(Travel));
         }

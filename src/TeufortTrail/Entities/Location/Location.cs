@@ -1,4 +1,6 @@
-﻿namespace TeufortTrail.Entities.Location
+﻿using System;
+
+namespace TeufortTrail.Entities.Location
 {
     /// <summary>
     /// Defines the trail location that the player will visit in their playthrough.
@@ -32,6 +34,11 @@
         /// </summary>
         public abstract bool TalkingAllowed { get; }
 
+        /// <summary>
+        /// Flags thee location as just being arrived at by the player.
+        /// </summary>
+        public bool ArrivalFlag { get; set; }
+
         #endregion VARIBLES
 
         /// <summary>
@@ -42,6 +49,11 @@
         {
             Name = name;
             Status = LocationStatus.Unreached;
+        }
+
+        public void OnTick(bool systemTick)
+        {
+            if (systemTick) return;
         }
     }
 

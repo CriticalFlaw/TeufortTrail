@@ -31,6 +31,31 @@ namespace TeufortTrail.Screens.Travel
                 SetForm(typeof(StoreWelcome));
         }
 
+        public override void OnWindowActivate()
+        {
+            ArriveAtLocation();
+        }
+
+        public override void OnWindowAdded()
+        {
+            if (!GameCore.Instance.Trail.CurrentLocation.ArrivalFlag) return;
+            ArriveAtLocation();
+        }
+
+        private void ArriveAtLocation()
+        {
+            var game = GameCore.Instance;
+            // TODO: Check if this is game over, passengers are dead or if this is the last location.
+            if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived)
+            {
+                game.Trail.CurrentLocation.ArrivalFlag = true;
+                SetForm(typeof(LocationArrived));
+                return;
+            }
+
+            UpdateLocation();
+        }
+
         /// <summary>
         /// Called when the town information including party status and available commands need to be displayed.
         /// </summary>
@@ -74,13 +99,13 @@ namespace TeufortTrail.Screens.Travel
         {
             if (GameCore.Instance.Trail.CurrentLocation.Status == LocationStatus.Departed)
             {
-                SetForm(typeof(Store.Store));   // TEMP
+                SetForm(typeof(ContinueTrail));
                 return;
             }
 
             // TODO: Add other location types
             if (GameCore.Instance.Trail.CurrentLocation is Town)
-                SetForm(typeof(Store.Store));   // TEMP
+                SetForm(typeof(DepartLocation));
         }
 
         /// <summary>
