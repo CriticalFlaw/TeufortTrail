@@ -28,6 +28,7 @@ namespace TeufortTrail.Screens.MainMenu
         /// </summary>
         protected override string OnDialogPrompt()
         {
+            // Generate a string listing the player's party members.
             var _partyList = new StringBuilder();
             for (var index = 1; index < UserData.PartyClasses.Count - 1; index++)
             {
@@ -35,6 +36,7 @@ namespace TeufortTrail.Screens.MainMenu
                 _partyList.Append((isLast ? " and " : " ") + UserData.PartyClasses[index] + (isLast ? "." : ","));
             }
 
+            // Output the game story and objective.
             _storyHelp = new StringBuilder();
             _storyHelp.AppendLine($"{Environment.NewLine}The year is 1972. Gray Mann's robot army have captured majority");
             _storyHelp.AppendLine("of the Southwest. You and your team must travel from Dustbowl");

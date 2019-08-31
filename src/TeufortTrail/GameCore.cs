@@ -65,55 +65,55 @@ namespace TeufortTrail
         }
 
         /// <summary>
-        /// Called by the text user interface to display any headings before the rest of the content.
+        /// Called by the text user interface to display a heading before the rest of the content.
         /// </summary>
         /// <returns></returns>
         public override string OnPreRender()
         {
+            // Display the current location, vehicle status and turn count.
             return $"Turns: {TotalTurns:D4}\nLocation: {Trail?.CurrentLocation?.Status}\nVehicle: {Vehicle?.Status}";
         }
 
         /// <summary>
-        /// Called on the first ever game tick. Meant to be used to setup and load basic resources.
+        /// Called on the first game tick. Meant to be used to setup and load base resources.
         /// </summary>
         protected override void OnFirstTick()
         {
+            // Reset the turn counter.
             TotalTurns = 0;
 
+            // Load the necessary trail and vehicle modules.
             Trail = new TrailBase();
             Vehicle = new Vehicle();
 
-            // Reset the Window Manager
+            // Reset the Window Manager, attach the main screens.
             base.Restart();
-
             WindowManager.Add(typeof(Travel));
             WindowManager.Add(typeof(MainMenu));
         }
 
         /// <summary>
-        /// Called right before the game destroys itself.
+        /// Cleans up remaining resources, right before the game closes.
         /// </summary>
         protected override void OnPreDestroy()
         {
             TotalTurns = 0;
-
             Trail.Destroy();
-
             Vehicle = null;
             Trail = null;
             Instance = null;
         }
 
         /// <summary>
-        /// Increment the turn number.
+        /// Increment the turn counter.
         /// </summary>
-        public void TakeTurn(bool skipDay)
+        public void TakeTurn()
         {
-            if (!skipDay) TotalTurns++;
+            TotalTurns++;
         }
 
         /// <summary>
-        /// Loads in the main game screens.
+        /// Clear then load in the vehicle party and starting resources.
         /// </summary>
         /// <param name="startInfo"></param>
         internal void SetStartInfo(NewGameInfo startInfo)
@@ -122,7 +122,6 @@ namespace TeufortTrail
             Vehicle.ResetVehicle(startInfo.StartingMoney);
             foreach (var _class in startInfo.PartyClasses)
             {
-                // First name in list is always the leader.
                 var personLeader = (startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1);
                 Vehicle.AddPerson(new Person(startInfo.PlayerClass, personLeader));
                 crewNumber++;

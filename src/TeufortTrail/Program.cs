@@ -8,22 +8,30 @@ namespace TeufortTrail
     /// </summary>
     internal static class Program
     {
+        /// <summary>
+        /// Console application entry point.
+        /// </summary>
+        /// <returns></returns>
         public static int Main()
         {
-            // Setup the console
+            // Setup the console.
             Console.Title = "Teufort Trail";
             Console.WriteLine("Loading...");
             Console.CursorVisible = false;
             Console.CancelKeyPress += Console_CancelKeyPress;
             Console.OutputEncoding = System.Text.Encoding.Unicode;
 
-            // Setup the game instance
+            // Setup the game instance.
             GameCore.Create();
             GameCore.Instance.SceneGraph.ScreenBufferDirtyEvent += ScreenBufferDirtyEvent;
 
+            // Loop through the game session.
             while (GameCore.Instance != null)
             {
+                // Takes any number of pulses to determine seconds elapsed.
                 GameCore.Instance.OnTick(true);
+
+                // Check if a key is being pressed.
                 if (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey(true);
@@ -45,7 +53,7 @@ namespace TeufortTrail
                 Thread.Sleep(1);
             }
 
-            // Clean the console
+            // Close the console.
             Console.Clear();
             Console.WriteLine("Goodbye!");
             Console.WriteLine("Press ANY KEY to close this window...");
@@ -60,7 +68,6 @@ namespace TeufortTrail
         private static void ScreenBufferDirtyEvent(string input)
         {
             var content = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
             for (var index = 0; index < Console.WindowHeight - 1; index++)
             {
                 Console.CursorLeft = 0;
@@ -75,8 +82,6 @@ namespace TeufortTrail
         /// <summary>
         /// Called when the player presses the escape shortcut to get out of the game.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             e.Cancel = true;

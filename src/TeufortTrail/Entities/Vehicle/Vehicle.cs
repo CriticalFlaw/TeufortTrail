@@ -14,22 +14,22 @@ namespace TeufortTrail.Entities.Vehicle
         private List<Person.Person> Passengers;
 
         /// <summary>
-        /// The number of miles travelled so far along the trail.
+        /// Total number of miles travelled so far on the trail.
         /// </summary>
         public int Mileage { get; private set; }
 
         /// <summary>
-        /// Defines the pace at which the vehicle is travelling.
+        /// The pace at which the vehicle is travelling.
         /// </summary>
         public TravelPace Pace { get; private set; }
 
         /// <summary>
-        /// Defines the vehicle's current status.
+        /// The vehicle's current status. (Stopped, Moving, etc.)
         /// </summary>
         public VehicleStatus Status { get; set; }
 
         /// <summary>
-        /// Defines the rate at which resources will be consumed on the trail.
+        /// The rate at which resources are consumed by the party on the trail.
         /// </summary>
         public RationLevel Ration { get; private set; }
 
@@ -41,8 +41,10 @@ namespace TeufortTrail.Entities.Vehicle
             get => _inventory[Categories.Money].TotalValue;
             private set
             {
-                if (value.Equals(_inventory[Categories.Money].Quantity))
-                    return;
+                // Skip this step if the balance is already at the value we were going to set.
+                if (value.Equals(_inventory[Categories.Money].Quantity)) return;
+
+                // Reset the balance value if it is somehow below or at zero.
                 if (value <= 0)
                     _inventory[Categories.Money].ResetQuantity();
                 else
@@ -64,6 +66,7 @@ namespace TeufortTrail.Entities.Vehicle
         {
             get
             {
+                // Create an inventory of items with default starting amounts.
                 var defaultInventory = new Dictionary<Categories, Item.Item>
                 {
                     {Categories.Food, Resources.Food},
@@ -73,6 +76,7 @@ namespace TeufortTrail.Entities.Vehicle
                     {Categories.Money, Resources.Money}
                 };
 
+                // Zero out all of the quantities by removing their max quantity. Then return.
                 foreach (var simItem in defaultInventory)
                     simItem.Value.ReduceQuantity(simItem.Value.MaxQuantity);
                 return defaultInventory;
@@ -86,32 +90,52 @@ namespace TeufortTrail.Entities.Vehicle
         /// </summary>
         public Vehicle()
         {
+            // Set the default vehicle state and values.
             ResetVehicle();
             Mileage = 1;
             Pace = TravelPace.Steady;
             Status = VehicleStatus.Stopped;
         }
 
+        /// <summary>
+        /// Called when the simulation is ticked.
+        /// </summary>
         public void OnTick(bool systemTick, bool skipDay)
         {
+            // Only tick vehicle at an inverval.
             if (systemTick) return;
+
+            // Loop through the party and tick them moving.
             foreach (var person in Passengers)
                 person.OnTick(false, skipDay);
+
+            // Only tick vehicle if it is moving.
             if ((Status != VehicleStatus.Moving) || skipDay) return;
+
+            // Determine how far the vehicle will travel to next point.
             Mileage = GetRandomMileage();
+
+            // If things go too slowly on the trail, cut the mileage in half.
             if (GameCore.Instance.Random.NextBool() && (Mileage > 0)) Mileage /= 2;
+
+            // Make sure the mileage is never below or at zero.
             if (Mileage <= 0) Mileage = 10;
+
+            // TODO: Trigger a random event.
         }
 
+        /// <summary>
+        /// Determine the ideal mileage value. If you run into problems, the mileage will be reduced.
+        /// </summary>
         private int GetRandomMileage()
         {
-            var costAnimals = Inventory[Categories.Food].TotalValue;
-            var totalMiles = Mileage + (costAnimals - 110) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
+            // Calculate the distance that the party should travel in the next day.
+            var totalMiles = Mileage + (Inventory[Categories.Food].TotalValue - 110) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
             return (int)Math.Abs(totalMiles);
         }
 
         /// <summary>
-        /// Reset the vehicle status to the default.
+        /// Reset the vehicle status and resources to the default.
         /// </summary>
         /// <param name="startingMoney">Amount of money the vehicle should have on reset.</param>
         internal void ResetVehicle(int startingMoney = 0)
@@ -132,28 +156,22 @@ namespace TeufortTrail.Entities.Vehicle
         }
 
         /// <summary>
-        /// Adds a new item to the inventory of the vehicle and subtracts it's cost multiplied by quantity from balance.
+        /// Adds an item to the vehicle inventory and subtracts its' cost multiplied by quantity from balance.
         /// </summary>
         public void PurchaseItem(Item.Item purchasedItem)
         {
+            // Check that the player can afford the item
             if (Balance < purchasedItem.TotalValue) return;
-            Balance -= purchasedItem.TotalValue;
-            Inventory[purchasedItem.Category].AddQuantity(purchasedItem.Quantity);
-        }
 
-        /// <summary>
-        /// Check if the vehicle is currently operational and is able to move.
-        /// </summary>
-        public void CheckStatus()
-        {
-            // TODO: Add a condition to check that would cause the vehicle to be disabled.
-            if (Status == VehicleStatus.Disabled)
-                return;
-            Status = VehicleStatus.Moving;
+            // Reduce the player's money by the total cost of the purchased item.
+            Balance -= purchasedItem.TotalValue;
+
+            // Increase the quantity of the item in the player's inventory.
+            Inventory[purchasedItem.Category].AddQuantity(purchasedItem.Quantity);
         }
     }
 
-    #region ENUM
+    #region ENUMERABLES
 
     /// <summary>
     /// Defines the pace at which the vehicle is travelling.
@@ -185,5 +203,5 @@ namespace TeufortTrail.Entities.Vehicle
         BareBones = 3
     }
 
-    #endregion ENUM
+    #endregion ENUMERABLES
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TeufortTrail.Entities.Location
+﻿namespace TeufortTrail.Entities.Location
 {
     /// <summary>
     /// Defines the trail location that the player will visit in their playthrough.
@@ -10,7 +8,7 @@ namespace TeufortTrail.Entities.Location
         #region VARIBLES
 
         /// <summary>
-        /// Name of the current location as it should be known to players.
+        /// Display name of the location as it should be known to the player.
         /// </summary>
         public string Name { get; }
 
@@ -25,17 +23,17 @@ namespace TeufortTrail.Entities.Location
         public int TotalDistance { get; set; }
 
         /// <summary>
-        /// Determines if this location has a store the player can visit.
+        /// Flags the location as having a store that the player can visit.
         /// </summary>
         public abstract bool ShoppingAllowed { get; }
 
         /// <summary>
-        /// Determines if this location has people the player can talk to.
+        /// Flags the location as having people that the player can talk to.
         /// </summary>
         public abstract bool TalkingAllowed { get; }
 
         /// <summary>
-        /// Flags thee location as just being arrived at by the player.
+        /// Flags the location as just being arrived at by the player.
         /// </summary>
         public bool ArrivalFlag { get; set; }
 
@@ -51,13 +49,17 @@ namespace TeufortTrail.Entities.Location
             Status = LocationStatus.Unreached;
         }
 
+        /// <summary>
+        /// Called when the simulation is ticked.
+        /// </summary>
         public void OnTick(bool systemTick)
         {
+            // Only tick vehicle at an inverval.
             if (systemTick) return;
         }
     }
 
-    #region ENUM
+    #region ENUMERABLES
 
     /// <summary>
     /// Defines the status of the location in relation to the player's trail progress.
@@ -69,5 +71,5 @@ namespace TeufortTrail.Entities.Location
         Departed = 2
     }
 
-    #endregion ENUM
+    #endregion ENUMERABLES
 }

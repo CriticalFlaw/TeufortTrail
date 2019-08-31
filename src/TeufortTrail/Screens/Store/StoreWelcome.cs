@@ -27,6 +27,7 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         protected override string OnDialogPrompt()
         {
+            // Display the welcome message when the player enters the store.
             _storeWelcome = new StringBuilder();
             _storeWelcome.Clear();
             _storeWelcome.Append($"{Environment.NewLine}Welcome to the Mann Co. Store! You fellas are heading to Teufort?");

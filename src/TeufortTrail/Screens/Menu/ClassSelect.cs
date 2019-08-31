@@ -35,14 +35,15 @@ namespace TeufortTrail.Screens.MainMenu
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
+
+            // Set the default player class and starting money.
             UserData.PlayerClass = Classes.Scout;
             UserData.StartingMoney = 10;
             GameCore.Instance.SetStartInfo(UserData);
 
+            // Loop through all the class enumerables and grab their description for selection purposes.
             _classSelect = new StringBuilder();
             _classSelect.AppendLine($"{Environment.NewLine}Choose your class:{Environment.NewLine}");
-
-            // Loop through all the class enumerables and grab their description for selection purposes.
             var classes = new List<Classes>(Enum.GetValues(typeof(Classes)).Cast<Classes>());
             for (var index = 0; index < classes.Count; index++)
             {
@@ -61,57 +62,26 @@ namespace TeufortTrail.Screens.MainMenu
             // Skip this step if the input is null or empty.
             if (string.IsNullOrWhiteSpace(input)) return;
 
-            // Cast user selection to the enum value.
+            // Cast user selection to the enumerable value.
             Enum.TryParse(input, out Classes playerChoice);
 
-            // Set starting player stats depending on the class chosen.
-            switch (playerChoice)
-            {
-                default:
-                case Classes.Scout:
-                    UserData.PlayerClass = Classes.Scout;
-                    break;
+            // Set the player class based on the selection
+            UserData.PlayerClass = playerChoice;
 
-                case Classes.Soldier:
-                    UserData.PlayerClass = Classes.Soldier;
-                    break;
+            // TODO: Set player stats depending on the class chosen.
 
-                case Classes.Pyro:
-                    UserData.PlayerClass = Classes.Pyro;
-                    break;
-
-                case Classes.Demoman:
-                    UserData.PlayerClass = Classes.Demoman;
-                    break;
-
-                case Classes.Heavy:
-                    UserData.PlayerClass = Classes.Heavy;
-                    break;
-
-                case Classes.Medic:
-                    UserData.PlayerClass = Classes.Medic;
-                    break;
-
-                case Classes.Engineer:
-                    UserData.PlayerClass = Classes.Engineer;
-                    break;
-
-                case Classes.Sniper:
-                    UserData.PlayerClass = Classes.Sniper;
-                    break;
-
-                case Classes.Spy:
-                    UserData.PlayerClass = Classes.Spy;
-                    break;
-            }
-
+            // Set the player's starting money, add them to the party.
             UserData.StartingMoney = 1000;
             UserData.PartyClasses.Add(playerChoice);
+
+            // Add three randomly selected, unique people to the player's party.
             var classes = Enum.GetValues(typeof(Classes)).Cast<Classes>().ToList();
             classes.Remove(UserData.PlayerClass);
             classes = classes.OrderBy(arg => Guid.NewGuid()).Take(4).ToList();
             foreach (var _class in classes)
                 UserData.PartyClasses.Add(_class);
+
+            // Change to the next screen.
             SetForm(typeof(StorySetup));
         }
 

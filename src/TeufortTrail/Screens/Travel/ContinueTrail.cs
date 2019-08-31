@@ -14,7 +14,15 @@ namespace TeufortTrail.Screens.Travel
         #region VARIABLES
 
         private StringBuilder _continueTrail;
+
+        /// <summary>
+        /// Animated sway bar that prints out as text, ping-pongs back and fourth between left and right side, moved by stepping it with tick.
+        /// </summary>
         private MarqueeBar _marqueeBar;
+
+        /// <summary>
+        /// Holds the text related to animated sway bar, each tick of simulation steps it.
+        /// </summary>
         private string _swayBarText;
 
         #endregion VARIABLES
@@ -26,34 +34,46 @@ namespace TeufortTrail.Screens.Travel
         {
         }
 
+        /// <summary>
+        /// Called when this screen has been created and now needs information to be displayed.
+        /// </summary>
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
+
+            // Initialize the game instance and marquee bar.
             var game = GameCore.Instance;
             _continueTrail = new StringBuilder();
             _marqueeBar = new MarqueeBar();
             _swayBarText = _marqueeBar.Step();
 
+            // Mark the previous location as Departed as the vehicle is now moving onto the next location.
             if ((game.Trail.NextLocationDistance > 0) && (game.Trail.CurrentLocation.Status == LocationStatus.Arrived))
                 game.Trail.CurrentLocation.Status = LocationStatus.Departed;
         }
 
+        /// <summary>
+        /// Called when the simulation is ticked.
+        /// </summary>
         public override void OnTick(bool systemTick, bool skipDay)
         {
+            // Only tick vehicle at an inverval.
             base.OnTick(systemTick, skipDay);
             if (systemTick) return;
-            var game = GameCore.Instance;
-            game.Vehicle.CheckStatus();
 
+            // Check the status of the vehicle at the this tick.
+            var game = GameCore.Instance;
             switch (game.Vehicle.Status)
             {
                 case VehicleStatus.Stopped:
-                case VehicleStatus.Disabled:    // TODO: Let the player know they are unable to continue
+                case VehicleStatus.Disabled:
+                    // TODO: Let the player know they are unable to continue
                     break;
 
                 case VehicleStatus.Moving:
+                    // Continue on the trail if the vehicle is already in motion.
                     _swayBarText = _marqueeBar.Step();
-                    game.TakeTurn(false);
+                    game.TakeTurn();
                     GameCore.Instance.Trail.OnTick(false, skipDay);
                     break;
 
@@ -68,7 +88,10 @@ namespace TeufortTrail.Screens.Travel
         /// <param name="input">User input</param>
         public override void OnInputBufferReturned(string input)
         {
+            // Check that the user input is not empty.
             if (!string.IsNullOrEmpty(input)) return;
+
+            // Stop the vehicle and clear the screen if it's already in motion.
             if (GameCore.Instance.Vehicle.Status == VehicleStatus.Moving)
                 GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
             ClearForm();
@@ -79,6 +102,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         public override string OnRenderForm()
         {
+            // Disply the marquee bar and current party status
             _continueTrail = new StringBuilder();
             _continueTrail.Clear();
             _continueTrail.AppendLine($"{Environment.NewLine}{_swayBarText}");

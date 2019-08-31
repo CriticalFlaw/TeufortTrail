@@ -17,7 +17,7 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Defines the kind of dialog prompt this screen will be (Yes/No or Press Any Key)
         /// </summary>
-        protected override DialogType DialogType => (GameCore.Instance.Trail.IsFirstLocation) ? DialogType.Prompt : DialogType.YesNo;
+        protected override DialogType DialogType => DialogType.YesNo;
 
         #endregion VARIABLES
 
@@ -34,6 +34,7 @@ namespace TeufortTrail.Screens.Travel
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
+            // Stop the vehicle because it has arrived at a location.
             GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
         }
 
@@ -42,15 +43,10 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            var game = GameCore.Instance;
             _locationArrived = new StringBuilder();
-            if (game.Trail.IsFirstLocation)
-                _locationArrived.AppendLine($"{Environment.NewLine}Starting your trail...{Environment.NewLine}");
-            else
-            {
-                _locationArrived.AppendLine($"{Environment.NewLine}You've arrived at {game.Trail.CurrentLocation.Name}.");
-                _locationArrived.Append("Would you like to look around? Y/N");
-            }
+            // Display a message asking the player if they want to investigate the current location.
+            _locationArrived.AppendLine($"{Environment.NewLine}You've arrived at {GameCore.Instance.Trail.CurrentLocation.Name}.");
+            _locationArrived.Append("Would you like to look around? Y/N");
             return _locationArrived.ToString();
         }
 
@@ -59,13 +55,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
-            if (GameCore.Instance.Trail.IsFirstLocation)
-            {
-                ClearForm();
-                return;
-            }
-
-            // Subsequent locations will confirm what the player wants to do, they can stop or keep going on the trail at their own demise.
+            // Process player selection in regards to whether or not they want to investigate the current location.
             switch (response)
             {
                 case DialogResponse.Custom:

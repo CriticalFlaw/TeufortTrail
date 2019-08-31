@@ -27,9 +27,9 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         protected override string OnDialogPrompt()
         {
+            // Display the next location on the trail and how far it is.
             _departLocation = new StringBuilder();
-            var nextPoint = GameCore.Instance.Trail.NextLocation;
-            _departLocation.AppendLine($"{Environment.NewLine}From {GameCore.Instance.Trail.CurrentLocation.Name} it is {GameCore.Instance.Trail.NextLocationDistance} miles to {nextPoint.Name}{Environment.NewLine}");
+            _departLocation.AppendLine($"{Environment.NewLine}From {GameCore.Instance.Trail.CurrentLocation.Name} it is {GameCore.Instance.Trail.NextLocationDistance} miles to {GameCore.Instance.Trail.NextLocation.Name}{Environment.NewLine}");
             return _departLocation.ToString();
         }
 

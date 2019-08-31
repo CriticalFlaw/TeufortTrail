@@ -22,8 +22,10 @@ namespace TeufortTrail.Screens.MainMenu
         /// </summary>
         public override void OnWindowPostCreate()
         {
-            MenuHeader = $"{Environment.NewLine}The Teurfort Trail";
             // TODO: Add a welcome message and game information
+            MenuHeader = $"{Environment.NewLine}The Teurfort Trail";
+
+            // Initialize the available commands and their methods.
             AddCommand(PlayTheGame, MainMenuCommands.PlayTheGame);
             AddCommand(CloseTheGame, MainMenuCommands.CloseTheGame);
         }
@@ -67,7 +69,7 @@ namespace TeufortTrail.Screens.MainMenu
         public Classes PlayerClass { get; set; }
 
         /// <summary>
-        /// References all the unique person classes currently in the party.
+        /// References all the unique classes currently in the party.
         /// </summary>
         public List<Classes> PartyClasses { get; set; }
 
