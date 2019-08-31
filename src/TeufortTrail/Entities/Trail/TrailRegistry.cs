@@ -14,13 +14,13 @@ namespace TeufortTrail.Entities.Trail
         {
             get
             {
-                var debugTrail = new Location.Location[]
+                var teufortTrail = new Location.Location[]
                 {
-                    new Town("Start Of Test"),
-                    new Town("End Of Test")
+                    new Town("Dustbowl"),
+                    new Town("Teufort, New Mexico")
                 };
 
-                return new Trail(debugTrail, 50, 100);
+                return new Trail(teufortTrail, 50, 100);
             }
         }
 

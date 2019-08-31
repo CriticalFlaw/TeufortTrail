@@ -33,14 +33,15 @@ namespace TeufortTrail.Screens.Travel.Store
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
-            _store = new StringBuilder();
 
             // TODO: Add current time
+            _store = new StringBuilder();
             _store.Clear();
             _store.AppendLine("--------------------------------");
             _store.AppendLine(GameCore.Instance.Trail.CurrentLocation?.Name + " Mann Co. Store");
             _store.AppendLine("--------------------------------");
 
+            // Display the available items at the store, also add the option to leave.
             var storeItems = new List<Categories>(Enum.GetValues(typeof(Categories)).Cast<Categories>());
             for (var index = 0; index < storeItems.Count; index++)
             {
@@ -54,6 +55,7 @@ namespace TeufortTrail.Screens.Travel.Store
                     _store.AppendLine($"  {storeItems.Count - 2}. Leave store");
             }
 
+            // Display the player's current money balance and pending transaction cost.
             _store.AppendLine("--------------------------------");
             var totalBill = UserData.Store.TotalTransactionCost;
             var playerBalance = GameCore.Instance.Vehicle.Balance - totalBill;
@@ -69,10 +71,13 @@ namespace TeufortTrail.Screens.Travel.Store
         /// <param name="input">User input</param>
         public override void OnInputBufferReturned(string input)
         {
+            // Check that the user input is not empty.
             if (string.IsNullOrWhiteSpace(input)) return;
 
+            // Check that the user input is a valid enumerable.
             Enum.TryParse(input, out Categories selectedItem);
 
+            // Depending on the item category selected, proceed to confirm the purchase.
             switch (selectedItem)
             {
                 case Categories.Food:
@@ -119,6 +124,7 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         private void LeaveStore()
         {
+            // Used for purchasing the starting items and setting the first location on the first turn of the game.
             if (GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached))
             {
                 UserData.Store.PurchaseItems();
@@ -144,6 +150,21 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         public Item SelectedItem { get; set; }
 
+        /// <summary>
+        /// Calculate the current transaction cost.
+        /// </summary>
+        public float TotalTransactionCost
+        {
+            get
+            {
+                // Loop through all the transactions and multiply the quantity by value.
+                float totalCost = 0;
+                foreach (var item in Transactions)
+                    totalCost += item.Value.Quantity * item.Value.Value;
+                return totalCost;
+            }
+        }
+
         #endregion VARIABLES
 
         /// <summary>
@@ -152,20 +173,6 @@ namespace TeufortTrail.Screens.Travel.Store
         public StoreGenerator()
         {
             Transactions = new Dictionary<Categories, Item>(Vehicle.DefaultInventory);
-        }
-
-        /// <summary>
-        /// Calculate the current transaction cost.
-        /// </summary>
-        public float TotalTransactionCost
-        {
-            get
-            {
-                float totalCost = 0;
-                foreach (var item in Transactions)
-                    totalCost += item.Value.Quantity * item.Value.Value;
-                return totalCost;
-            }
         }
 
         /// <summary>
@@ -184,10 +191,11 @@ namespace TeufortTrail.Screens.Travel.Store
         /// <param name="item"></param>
         public void RemoveItem(Item item)
         {
+            // Loop through ever transaction
             foreach (var transaction in new Dictionary<Categories, Item>(Transactions))
             {
-                if (!transaction.Key.Equals(item.Category))
-                    continue;
+                // Reset the quantity value of the item, removing it from the player's inventory.
+                if (!transaction.Key.Equals(item.Category)) continue;
                 Transactions[item.Category].ResetQuantity();
                 break;
             }
@@ -198,8 +206,11 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         public void PurchaseItems()
         {
+            // Check that the player can afford the items they want to purhcase.
             if (GameCore.Instance.Vehicle.Balance < TotalTransactionCost)
                 throw new InvalidOperationException("Attempted to purchase items the player does not have enough monies for!");
+
+            // Process each purchased item in the transaction.
             foreach (var transaction in Transactions)
                 GameCore.Instance.Vehicle.PurchaseItem(transaction.Value);
             Transactions = new Dictionary<Categories, Item>(Vehicle.DefaultInventory);

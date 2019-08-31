@@ -2,15 +2,19 @@
 {
     public sealed class Town : Location
     {
+        #region VARIABLES
+
         /// <summary>
-        /// Determines if this location has a store the player can visit.
+        /// Flags the location as having a store that the player can visit.
         /// </summary>
         public override bool ShoppingAllowed => true;
 
         /// <summary>
-        /// Determines if this location has people the player can talk to.
+        /// Flags the location as having people that the player can talk to.
         /// </summary>
         public override bool TalkingAllowed => true;
+
+        #endregion VARIABLES
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Location.Town" /> class.

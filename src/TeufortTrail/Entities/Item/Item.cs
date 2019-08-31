@@ -15,22 +15,22 @@ namespace TeufortTrail.Entities.Item
         public Categories Category { get; }
 
         /// <summary>
-        /// Display name of the item as it is known to the player.
+        /// Display name of the item as it should be known to the player.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Monetary cost of the item.
+        /// Monetary value of the item.
         /// </summary>
         public float Value { get; }
 
         /// <summary>
-        /// Weight of a single item unit, in pounds.
+        /// Weight of the item in pounds.
         /// </summary>
         private int Weight { get; }
 
         /// <summary>
-        /// Point value of the item awarded to the player's score.
+        /// Point value of the item awarded to the player.
         /// </summary>
         public int Points { get; }
 
@@ -50,32 +50,19 @@ namespace TeufortTrail.Entities.Item
         public int Quantity { get; private set; }
 
         /// <summary>
-        /// Current number of the item that the player has.
+        /// Starting number of the item that the player will have.
         /// </summary>
         private int StartingQuantity { get; }
 
         /// <summary>
-        /// Single weight of the item, multiplied by player quantity.
+        /// Total weight of the item, weight multiplied by inventory quantity.
         /// </summary>
         public int TotalWeight => Weight * Quantity;
 
         /// <summary>
-        /// Single value of the item, multiplied by player quantity.
+        /// Total value of the item, single value multiplied by inventory quantity.
         /// </summary>
         public float TotalValue => Value * Quantity;
-
-        /// <summary>
-        /// Total number of points the player has accumulated.
-        /// </summary>
-        public int PointsTotal
-        {
-            get
-            {
-                if ((Quantity <= 0) || (Quantity < Points))
-                    return 0;
-                return Quantity * Points;
-            }
-        }
 
         #endregion VARIABLES
 
@@ -110,6 +97,7 @@ namespace TeufortTrail.Entities.Item
         /// <param name="newQuantity"></param>
         public Item(Item oldItem, int newQuantity)
         {
+            // Check that the new quantity is within the min/max range.
             if (newQuantity > oldItem.MaxQuantity)
                 newQuantity = oldItem.MaxQuantity;
             if (newQuantity < oldItem.MinQuantity)
@@ -133,6 +121,7 @@ namespace TeufortTrail.Entities.Item
         public void AddQuantity(int amount)
         {
             var addition = Quantity + amount;
+            // Check that the amount is within the min/max range.
             Quantity = (addition < 0) ? 0 : Quantity;
             Quantity = (addition > MaxQuantity) ? MaxQuantity : addition;
         }
@@ -144,6 +133,7 @@ namespace TeufortTrail.Entities.Item
         public void ReduceQuantity(int amount)
         {
             var subtraction = Quantity - amount;
+            // Check that the amount is within the min/max range.
             Quantity = (subtraction <= 0) ? 0 : Quantity;
             if (Quantity == 0) return;
             Quantity = (subtraction > MaxQuantity) ? MaxQuantity : subtraction;
@@ -151,7 +141,7 @@ namespace TeufortTrail.Entities.Item
         }
 
         /// <summary>
-        /// Force reset the item's quantity to the starting amount.
+        /// Reset the item's quantity to the starting amount.
         /// </summary>
         public void ResetQuantity()
         {
@@ -159,7 +149,7 @@ namespace TeufortTrail.Entities.Item
         }
     }
 
-    #region ENUM
+    #region ENUMERABLES
 
     /// <summary>
     /// Defines all possible item types.
@@ -207,5 +197,5 @@ namespace TeufortTrail.Entities.Item
         Location = 8
     }
 
-    #endregion ENUM
+    #endregion ENUMERABLES
 }

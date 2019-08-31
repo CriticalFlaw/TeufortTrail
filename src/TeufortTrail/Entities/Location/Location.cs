@@ -8,7 +8,7 @@
         #region VARIBLES
 
         /// <summary>
-        /// Name of the current location as it should be known to players.
+        /// Display name of the location as it should be known to the player.
         /// </summary>
         public string Name { get; }
 
@@ -23,14 +23,19 @@
         public int TotalDistance { get; set; }
 
         /// <summary>
-        /// Determines if this location has a store the player can visit.
+        /// Flags the location as having a store that the player can visit.
         /// </summary>
         public abstract bool ShoppingAllowed { get; }
 
         /// <summary>
-        /// Determines if this location has people the player can talk to.
+        /// Flags the location as having people that the player can talk to.
         /// </summary>
         public abstract bool TalkingAllowed { get; }
+
+        /// <summary>
+        /// Flags the location as just being arrived at by the player.
+        /// </summary>
+        public bool ArrivalFlag { get; set; }
 
         #endregion VARIBLES
 
@@ -43,9 +48,18 @@
             Name = name;
             Status = LocationStatus.Unreached;
         }
+
+        /// <summary>
+        /// Called when the simulation is ticked.
+        /// </summary>
+        public void OnTick(bool systemTick)
+        {
+            // Only tick vehicle at an inverval.
+            if (systemTick) return;
+        }
     }
 
-    #region ENUM
+    #region ENUMERABLES
 
     /// <summary>
     /// Defines the status of the location in relation to the player's trail progress.
@@ -57,5 +71,5 @@
         Departed = 2
     }
 
-    #endregion ENUM
+    #endregion ENUMERABLES
 }

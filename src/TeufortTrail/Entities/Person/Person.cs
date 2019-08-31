@@ -8,22 +8,22 @@ namespace TeufortTrail.Entities.Person
         #region VARIABLES
 
         /// <summary>
-        /// Determines the player class (Scout, Soldier, Heavy, etc.)
+        /// Defines the the player class (See Classes enumerable)
         /// </summary>
         public Classes Class { get; }
 
         /// <summary>
-        /// Flag to determine if this party member is the leader/player.
+        /// Flags the party member as the leader/player.
         /// </summary>
         public bool Leader { get; }
 
         /// <summary>
-        /// Flag to determine if this party member is sick or infected.
+        /// Flags the party member as sick or infected.
         /// </summary>
         private bool Infected { get; set; }
 
         /// <summary>
-        /// Flag to determine if this party member is hurt or injuried.
+        /// Flags the party member as hurt or injured.
         /// </summary>
         private bool Injured { get; set; }
 
@@ -49,64 +49,66 @@ namespace TeufortTrail.Entities.Person
         }
 
         /// <summary>
-        /// Called every in-game tick. Used to roll a die in deciding how much the person's health will change.
+        /// Called when the simulation is ticked.
         /// </summary>
-        /// <param name="systemTick">TRUE if ticked unpredictably or FALSE if ticked at a fixed interval.</param>
-        /// <param name="skipDay">Determines if the game has force ticked without advancing time. Used by special events that want to simulate passage of time without actually any actual time moving by.</param>
         public void OnTick(bool systemTick, bool skipDay)
         {
+            // Only tick vehicle at an inverval.
+            if (systemTick) return;
+
             // TODO: Add events that would change member's health and resource consumption
+
+            // Only consume food if the whole day has passed.
+            if (!skipDay) ConsumeFood();
         }
 
         /// <summary>
-        /// Determines how much food party members in the vehicle will eat today.
+        /// Determines how much food party members in the vehicle will consume.
         /// </summary>
         private void ConsumeFood()
         {
+            // Skip this step if the party member is already dead.
             if (Status == (int)HealthStatus.Dead) return;
 
             if (GameCore.Instance.Vehicle.Inventory[Categories.Food].Quantity > 0)
+            {
+                // TODO: Reduce the food quantity based on the ration level.
                 Heal();
+            }
             else
+                // Reduce party member's health if there is no food to eat.
                 Damage(10, 50);
         }
 
         /// <summary>
-        /// Increase person's health until it reaches maximum value.
+        /// Increase party member's health until it reaches maximum value.
         /// </summary>
         private void Heal()
         {
-            if (Status == (int)HealthStatus.Dead || Status == (int)HealthStatus.Good)
-                return;
+            // Skip this step if the party member is already dead or healthy enough.
+            if (Status == (int)HealthStatus.Dead || Status == (int)HealthStatus.Good) return;
 
+            // Roll the dice to determine if the party member will even be healed.
             var game = GameCore.Instance;
             if (game.Random.NextBool()) return;
 
-            if (Infected || Injured)
-                Status += game.Random.Next(1, 20);
-            else
-                Status += game.Random.Next(1, 10);
+            // Heal the party member a greater amount if they are currently sick or hurt.
+            Status += game.Random.Next(1, ((Infected || Injured) ? 20 : 10));
         }
 
         /// <summary>
-        /// Increase person's health until it reaches maximum value.
-        /// </summary>
-        private void HealFull()
-        {
-            Status = (int)HealthStatus.Great;
-            Infected = false;
-            Injured = false;
-        }
-
-        /// <summary>
-        /// Check if the party leader or member has or has been killed by an illness.
+        /// Check if the party member has an illness or injury.
         /// </summary>
         private void CheckIllness()
         {
+            // Skip this step if the party member is already dead.
             if (Status == (int)HealthStatus.Dead) return;
+
+            // Roll the dice to determine if the party member will even be healed.
             var game = GameCore.Instance;
             if (game.Random.NextBool()) return;
 
+            // Reduce the party member's health depending on their health and debuff.
             switch (Status)
             {
                 case (int)HealthStatus.Great:
@@ -145,8 +147,7 @@ namespace TeufortTrail.Entities.Person
         /// <param name="amount">Amount of health to decrease</param>
         private void Damage(int amount)
         {
-            if (amount > 0)
-                Status -= amount;
+            if (amount > 0) Status -= amount;
         }
 
         /// <summary>
@@ -184,7 +185,7 @@ namespace TeufortTrail.Entities.Person
         }
     }
 
-    #region ENUM
+    #region ENUMERABLES
 
     /// <summary>
     /// Defines all the playable classes.
@@ -193,6 +194,7 @@ namespace TeufortTrail.Entities.Person
     {
         // TODO: Add descriptons and unique stats to each class.
         Scout = 1,
+
         Soldier = 2,
         Pyro = 3,
         Demoman = 4,
@@ -215,5 +217,5 @@ namespace TeufortTrail.Entities.Person
         Dead = 0
     }
 
-    #endregion ENUM
+    #endregion ENUMERABLES
 }

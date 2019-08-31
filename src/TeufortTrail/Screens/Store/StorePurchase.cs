@@ -39,13 +39,18 @@ namespace TeufortTrail.Screens.Travel.Store
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
+
+            // Determine the current player balance and the limit on their purchasing.
             var currentBalance = (int)(GameCore.Instance.Vehicle.Balance - UserData.Store.TotalTransactionCost);
             PurchaseLimit = (int)(currentBalance / UserData.Store.SelectedItem.Value);
+
+            // Check that the limist are within range.
             if (PurchaseLimit < 0)
                 PurchaseLimit = 0;
             if (PurchaseLimit > UserData.Store.SelectedItem.MaxQuantity)
                 PurchaseLimit = UserData.Store.SelectedItem.MaxQuantity;
 
+            // Display a message indicating how much of this item the player can afford.
             _storePurchase = new StringBuilder();
             _storePurchase.AppendLine($"{Environment.NewLine}You can afford {PurchaseLimit} {UserData.Store.SelectedItem.Name.ToLowerInvariant()}.");
             _storePurchase.Append($"How many {UserData.Store.SelectedItem.Name.ToLowerInvariant()} to buy?");
@@ -58,16 +63,21 @@ namespace TeufortTrail.Screens.Travel.Store
         /// <param name="input">User input</param>
         public override void OnInputBufferReturned(string input)
         {
+            // Check that the user input is a valid intenger.
             if (!int.TryParse(input, out var userInput)) return;
 
+            // Check that the user input is not zero, within the purchasing limit, does not exceed the set maximum and can actually afford the item.
             if (userInput <= 0 || userInput > PurchaseLimit || userInput > PurchaseItem.MaxQuantity || GameCore.Instance.Vehicle.Balance < PurchaseItem.TotalValue * userInput)
                 UserData.Store.RemoveItem(PurchaseItem);
             else
             {
+                // If all checks pass, then add the item to the player's inventory.
                 UserData.Store.AddItem(PurchaseItem, userInput);
                 if (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Arrived)
                     UserData.Store.PurchaseItems();
             }
+
+            // Deselect the item and return to the store.
             UserData.Store.SelectedItem = null;
             SetForm(typeof(Store));
         }
