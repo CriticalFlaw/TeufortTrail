@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
-using TeufortTrail.Screens.Travel.Location;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
@@ -100,6 +99,15 @@ namespace TeufortTrail.Screens.Travel.Store
             }
             else
                 ClearForm();
+        }
+    }
+
+    public sealed class StoreGenerator
+    {
+        public Item SelectedItem { get; set; }
+
+        public StoreGenerator()
+        {
         }
     }
 }

@@ -1,18 +1,38 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Travel;
 
-namespace TeufortTrail.Events.Trail
+namespace TeufortTrail.Entities.Trail
 {
-    public sealed class TrailModule : WolfCurses.Module.Module
+    public sealed class Trail
+    {
+        private readonly List<Location.Location> _locations;
+        public ReadOnlyCollection<Location.Location> Locations => _locations.AsReadOnly();
+        private int MinLength { get; }
+        private int MaxLength { get; }
+        public int Length { get; }
+
+        public Trail(IEnumerable<Location.Location> locations, int minLength, int maxLength)
+        {
+            if (locations == null) throw new ArgumentNullException(nameof(locations), "List of locations for the trail is null");
+
+            _locations = new List<Location.Location>(locations);
+            MinLength = minLength;
+            MaxLength = maxLength;
+        }
+    }
+
+    public sealed class TrailBase : WolfCurses.Module.Module
     {
         private Trail Trail { get; set; }
         public int LocationIndex { get; private set; }
-        public ReadOnlyCollection<Location> Locations => Trail.Locations;
-        public Location CurrentLocation => Locations[LocationIndex];
+        public ReadOnlyCollection<Location.Location> Locations => Trail.Locations;
+        public Location.Location CurrentLocation => Locations[LocationIndex];
         public bool IsFirstLocation => LocationIndex <= 0;
 
-        public Location NextLocation
+        public Location.Location NextLocation
         {
             get
             {
@@ -23,7 +43,7 @@ namespace TeufortTrail.Events.Trail
 
         public int NextLocationDistance { get; private set; }
 
-        public TrailModule()
+        public TrailBase()
         {
             Trail = TrailRegistry.TeufortTrail;
             LocationIndex = 0;

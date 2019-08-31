@@ -5,7 +5,7 @@ using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Location
+namespace TeufortTrail.Screens.Travel
 {
     [ParentWindow(typeof(Travel))]
     public sealed class LocationArrived : InputForm<TravelInfo>

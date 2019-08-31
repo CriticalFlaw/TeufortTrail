@@ -1,6 +1,6 @@
 ﻿using TeufortTrail.Entities.Location;
 
-namespace TeufortTrail.Events.Trail
+namespace TeufortTrail.Entities.Trail
 {
     public static class TrailRegistry
     {
@@ -8,7 +8,7 @@ namespace TeufortTrail.Events.Trail
         {
             get
             {
-                var debugTrail = new Location[]
+                var debugTrail = new Location.Location[]
                 {
                     new Town("Start Of Test"),
                     new Town("End Of Test")

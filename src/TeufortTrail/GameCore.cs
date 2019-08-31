@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using TeufortTrail.Entities.Person;
+using TeufortTrail.Entities.Trail;
 using TeufortTrail.Entities.Vehicle;
-using TeufortTrail.Events.Trail;
 using TeufortTrail.Screens.MainMenu;
 using TeufortTrail.Screens.Travel;
 using WolfCurses;
@@ -13,7 +13,7 @@ namespace TeufortTrail
     {
         public static GameCore Instance { get; private set; }
         public Vehicle Vehicle { get; private set; }
-        public TrailModule Trail { get; private set; }
+        public TrailBase Trail { get; private set; }
         public int TotalTurns { get; private set; }
 
         public override IEnumerable<Type> AllowedWindows
@@ -46,7 +46,7 @@ namespace TeufortTrail
             TotalTurns = 0;
 
             Vehicle = new Vehicle();
-            Trail = new TrailModule();
+            Trail = new TrailBase();
 
             // Reset the Window Manager
             base.Restart();

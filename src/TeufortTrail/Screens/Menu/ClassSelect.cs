@@ -96,7 +96,7 @@ namespace TeufortTrail.Screens.MainMenu
             classes = classes.OrderBy(arg => Guid.NewGuid()).Take(4).ToList();
             foreach (var _class in classes)
                 UserData.PartyClasses.Add(_class);
-            SetForm(typeof(ConfirmParty));
+            SetForm(typeof(StorySetup));
         }
 
         public override string OnRenderForm()
