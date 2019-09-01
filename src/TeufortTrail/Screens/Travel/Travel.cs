@@ -81,8 +81,8 @@ namespace TeufortTrail.Screens.Travel
             // Initialize the available commands and their methods.
             ClearCommands();
             AddCommand(ContinueTrail, TravelCommands.ContinueOnTrail);
-            AddCommand(StopToRest, TravelCommands.StopToRest);
             AddCommand(CheckSupplies, TravelCommands.CheckSupplies);
+            AddCommand(StopToRest, TravelCommands.StopToRest);
 
             // Add additional commands depending on the current vehicle state.
             var location = GameCore.Instance.Trail.CurrentLocation;
@@ -135,7 +135,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void CheckSupplies()
         {
-            SetForm(typeof(Store.Store));   // TEMP
+            SetForm(typeof(Location.CheckSupplies));
         }
 
         /// <summary>
@@ -161,10 +161,10 @@ namespace TeufortTrail.Screens.Travel
     public enum TravelCommands
     {
         [Description("Continue on the trail")] ContinueOnTrail = 1,
-        [Description("Stop to rest")] StopToRest = 2,
-        [Description("Talk to people")] TalkToPeople = 3,
-        [Description("Buy supplies")] BuySupplies = 4,
-        [Description("Check supplies")] CheckSupplies = 5
+        [Description("Check supplies")] CheckSupplies = 2,
+        [Description("Stop to rest")] StopToRest = 3,
+        [Description("Talk to people")] TalkToPeople = 4,
+        [Description("Buy supplies")] BuySupplies = 5
     }
 
     /// <summary>
