@@ -23,6 +23,16 @@
         public int TotalDistance { get; set; }
 
         /// <summary>
+        /// Flags the location as just being arrived at by the player.
+        /// </summary>
+        public bool ArrivalFlag { get; set; }
+
+        /// <summary>
+        /// Flags the location as being the last on the trail.
+        /// </summary>
+        public bool LastLocation { get; set; }
+
+        /// <summary>
         /// Flags the location as having a store that the player can visit.
         /// </summary>
         public abstract bool ShoppingAllowed { get; }
@@ -31,11 +41,6 @@
         /// Flags the location as having people that the player can talk to.
         /// </summary>
         public abstract bool TalkingAllowed { get; }
-
-        /// <summary>
-        /// Flags the location as just being arrived at by the player.
-        /// </summary>
-        public bool ArrivalFlag { get; set; }
 
         #endregion VARIBLES
 

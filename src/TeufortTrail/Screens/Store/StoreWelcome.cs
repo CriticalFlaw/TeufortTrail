@@ -32,7 +32,7 @@ namespace TeufortTrail.Screens.Travel.Store
             _storeWelcome.Clear();
             _storeWelcome.Append($"{Environment.NewLine}Welcome to the Mann Co. Store! You fellas are heading to Teufort?");
             _storeWelcome.Append($"{Environment.NewLine}We can fix you right up with these fine products.");
-            _storeWelcome.Append($"{Environment.NewLine}Your satisfaction is guaranteed or we'll beat it into you");
+            _storeWelcome.AppendLine($"{Environment.NewLine}Your satisfaction is guaranteed or we'll beat it into you!");
             _storeWelcome.Append($"{Environment.NewLine}So what do you need?");
             _storeWelcome.Append($"{Environment.NewLine} - Spare parts to keep your camper van going.");
             _storeWelcome.Append($"{Environment.NewLine} - Hats and clothing for both summer and winter.");

@@ -14,9 +14,14 @@ namespace TeufortTrail.Entities.Vehicle
         private List<Person.Person> Passengers;
 
         /// <summary>
-        /// Total number of miles travelled so far on the trail.
+        /// The ideal number of miles that will be travelled assuming nothing goes wrong.
         /// </summary>
         public int Mileage { get; private set; }
+
+        /// <summary>
+        /// Total number of miles the vehicle has traveled in this playthrough.
+        /// </summary>
+        public int Odometer { get; private set; }
 
         /// <summary>
         /// The pace at which the vehicle is travelling.
@@ -38,48 +43,59 @@ namespace TeufortTrail.Entities.Vehicle
         /// </summary>
         public float Balance
         {
-            get => _inventory[Categories.Money].TotalValue;
+            get => _inventory[Types.Money].TotalValue;
             private set
             {
                 // Skip this step if the balance is already at the value we were going to set.
-                if (value.Equals(_inventory[Categories.Money].Quantity)) return;
+                if (value.Equals(_inventory[Types.Money].Quantity)) return;
 
                 // Reset the balance value if it is somehow below or at zero.
                 if (value <= 0)
-                    _inventory[Categories.Money].ResetQuantity();
+                    _inventory[Types.Money].ResetQuantity();
                 else
-                    _inventory[Categories.Money] = new Item.Item(_inventory[Categories.Money], (int)value);
+                    _inventory[Types.Money] = new Item.Item(_inventory[Types.Money], (int)value);
             }
         }
 
         /// <summary>
         /// Vehicle party's inventory of resources and money.
         /// </summary>
-        public IDictionary<Categories, Item.Item> Inventory => _inventory;
+        public IDictionary<Types, Item.Item> Inventory => _inventory;
 
-        private Dictionary<Categories, Item.Item> _inventory;
+        private Dictionary<Types, Item.Item> _inventory;
 
         /// <summary>
         /// Default items every vehicle and store will have.
         /// </summary>
-        internal static IDictionary<Categories, Item.Item> DefaultInventory
+        internal static IDictionary<Types, Item.Item> DefaultInventory
         {
             get
             {
                 // Create an inventory of items with default starting amounts.
-                var defaultInventory = new Dictionary<Categories, Item.Item>
+                var defaultInventory = new Dictionary<Types, Item.Item>
                 {
-                    {Categories.Food, Resources.Food},
-                    {Categories.Hats, Resources.Hats},
-                    {Categories.Weapons, Resources.Weapons},
-                    {Categories.Ammo, Resources.Ammunition},
-                    {Categories.Money, Resources.Money}
+                    {Types.Food, Resources.Food},
+                    {Types.Hats, Resources.Hats},
+                    {Types.Ammo, Resources.Ammunition},
+                    {Types.Money, Resources.Money}
                 };
 
                 // Zero out all of the quantities by removing their max quantity. Then return.
                 foreach (var simItem in defaultInventory)
-                    simItem.Value.ReduceQuantity(simItem.Value.MaxQuantity);
+                    simItem.Value.SubtractQuantity(simItem.Value.MaxQuantity);
                 return defaultInventory;
+            }
+        }
+
+        /// <summary>
+        /// Determine the ideal mileage value. If you run into problems, the mileage will be reduced.
+        /// </summary>
+        private int RandomMileage
+        {
+            get
+            {
+                var totalMiles = Mileage + (Inventory[Types.Food].TotalValue - 110) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
+                return (int)Math.Abs(totalMiles);
             }
         }
 
@@ -113,7 +129,7 @@ namespace TeufortTrail.Entities.Vehicle
             if ((Status != VehicleStatus.Moving) || skipDay) return;
 
             // Determine how far the vehicle will travel to next point.
-            Mileage = GetRandomMileage();
+            Mileage = RandomMileage;
 
             // If things go too slowly on the trail, cut the mileage in half.
             if (GameCore.Instance.Random.NextBool() && (Mileage > 0)) Mileage /= 2;
@@ -121,17 +137,10 @@ namespace TeufortTrail.Entities.Vehicle
             // Make sure the mileage is never below or at zero.
             if (Mileage <= 0) Mileage = 10;
 
-            // TODO: Trigger a random event.
-        }
+            // Updated the total mileage travelled.
+            Odometer += Mileage;
 
-        /// <summary>
-        /// Determine the ideal mileage value. If you run into problems, the mileage will be reduced.
-        /// </summary>
-        private int GetRandomMileage()
-        {
-            // Calculate the distance that the party should travel in the next day.
-            var totalMiles = Mileage + (Inventory[Categories.Food].TotalValue - 110) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
-            return (int)Math.Abs(totalMiles);
+            // TODO: Trigger a random event.
         }
 
         /// <summary>
@@ -140,8 +149,9 @@ namespace TeufortTrail.Entities.Vehicle
         /// <param name="startingMoney">Amount of money the vehicle should have on reset.</param>
         internal void ResetVehicle(int startingMoney = 0)
         {
-            _inventory = new Dictionary<Categories, Item.Item>(DefaultInventory);
+            _inventory = new Dictionary<Types, Item.Item>(DefaultInventory);
             Passengers = new List<Person.Person>();
+            Odometer = 0;
             Status = VehicleStatus.Stopped;
             Ration = RationLevel.Filling;
             Balance = startingMoney;
@@ -168,6 +178,16 @@ namespace TeufortTrail.Entities.Vehicle
 
             // Increase the quantity of the item in the player's inventory.
             Inventory[purchasedItem.Category].AddQuantity(purchasedItem.Quantity);
+        }
+
+        /// <summary>
+        /// Check if the vehicle is currently operational and is able to move.
+        /// </summary>
+        public void CheckStatus()
+        {
+            // TODO: Add a condition to check that would cause the vehicle to be disabled.
+            if (Status == VehicleStatus.Disabled) return;
+            Status = VehicleStatus.Moving;
         }
     }
 

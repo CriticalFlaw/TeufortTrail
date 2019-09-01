@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using TeufortTrail.Entities.Person;
 using TeufortTrail.Entities.Trail;
 using TeufortTrail.Entities.Vehicle;
@@ -71,7 +72,12 @@ namespace TeufortTrail
         public override string OnPreRender()
         {
             // Display the current location, vehicle status and turn count.
-            return $"Turns: {TotalTurns:D4}\nLocation: {Trail?.CurrentLocation?.Status}\nVehicle: {Vehicle?.Status}";
+            var _gameCore = new StringBuilder();
+            _gameCore.AppendLine($"Turn: {TotalTurns:D4}");
+            _gameCore.AppendLine($"Location: {Trail?.CurrentLocation?.Status}");
+            _gameCore.AppendLine($"Vehicle: {Vehicle?.Status}");
+            _gameCore.AppendLine("------------------------------------------");
+            return _gameCore.ToString();
         }
 
         /// <summary>

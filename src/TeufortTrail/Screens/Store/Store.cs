@@ -37,22 +37,22 @@ namespace TeufortTrail.Screens.Travel.Store
             // TODO: Add current time
             _store = new StringBuilder();
             _store.Clear();
-            _store.AppendLine("--------------------------------");
-            _store.AppendLine(GameCore.Instance.Trail.CurrentLocation?.Name + " Mann Co. Store");
-            _store.AppendLine("--------------------------------");
+            _store.AppendLine(GameCore.Instance.Trail.CurrentLocation?.Name + " -  Mann Co. Store");
+            _store.AppendLine("------------------------------------------");
 
             // Display the available items at the store, also add the option to leave.
-            var storeItems = new List<Categories>(Enum.GetValues(typeof(Categories)).Cast<Categories>());
+            var storeItems = new List<Types>(Enum.GetValues(typeof(Types)).Cast<Types>());
             for (var index = 0; index < storeItems.Count; index++)
             {
                 var storeItem = storeItems[index];
+                // Get the selected item, check if its of a type that can be sold at the store.
+                if ((storeItem == Types.Vehicle) || (storeItem == Types.Person) || (storeItem == Types.Money) || (storeItem == Types.Location)) continue;
 
-                if ((storeItem == Categories.Vehicle) || (storeItem == Categories.Person) || (storeItem == Categories.Money) || (storeItem == Categories.Location)) continue;
-
+                // Format the price tag for every item type that is sold at the store.
                 var storeTag = storeItem.ToDescriptionAttribute() + "              " + UserData.Store.Transactions[storeItem].Value.ToString("C2");
                 _store.AppendLine($"  {(int)storeItem}. {storeTag}");
                 if (index == storeItems.Count - 5)
-                    _store.AppendLine($"  {storeItems.Count - 2}. Leave store");
+                    _store.AppendLine($"  {storeItems.Count - 3}. Leave store");
             }
 
             // Display the player's current money balance and pending transaction cost.
@@ -75,33 +75,23 @@ namespace TeufortTrail.Screens.Travel.Store
             if (string.IsNullOrWhiteSpace(input)) return;
 
             // Check that the user input is a valid enumerable.
-            Enum.TryParse(input, out Categories selectedItem);
+            Enum.TryParse(input, out Types selectedItem);
 
             // Depending on the item category selected, proceed to confirm the purchase.
             switch (selectedItem)
             {
-                case Categories.Food:
+                case Types.Food:
                     UserData.Store.SelectedItem = Resources.Food;
                     SetForm(typeof(StorePurchase));
                     break;
 
-                case Categories.Hats:
+                case Types.Hats:
                     UserData.Store.SelectedItem = Resources.Hats;
                     SetForm(typeof(StorePurchase));
                     break;
 
-                case Categories.Weapons:
-                    UserData.Store.SelectedItem = Resources.Weapons;
-                    SetForm(typeof(StorePurchase));
-                    break;
-
-                case Categories.Ammo:
+                case Types.Ammo:
                     UserData.Store.SelectedItem = Resources.Ammunition;
-                    SetForm(typeof(StorePurchase));
-                    break;
-
-                case Categories.Vehicle:
-                    UserData.Store.SelectedItem = Resources.Parts;
                     SetForm(typeof(StorePurchase));
                     break;
 
@@ -143,7 +133,7 @@ namespace TeufortTrail.Screens.Travel.Store
         /// <summary>
         /// Defines the list of currently active transactions.
         /// </summary>
-        public IDictionary<Categories, Item> Transactions;
+        public IDictionary<Types, Item> Transactions;
 
         /// <summary>
         /// Defines the store item the player has chosen to purchase.
@@ -172,7 +162,7 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         public StoreGenerator()
         {
-            Transactions = new Dictionary<Categories, Item>(Vehicle.DefaultInventory);
+            Transactions = new Dictionary<Types, Item>(Vehicle.DefaultInventory);
         }
 
         /// <summary>
@@ -192,7 +182,7 @@ namespace TeufortTrail.Screens.Travel.Store
         public void RemoveItem(Item item)
         {
             // Loop through ever transaction
-            foreach (var transaction in new Dictionary<Categories, Item>(Transactions))
+            foreach (var transaction in new Dictionary<Types, Item>(Transactions))
             {
                 // Reset the quantity value of the item, removing it from the player's inventory.
                 if (!transaction.Key.Equals(item.Category)) continue;
@@ -213,7 +203,7 @@ namespace TeufortTrail.Screens.Travel.Store
             // Process each purchased item in the transaction.
             foreach (var transaction in Transactions)
                 GameCore.Instance.Vehicle.PurchaseItem(transaction.Value);
-            Transactions = new Dictionary<Categories, Item>(Vehicle.DefaultInventory);
+            Transactions = new Dictionary<Types, Item>(Vehicle.DefaultInventory);
         }
     }
 }

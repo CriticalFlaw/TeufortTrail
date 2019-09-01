@@ -2,6 +2,7 @@
 using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Screens.Menu;
 using TeufortTrail.Screens.Travel.Store;
 using WolfCurses;
 using WolfCurses.Utility;
@@ -42,10 +43,21 @@ namespace TeufortTrail.Screens.Travel
             ArriveAtLocation();
         }
 
+        /// <summary>
+        /// Called when the party has arrived at a location.
+        /// </summary>
         private void ArriveAtLocation()
         {
             var game = GameCore.Instance;
-            // TODO: Check if this is game over, passengers are dead or if this is the last location.
+            // TODO: Check if this is game over or all of the passengers are dead.
+
+            // Check if the party has arrived at the last location.
+            if (game.Trail.CurrentLocation.LastLocation)
+            {
+                SetForm(typeof(GameOver));
+                return;
+            }
+
             if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived)
             {
                 game.Trail.CurrentLocation.ArrivalFlag = true;
@@ -63,14 +75,16 @@ namespace TeufortTrail.Screens.Travel
         {
             var _menuHeader = new StringBuilder();
             _menuHeader.Append(TravelInfo.PartyStatus);
-            _menuHeader.Append("You can:");
+            _menuHeader.Append("Here is what you can do:");
             MenuHeader = _menuHeader.ToString();
 
+            // Initialize the available commands and their methods.
             ClearCommands();
             AddCommand(ContinueTrail, TravelCommands.ContinueOnTrail);
             AddCommand(StopToRest, TravelCommands.StopToRest);
             AddCommand(CheckSupplies, TravelCommands.CheckSupplies);
 
+            // Add additional commands depending on the current vehicle state.
             var location = GameCore.Instance.Trail.CurrentLocation;
             switch (location.Status)
             {
@@ -179,14 +193,13 @@ namespace TeufortTrail.Screens.Travel
             get
             {
                 var game = GameCore.Instance;
-                var foodCount = game.Vehicle.Inventory[Categories.Food];
+                var foodCount = game.Vehicle.Inventory[Types.Food];
                 var driveStatus = new StringBuilder();
-                driveStatus.AppendLine("--------------------------------");
                 // TODO: Add time, weather and passenger health statuses
-                driveStatus.AppendLine($"Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
-                driveStatus.AppendLine($"Next landmark: {game.Trail.NextLocationDistance} miles");
-                driveStatus.AppendLine($"Miles traveled: {game.Vehicle.Mileage} miles");
-                driveStatus.AppendLine("--------------------------------");
+                driveStatus.AppendLine($"Available Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
+                driveStatus.AppendLine($"Next landmark is in: {game.Trail.NextLocationDistance} miles");
+                driveStatus.AppendLine($"You've traveled: {game.Vehicle.Odometer} miles");
+                driveStatus.AppendLine("------------------------------------------");
                 return driveStatus.ToString();
             }
         }

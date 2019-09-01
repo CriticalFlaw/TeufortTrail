@@ -11,7 +11,7 @@ namespace TeufortTrail.Screens.MainMenu
     public sealed class MainMenu : Window<MainMenuCommands, NewGameInfo>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.MainMenu.MainMenu" /> class.
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Menu.MainMenu" /> class.
         /// </summary>
         public MainMenu(SimulationApp app) : base(app)
         {
@@ -52,7 +52,7 @@ namespace TeufortTrail.Screens.MainMenu
     /// </summary>
     public enum MainMenuCommands
     {
-        [Description("Play")] PlayTheGame = 1,
+        [Description("Begin the Trail")] PlayTheGame = 1,
         [Description("Quit")] CloseTheGame = 2
     }
 

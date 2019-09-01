@@ -25,6 +25,11 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         private string _swayBarText;
 
+        /// <summary>
+        /// Sets the visibility of the prompt for the player to provide input.
+        /// </summary>
+        public override bool InputFillsBuffer => false;
+
         #endregion VARIABLES
 
         /// <summary>
@@ -60,9 +65,11 @@ namespace TeufortTrail.Screens.Travel
             // Only tick vehicle at an inverval.
             base.OnTick(systemTick, skipDay);
             if (systemTick) return;
+            var game = GameCore.Instance;
 
             // Check the status of the vehicle at the this tick.
-            var game = GameCore.Instance;
+            game.Vehicle.CheckStatus();
+
             switch (game.Vehicle.Status)
             {
                 case VehicleStatus.Stopped:

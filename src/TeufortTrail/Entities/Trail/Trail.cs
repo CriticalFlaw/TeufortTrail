@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Entities.Vehicle;
 using TeufortTrail.Screens.Travel;
@@ -53,7 +54,8 @@ namespace TeufortTrail.Entities.Trail
             MaxLength = maxLength;
             Length = GenerateDistances(_locations);
 
-            // TODO: Flag the last location on the trail.
+            // Mark the last location on the trail.
+            FlagLastLocation();
         }
 
         /// <summary>
@@ -72,6 +74,20 @@ namespace TeufortTrail.Entities.Trail
 
             // Return the total length of the entire trail.
             return _totalTrailLength;
+        }
+
+        /// <summary>
+        /// Find and mark the last location on the trail.
+        /// </summary>
+        private void FlagLastLocation()
+        {
+            // Clear the flag from any location that may have one.
+            foreach (var location in _locations)
+                location.LastLocation = false;
+
+            // Set the last location flag on the last location in the list.
+            var lastLocation = _locations.Last();
+            lastLocation.LastLocation = true;
         }
     }
 

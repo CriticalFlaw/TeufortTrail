@@ -1,6 +1,4 @@
-﻿using WolfCurses.Utility;
-
-namespace TeufortTrail.Entities.Item
+﻿namespace TeufortTrail.Entities.Item
 {
     /// <summary>
     /// Defines the base item that be purchased or acquired by the player.
@@ -12,7 +10,7 @@ namespace TeufortTrail.Entities.Item
         /// <summary>
         /// Defines what kind of item this is (Food, Ammo, Clothing etc.).
         /// </summary>
-        public Categories Category { get; }
+        public Types Category { get; }
 
         /// <summary>
         /// Display name of the item as it should be known to the player.
@@ -77,7 +75,7 @@ namespace TeufortTrail.Entities.Item
         /// <param name="minQuantity"></param>
         /// <param name="maxQuantity"></param>
         /// <param name="startingQuantity"></param>
-        public Item(Categories category, string name, float value, int weight = 1, int points = 1, int minQuantity = 1, int maxQuantity = 999, int startingQuantity = 0)
+        public Item(Types category, string name, float value, int weight = 1, int points = 1, int minQuantity = 1, int maxQuantity = 999, int startingQuantity = 0)
         {
             Category = category;
             Name = name;
@@ -97,7 +95,7 @@ namespace TeufortTrail.Entities.Item
         /// <param name="newQuantity"></param>
         public Item(Item oldItem, int newQuantity)
         {
-            // Check that the new quantity is within the min/max range.
+            // Check that the new quantity is within range.
             if (newQuantity > oldItem.MaxQuantity)
                 newQuantity = oldItem.MaxQuantity;
             if (newQuantity < oldItem.MinQuantity)
@@ -121,19 +119,19 @@ namespace TeufortTrail.Entities.Item
         public void AddQuantity(int amount)
         {
             var addition = Quantity + amount;
-            // Check that the amount is within the min/max range.
+            // Check that the added amount is within range.
             Quantity = (addition < 0) ? 0 : Quantity;
             Quantity = (addition > MaxQuantity) ? MaxQuantity : addition;
         }
 
         /// <summary>
-        /// Reduce the current quantity value by a given amount. Check for maximum and minimum values.
+        /// Subtract the current quantity value by a given amount. Check for maximum and minimum values.
         /// </summary>
         /// <param name="amount">Amount the quantity should be reduced by.</param>
-        public void ReduceQuantity(int amount)
+        public void SubtractQuantity(int amount)
         {
             var subtraction = Quantity - amount;
-            // Check that the amount is within the min/max range.
+            // Check that the subtracted amount is within range.
             Quantity = (subtraction <= 0) ? 0 : Quantity;
             if (Quantity == 0) return;
             Quantity = (subtraction > MaxQuantity) ? MaxQuantity : subtraction;
@@ -154,7 +152,7 @@ namespace TeufortTrail.Entities.Item
     /// <summary>
     /// Defines all possible item types.
     /// </summary>
-    public enum Categories
+    public enum Types
     {
         /// <summary>
         /// Represents the food gathered from hunting and purchasing in store. Consumed by the party during travel.
@@ -167,34 +165,29 @@ namespace TeufortTrail.Entities.Item
         Hats = 2,
 
         /// <summary>
-        /// Used for hunting and fighting off the robot army during travel. Can be purchased in-store. Breaks after long use.
-        /// </summary>
-        [Description("Guns")] Weapons = 3,
-
-        /// <summary>
         /// Used for hunting and fighting off the robot army during travel. Can be purchased in-store or traded with towns folks.
         /// </summary>
-        Ammo = 4,
+        Ammo = 3,
 
         /// <summary>
         /// Represents the camper van that the party members are travelling in. Holds their inventory, money, hats, hopes and dreams. May require replacement parts to be purchased.
         /// </summary>
-        Vehicle = 5,
+        Vehicle = 4,
 
         /// <summary>
         /// Represents a given party member in the vehicle, this is used mostly to separate the player entities from vehicle and ensure the game never confuses them for being items.
         /// </summary>
-        Person = 6,
+        Person = 5,
 
         /// <summary>
         /// Money can be exchanged for goods (and service) at the store. Rarely if ever will it be counted by the cents.
         /// </summary>
-        Money = 7,
+        Money = 6,
 
         /// <summary>
         /// Represents the location along the trail that the player will visit. Could be a town, river crossing, etc.
         /// </summary>
-        Location = 8
+        Location = 7
     }
 
     #endregion ENUMERABLES

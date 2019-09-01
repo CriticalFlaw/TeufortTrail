@@ -70,7 +70,7 @@ namespace TeufortTrail.Entities.Person
             // Skip this step if the party member is already dead.
             if (Status == (int)HealthStatus.Dead) return;
 
-            if (GameCore.Instance.Vehicle.Inventory[Categories.Food].Quantity > 0)
+            if (GameCore.Instance.Vehicle.Inventory[Types.Food].Quantity > 0)
             {
                 // TODO: Reduce the food quantity based on the ration level.
                 Heal();

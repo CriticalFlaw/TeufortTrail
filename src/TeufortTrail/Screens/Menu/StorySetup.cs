@@ -16,7 +16,7 @@ namespace TeufortTrail.Screens.MainMenu
         #endregion VARIABLES
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.MainMenu.StorySetup" /> class.
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Menu.StorySetup" /> class.
         /// </summary>
         public StorySetup(IWindow window) : base(window)
         {
@@ -43,8 +43,8 @@ namespace TeufortTrail.Screens.MainMenu
             _storyHelp.AppendLine("to Teufort, New Mexico to escapre the mechanical menace.");
             GameCore.Instance.SetStartInfo(UserData);
             _storyHelp.AppendLine($"{Environment.NewLine}Your team will consist of:{_partyList}");
-            _storyHelp.AppendLine($"{Environment.NewLine}Before leaving Dustbowl you need to buy equipment and");
-            _storyHelp.AppendLine($"supplies from the Mann Co. Store. You have {UserData.StartingMoney:C2} in cash,");
+            _storyHelp.AppendLine($"{Environment.NewLine}Before leaving Dustbowl you need to buy supplies and");
+            _storyHelp.AppendLine($"from the Mann Co. Store. You have {UserData.StartingMoney:C2} in cash,");
             _storyHelp.AppendLine($"but you don't have to spend it all now.{Environment.NewLine}");
             return _storyHelp.ToString();
         }

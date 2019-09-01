@@ -9,7 +9,7 @@
         /// Represents the food gathered from hunting and purchasing in store. Consumed by the party during travel.
         /// </summary>
         public static Item Food => new Item(
-            category: Categories.Food,
+            category: Types.Food,
             name: "Food",
             value: 0.20f,
             weight: 1,
@@ -22,7 +22,7 @@
         /// Worn by the party members to keep them warm and avoid the risk of getting sick when it is cold outside.
         /// </summary>
         public static Item Hats => new Item(
-            category: Categories.Hats,
+            category: Types.Hats,
             name: "Hats",
             value: 10,
             weight: 1,
@@ -32,23 +32,10 @@
             startingQuantity: 0);
 
         /// <summary>
-        /// Used for hunting and fighting off the robot army during travel. Can be purchased in-store. Breaks after long use.
-        /// </summary>
-        public static Item Weapons => new Item(
-            category: Categories.Weapons,
-            name: "Weapons",
-            value: 3,
-            weight: 1,
-            points: 1,
-            minQuantity: 1,
-            maxQuantity: 10,
-            startingQuantity: 4);
-
-        /// <summary>
         /// Used for hunting and fighting off the robot army during travel. Can be purchased in-store or traded with towns folks.
         /// </summary>
         public static Item Ammunition => new Item(
-            category: Categories.Ammo,
+            category: Types.Ammo,
             name: "Ammunition",
             value: 2,
             weight: 0,
@@ -61,7 +48,7 @@
         /// Represents the vehicle parts used by the camper van carrying the party. These will need to be periodically replaced to continue travelling.
         /// </summary>
         public static Item Parts => new Item(
-            category: Categories.Vehicle,
+            category: Types.Vehicle,
             name: "Parts",
             value: 50,
             weight: 500,
@@ -74,7 +61,7 @@
         /// Represents a given party member in the vehicle, this is used mostly to separate the player entities from vehicle and ensure the game never confuses them for being items.
         /// </summary>
         public static Item Person => new Item(
-            category: Categories.Person,
+            category: Types.Person,
             name: "Person",
             value: 0,
             weight: 2000,
@@ -87,7 +74,7 @@
         /// Money can be exchanged for goods (and service) at the store. Rarely if ever will it be counted by the cents.
         /// </summary>
         public static Item Money => new Item(
-            category: Categories.Money,
+            category: Types.Money,
             name: "Money",
             value: 1,
             weight: 0,
