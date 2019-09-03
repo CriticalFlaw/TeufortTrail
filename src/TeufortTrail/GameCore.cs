@@ -128,8 +128,7 @@ namespace TeufortTrail
             Vehicle.ResetVehicle(startInfo.StartingMoney);
             foreach (var _class in startInfo.PartyClasses)
             {
-                var personLeader = (startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1);
-                Vehicle.AddPerson(new Person(startInfo.PlayerClass, personLeader));
+                Vehicle.AddPerson(new Person(_class, ((startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1)) ? true : false));
                 crewNumber++;
             }
         }

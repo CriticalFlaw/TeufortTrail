@@ -13,7 +13,7 @@ namespace TeufortTrail.Screens.MainMenu
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Menu.MainMenu" /> class.
         /// </summary>
-        public MainMenu(SimulationApp app) : base(app)
+        public MainMenu(GameCore game) : base(game)
         {
         }
 

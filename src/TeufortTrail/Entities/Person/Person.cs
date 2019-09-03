@@ -1,9 +1,10 @@
 ﻿using System;
 using TeufortTrail.Entities.Item;
+using WolfCurses.Utility;
 
 namespace TeufortTrail.Entities.Person
 {
-    internal class Person
+    public sealed class Person
     {
         #region VARIABLES
 
@@ -30,7 +31,47 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Defines the party member's status as a health value.
         /// </summary>
-        private int Status { get; set; }
+        public int Health { get; set; }
+
+        /// <summary>
+        /// Returns the party member's health value as a text indicator
+        /// </summary>
+        public HealthStatus HealthState
+        {
+            get
+            {
+                if (Health >= (int)HealthStatus.Great && Health >= (int)HealthStatus.Good)
+                    return HealthStatus.Great;
+                if (Health <= (int)HealthStatus.Good && Health >= (int)HealthStatus.Fair)
+                    return HealthStatus.Good;
+                if (Health <= (int)HealthStatus.Fair && Health >= (int)HealthStatus.Poor)
+                    return HealthStatus.Fair;
+                if (Health <= (int)HealthStatus.Poor && Health >= (int)HealthStatus.Dead)
+                    return HealthStatus.Poor;
+                if (Health <= (int)HealthStatus.Dead)
+                    return HealthStatus.Dead;
+                return HealthStatus.Good;
+            }
+        }
+
+        /// <summary>
+        /// Returns the party member's status state as a text indicator
+        /// </summary>
+        public string Status
+        {
+            get
+            {
+                if (Infected && Injured)
+                    return "Infected and Injured";
+                if (Infected && Injured)
+                    return "Injured";
+                if (Infected && Injured)
+                    return "Infected";
+                if (Health == (int)HealthStatus.Dead)
+                    return "Dead";
+                return "OK";
+            }
+        }
 
         #endregion VARIABLES
 
@@ -38,14 +79,14 @@ namespace TeufortTrail.Entities.Person
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Person.Person" /> class.
         /// </summary>
         /// <param name="_class">Party member class</param>
-        /// <param name="leader">Flag to determine if this member is the leader/player</param>
+        /// <param name="leader">Flags the party member as the leader/player</param>
         public Person(Classes _class, bool leader)
         {
             Class = _class;
             Leader = leader;
             Infected = false;
             Injured = false;
-            Status = (int)HealthStatus.Good;
+            Health = (int)HealthStatus.Good;
         }
 
         /// <summary>
@@ -55,6 +96,9 @@ namespace TeufortTrail.Entities.Person
         {
             // Only tick vehicle at an inverval.
             if (systemTick) return;
+
+            // Skip this step if the party member is already dead.
+            if (Health == (int)HealthStatus.Dead) return;
 
             // TODO: Add events that would change member's health and resource consumption
 
@@ -68,11 +112,11 @@ namespace TeufortTrail.Entities.Person
         private void ConsumeFood()
         {
             // Skip this step if the party member is already dead.
-            if (Status == (int)HealthStatus.Dead) return;
+            if (HealthState == HealthStatus.Dead) return;
 
             if (GameCore.Instance.Vehicle.Inventory[Types.Food].Quantity > 0)
             {
-                // TODO: Reduce the food quantity based on the ration level.
+                GameCore.Instance.Vehicle.Inventory[Types.Food].SubtractQuantity((int)GameCore.Instance.Vehicle.Ration * GameCore.Instance.Vehicle.Passengers.Count);
                 Heal();
             }
             else
@@ -86,14 +130,13 @@ namespace TeufortTrail.Entities.Person
         private void Heal()
         {
             // Skip this step if the party member is already dead or healthy enough.
-            if (Status == (int)HealthStatus.Dead || Status == (int)HealthStatus.Good) return;
+            if (HealthState == HealthStatus.Dead || HealthState == HealthStatus.Good) return;
 
             // Roll the dice to determine if the party member will even be healed.
-            var game = GameCore.Instance;
-            if (game.Random.NextBool()) return;
+            if (GameCore.Instance.Random.NextBool()) return;
 
             // Heal the party member a greater amount if they are currently sick or hurt.
-            Status += game.Random.Next(1, ((Infected || Injured) ? 20 : 10));
+            Health += GameCore.Instance.Random.Next(1, ((Infected || Injured) ? 20 : 10));
         }
 
         /// <summary>
@@ -102,14 +145,14 @@ namespace TeufortTrail.Entities.Person
         private void CheckIllness()
         {
             // Skip this step if the party member is already dead.
-            if (Status == (int)HealthStatus.Dead) return;
+            if (HealthState == HealthStatus.Dead) return;
 
             // Roll the dice to determine if the party member will even be healed.
             var game = GameCore.Instance;
             if (game.Random.NextBool()) return;
 
             // Reduce the party member's health depending on their health and debuff.
-            switch (Status)
+            switch (Health)
             {
                 case (int)HealthStatus.Great:
                     if (Infected || Injured)
@@ -147,7 +190,7 @@ namespace TeufortTrail.Entities.Person
         /// <param name="amount">Amount of health to decrease</param>
         private void Damage(int amount)
         {
-            if (amount > 0) Status -= amount;
+            if (amount > 0) Health -= amount;
         }
 
         /// <summary>
@@ -157,7 +200,13 @@ namespace TeufortTrail.Entities.Person
         /// <param name="maxAmount">Maximum amount of damage that should be randomly generated.</param>
         private void Damage(int minAmount, int maxAmount)
         {
-            Status -= GameCore.Instance.Random.Next(minAmount, maxAmount);
+            // Skip this step if the party member is already dead.
+            if (HealthState == HealthStatus.Dead) return;
+
+            // Subtract a random amount of health from the party member.
+            Health -= GameCore.Instance.Random.Next(minAmount, maxAmount);
+
+            // TODO: Show a prompt, notifying the player that a party member has died.
         }
 
         /// <summary>
@@ -181,7 +230,10 @@ namespace TeufortTrail.Entities.Person
         /// </summary>
         private void Kill()
         {
-            Status = (int)HealthStatus.Dead;
+            // Skip this step if the party member is already dead.
+            if (HealthState == HealthStatus.Dead) return;
+
+            Health = (int)HealthStatus.Dead;
         }
     }
 
@@ -194,7 +246,6 @@ namespace TeufortTrail.Entities.Person
     {
         // TODO: Add descriptons and unique stats to each class.
         Scout = 1,
-
         Soldier = 2,
         Pyro = 3,
         Demoman = 4,

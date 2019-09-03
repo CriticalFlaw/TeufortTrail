@@ -11,7 +11,7 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// List of passangers currently travelling in the vehicle.
         /// </summary>
-        private List<Person.Person> Passengers;
+        public List<Person.Person> Passengers;
 
         /// <summary>
         /// The ideal number of miles that will be travelled assuming nothing goes wrong.

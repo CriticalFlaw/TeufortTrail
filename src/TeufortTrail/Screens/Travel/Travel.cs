@@ -15,7 +15,7 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Travel" /> class.
         /// </summary>
-        public Travel(SimulationApp app) : base(app)
+        public Travel(GameCore game) : base(game)
         {
         }
 
@@ -127,7 +127,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void StopToRest()
         {
-            SetForm(typeof(Store.Store));   // TEMP
+            SetForm(typeof(Location.StopToRest));
         }
 
         /// <summary>
@@ -194,13 +194,19 @@ namespace TeufortTrail.Screens.Travel
             {
                 var game = GameCore.Instance;
                 var foodCount = game.Vehicle.Inventory[Types.Food];
-                var driveStatus = new StringBuilder();
+                var partyStatus = new StringBuilder();
                 // TODO: Add time, weather and passenger health statuses
-                driveStatus.AppendLine($"Available Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
-                driveStatus.AppendLine($"Next landmark is in: {game.Trail.NextLocationDistance} miles");
-                driveStatus.AppendLine($"You've traveled: {game.Vehicle.Odometer} miles");
-                driveStatus.AppendLine("------------------------------------------");
-                return driveStatus.ToString();
+                partyStatus.AppendLine($"Available Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
+                partyStatus.AppendLine($"Next landmark is in: {game.Trail.NextLocationDistance} miles");
+                partyStatus.AppendLine($"You've traveled: {game.Vehicle.Odometer} miles");
+                partyStatus.AppendLine($"------------------------------------------{Environment.NewLine}");
+                foreach (var passenger in GameCore.Instance.Vehicle.Passengers)
+                {
+                    var tabs = (passenger.Class.ToString().Length >= 6) ? "\t" : "\t\t";
+                    partyStatus.AppendLine($"{passenger.Class.ToDescriptionAttribute()}: " + (passenger.Leader ? "(You)\t" : tabs) + $"Health: {passenger.HealthState}\tStatus: {passenger.Status}");
+                }
+                partyStatus.AppendLine($"------------------------------------------{Environment.NewLine}");
+                return partyStatus.ToString();
             }
         }
     }

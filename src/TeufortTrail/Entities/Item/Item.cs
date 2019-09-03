@@ -67,14 +67,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Item.Item" /> class.
         /// </summary>
-        /// <param name="category"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="weight"></param>
-        /// <param name="points"></param>
-        /// <param name="minQuantity"></param>
-        /// <param name="maxQuantity"></param>
-        /// <param name="startingQuantity"></param>
         public Item(Types category, string name, float value, int weight = 1, int points = 1, int minQuantity = 1, int maxQuantity = 999, int startingQuantity = 0)
         {
             Category = category;
@@ -91,8 +83,6 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Item.Item" /> class from previous instance and with updated quantity.
         /// </summary>
-        /// <param name="oldItem"></param>
-        /// <param name="newQuantity"></param>
         public Item(Item oldItem, int newQuantity)
         {
             // Check that the new quantity is within range.

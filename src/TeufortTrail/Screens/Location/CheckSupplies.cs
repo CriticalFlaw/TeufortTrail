@@ -37,19 +37,19 @@ namespace TeufortTrail.Screens.Travel.Location
                 switch (item.Key)
                 {
                     case Types.Food:
-                        suppliesList.Add(new Tuple<string, string>("pounds of food", item.Value.TotalWeight.ToString("N0")));
+                        suppliesList.Add(new Tuple<string, string>("Pounds of Food", item.Value.TotalWeight.ToString("N0")));
                         break;
 
                     case Types.Hats:
-                        suppliesList.Add(new Tuple<string, string>("hats", formattedQuantity));
+                        suppliesList.Add(new Tuple<string, string>("Hats", formattedQuantity));
                         break;
 
                     case Types.Ammo:
-                        suppliesList.Add(new Tuple<string, string>("bullets", formattedQuantity));
+                        suppliesList.Add(new Tuple<string, string>("Bullets", formattedQuantity));
                         break;
 
                     case Types.Money:
-                        suppliesList.Add(new Tuple<string, string>("money left", item.Value.TotalValue.ToString("C")));
+                        suppliesList.Add(new Tuple<string, string>("Money Left", item.Value.TotalValue.ToString("C")));
                         break;
 
                     default:
