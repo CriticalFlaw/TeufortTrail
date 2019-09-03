@@ -30,9 +30,9 @@ namespace TeufortTrail.Screens.MainMenu
         {
             // Generate a string listing the player's party members.
             var _partyList = new StringBuilder();
-            for (var index = 1; index < UserData.PartyClasses.Count - 1; index++)
+            for (var index = 1; index < UserData.PartyClasses.Count; index++)
             {
-                var isLast = (index == UserData.PartyClasses.Count - 2);
+                var isLast = (index == UserData.PartyClasses.Count - 1);
                 _partyList.Append((isLast ? " and " : " ") + UserData.PartyClasses[index] + (isLast ? "." : ","));
             }
 

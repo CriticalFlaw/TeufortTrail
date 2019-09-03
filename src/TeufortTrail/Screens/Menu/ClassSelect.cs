@@ -66,18 +66,21 @@ namespace TeufortTrail.Screens.MainMenu
             Enum.TryParse(input, out Classes playerChoice);
 
             // Set the player class based on the selection
-            UserData.PlayerClass = playerChoice;
+            if (Enum.IsDefined(typeof(Classes), playerChoice))
+                UserData.PlayerClass = (Classes)playerChoice;
+            else
+                UserData.PlayerClass = Classes.Scout;
 
             // TODO: Set player stats depending on the class chosen.
 
             // Set the player's starting money, add them to the party.
             UserData.StartingMoney = 1000;
-            UserData.PartyClasses.Add(playerChoice);
+            UserData.PartyClasses.Add(UserData.PlayerClass);
 
             // Add three randomly selected, unique people to the player's party.
             var classes = Enum.GetValues(typeof(Classes)).Cast<Classes>().ToList();
             classes.Remove(UserData.PlayerClass);
-            classes = classes.OrderBy(arg => Guid.NewGuid()).Take(4).ToList();
+            classes = classes.OrderBy(arg => Guid.NewGuid()).Take(3).ToList();
             foreach (var _class in classes)
                 UserData.PartyClasses.Add(_class);
 

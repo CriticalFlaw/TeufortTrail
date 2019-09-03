@@ -66,16 +66,11 @@ namespace TeufortTrail.Screens.Travel.Store
             // Check that the user input is a valid intenger.
             if (!int.TryParse(input, out var userInput)) return;
 
-            // Check that the user input is not zero, within the purchasing limit, does not exceed the set maximum and can actually afford the item.
+            // Check that the user input is not zero, within the purchasing limit, does not exceed the set maximum and can actually afford the item. If all checks pass, then add the item to the player's inventory.
             if (userInput <= 0 || userInput > PurchaseLimit || userInput > PurchaseItem.MaxQuantity || GameCore.Instance.Vehicle.Balance < PurchaseItem.TotalValue * userInput)
                 UserData.Store.RemoveItem(PurchaseItem);
             else
-            {
-                // If all checks pass, then add the item to the player's inventory.
                 UserData.Store.AddItem(PurchaseItem, userInput);
-                if (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Arrived)
-                    UserData.Store.PurchaseItems();
-            }
 
             // Deselect the item and return to the store.
             UserData.Store.SelectedItem = null;

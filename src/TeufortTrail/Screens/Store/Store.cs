@@ -59,10 +59,7 @@ namespace TeufortTrail.Screens.Travel.Store
             _store.AppendLine("--------------------------------");
             var totalBill = UserData.Store.TotalTransactionCost;
             var playerBalance = GameCore.Instance.Vehicle.Balance - totalBill;
-
-            _store.Append(GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached)
-                ? $"Total bill:            {totalBill:C2}" + $"{Environment.NewLine}Amount you have:       {playerBalance:C2}"
-                : $"You have {GameCore.Instance.Vehicle.Balance:C2} to spend.");
+            _store.Append($"Total bill:            {totalBill:C2}" + $"{Environment.NewLine}Amount you have:       {playerBalance:C2}");
         }
 
         /// <summary>
@@ -114,10 +111,12 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         private void LeaveStore()
         {
-            // Used for purchasing the starting items and setting the first location on the first turn of the game.
+            // Purchase the items in queue.
+            UserData.Store.PurchaseItems();
+
+            // Show the apropriate dialog screen if this is the first trail location.
             if (GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached))
             {
-                UserData.Store.PurchaseItems();
                 GameCore.Instance.Trail.ArriveAtLocation();
                 SetForm(typeof(LocationArrived));
             }
