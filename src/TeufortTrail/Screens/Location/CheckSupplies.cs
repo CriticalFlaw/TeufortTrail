@@ -19,12 +19,14 @@ namespace TeufortTrail.Screens.Travel.Location
         {
         }
 
+        /// <summary>
+        /// Called when the screen needs a prompt to be displayed to the player.
+        /// </summary>
         protected override string OnDialogPrompt()
         {
             // Build up representation of supplies once in constructor and then reference when asked for render.
             GameCore.Instance.TakeTurn(true);
             var _checkSupplies = new StringBuilder();
-            _checkSupplies.AppendLine($"{Environment.NewLine}Your Supplies{Environment.NewLine}");
 
             // Build up a list with tuple in it to hold our data about supplies.
             var suppliesList = new List<Tuple<string, string>>();
@@ -32,24 +34,22 @@ namespace TeufortTrail.Screens.Travel.Location
             // Loop through every inventory item in the vehicle.
             foreach (var item in GameCore.Instance.Vehicle.Inventory)
             {
-                // Apply number formatting to quantities so they have thousand separators.
-                var formattedQuantity = item.Value.Quantity.ToString("N0");
                 switch (item.Key)
                 {
                     case Types.Food:
-                        suppliesList.Add(new Tuple<string, string>("Pounds of Food", item.Value.TotalWeight.ToString("N0")));
+                        suppliesList.Add(new Tuple<string, string>("Food", item.Value.TotalWeight.ToString("N0")));
                         break;
 
                     case Types.Hats:
-                        suppliesList.Add(new Tuple<string, string>("Hats", formattedQuantity));
+                        suppliesList.Add(new Tuple<string, string>("Hats", item.Value.Quantity.ToString("N0")));
                         break;
 
                     case Types.Ammo:
-                        suppliesList.Add(new Tuple<string, string>("Bullets", formattedQuantity));
+                        suppliesList.Add(new Tuple<string, string>("Bullets", item.Value.Quantity.ToString("N0")));
                         break;
 
                     case Types.Money:
-                        suppliesList.Add(new Tuple<string, string>("Money Left", item.Value.TotalValue.ToString("C")));
+                        suppliesList.Add(new Tuple<string, string>("Money", item.Value.TotalValue.ToString("C")));
                         break;
 
                     default:
@@ -59,10 +59,18 @@ namespace TeufortTrail.Screens.Travel.Location
 
             // Generate the formatted table of supplies we will show to user.
             var supplyTable = suppliesList.ToStringTable(new[] { "Item Name", "Amount" }, u => u.Item1, u => u.Item2);
+
+            // Combine then return the generated tables.
+            _checkSupplies.AppendLine($"{Environment.NewLine}Your Party:{Environment.NewLine}");
+            _checkSupplies.AppendLine(TravelInfo.PartyStatus);
+            _checkSupplies.AppendLine($"Your Supplies:{Environment.NewLine}");
             _checkSupplies.AppendLine(supplyTable);
             return _checkSupplies.ToString();
         }
 
+        /// <summary>
+        /// Process the player's response to the prompt message.
+        /// </summary>
         protected override void OnDialogResponse(DialogResponse reponse)
         {
             ClearForm();

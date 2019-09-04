@@ -60,6 +60,7 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the simulation is ticked.
         /// </summary>
+        /// <remarks>TODO: Let the player know they are unable to continue</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an inverval.
@@ -74,7 +75,6 @@ namespace TeufortTrail.Screens.Travel
             {
                 case VehicleStatus.Stopped:
                 case VehicleStatus.Disabled:
-                    // TODO: Let the player know they are unable to continue
                     break;
 
                 case VehicleStatus.Moving:
@@ -113,6 +113,7 @@ namespace TeufortTrail.Screens.Travel
             _continueTrail = new StringBuilder();
             _continueTrail.Clear();
             _continueTrail.AppendLine($"{Environment.NewLine}{_swayBarText}");
+            _continueTrail.AppendLine(TravelInfo.TrailStatus);
             _continueTrail.AppendLine(TravelInfo.PartyStatus);
             return _continueTrail.ToString();
         }

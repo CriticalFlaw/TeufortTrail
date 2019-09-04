@@ -33,8 +33,6 @@ namespace TeufortTrail.Screens.Travel.Store
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
-
-            // TODO: Add current time
             _store = new StringBuilder();
             _store.Clear();
             _store.AppendLine(GameCore.Instance.Trail.CurrentLocation?.Name + " -  Mann Co. Store");
@@ -49,7 +47,8 @@ namespace TeufortTrail.Screens.Travel.Store
                 if ((storeItem == Types.Vehicle) || (storeItem == Types.Person) || (storeItem == Types.Money) || (storeItem == Types.Location)) continue;
 
                 // Format the price tag for every item type that is sold at the store.
-                var storeTag = storeItem.ToDescriptionAttribute() + "              " + UserData.Store.Transactions[storeItem].Value.ToString("C2");
+                var storeTag = storeItem.ToDescriptionAttribute() + "              " + (UserData.Store.Transactions[storeItem].Quantity * UserData.Store.Transactions[storeItem].Value).ToString("C2") + " (" + UserData.Store.Transactions[storeItem].Value.ToString("C2") + ")";
+
                 _store.AppendLine($"  {(int)storeItem}. {storeTag}");
                 if (index == storeItems.Count - 5)
                     _store.AppendLine($"  {storeItems.Count - 3}. Leave store");

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Menu;
 using TeufortTrail.Screens.Travel.Store;
-using WolfCurses;
 using WolfCurses.Utility;
 using WolfCurses.Window;
+using WolfCurses.Window.Control;
 
 namespace TeufortTrail.Screens.Travel
 {
@@ -46,10 +47,10 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the party has arrived at a location.
         /// </summary>
+        /// <remarks>TODO: Check if this is game over or all of the passengers are dead.</remarks>
         private void ArriveAtLocation()
         {
             var game = GameCore.Instance;
-            // TODO: Check if this is game over or all of the passengers are dead.
 
             // Check if the party has arrived at the last location.
             if (game.Trail.CurrentLocation.LastLocation)
@@ -71,10 +72,11 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the town information including party status and available commands need to be displayed.
         /// </summary>
+        /// <remarks>TODO: Add trading and hunting commands</remarks>
         private void UpdateLocation()
         {
             var _menuHeader = new StringBuilder();
-            _menuHeader.Append(TravelInfo.PartyStatus);
+            _menuHeader.Append(TravelInfo.TrailStatus);
             _menuHeader.Append("Here is what you can do:");
             MenuHeader = _menuHeader.ToString();
 
@@ -89,16 +91,12 @@ namespace TeufortTrail.Screens.Travel
             switch (location.Status)
             {
                 case LocationStatus.Unreached:
+                case LocationStatus.Departed:
                     break;
 
                 case LocationStatus.Arrived:
-                    // TOOD: Add trading
                     if (location.TalkingAllowed) AddCommand(TalkToPeople, TravelCommands.TalkToPeople);
                     if (location.ShoppingAllowed) AddCommand(BuySupplies, TravelCommands.BuySupplies);
-                    break;
-
-                case LocationStatus.Departed:
-                    // TODO: Add trading and food gathering
                     break;
 
                 default:
@@ -109,6 +107,7 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the player has chosen to continue on the trail.
         /// </summary>
+        /// <remarks>TODO: Add other location types</remarks>
         internal void ContinueTrail()
         {
             if (GameCore.Instance.Trail.CurrentLocation.Status == LocationStatus.Departed)
@@ -117,7 +116,7 @@ namespace TeufortTrail.Screens.Travel
                 return;
             }
 
-            // TODO: Add other location types
+            // Throw to an appropriate screen depending on the location reached.
             if (GameCore.Instance.Trail.CurrentLocation is Town)
                 SetForm(typeof(DepartLocation));
         }
@@ -143,7 +142,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void TalkToPeople()
         {
-            SetForm(typeof(Store.Store));   // TEMP
+            SetForm(typeof(Location.TalkToPeople));
         }
 
         /// <summary>
@@ -188,25 +187,38 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Retrieves the current party status, resources and distance until next location.
         /// </summary>
-        public static string PartyStatus
+        /// <remarks>TODO: Add time and weather</remarks>
+        public static string TrailStatus
         {
             get
             {
                 var game = GameCore.Instance;
                 var foodCount = game.Vehicle.Inventory[Types.Food];
-                var partyStatus = new StringBuilder();
-                // TODO: Add time, weather and passenger health statuses
-                partyStatus.AppendLine($"Available Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
-                partyStatus.AppendLine($"Next landmark is in: {game.Trail.NextLocationDistance} miles");
-                partyStatus.AppendLine($"You've traveled: {game.Vehicle.Odometer} miles");
-                partyStatus.AppendLine($"------------------------------------------{Environment.NewLine}");
+                var _trailStatus = new StringBuilder();
+                _trailStatus.AppendLine($"Available Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
+                _trailStatus.AppendLine($"Next landmark is in: {game.Trail.NextLocationDistance} miles");
+                _trailStatus.AppendLine($"You've traveled: {game.Vehicle.Odometer} miles");
+                _trailStatus.AppendLine("------------------------------------------");
+                return _trailStatus.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the current party status, resources and distance until next location.
+        /// </summary>
+        public static string PartyStatus
+        {
+            get
+            {
+                // Build up a list with tuple in it to hold our data about the party (health and debuffs).
+                var partyList = new List<Tuple<string, string, string>>();
+
+                // Loop through every passenger in the vehicle.
                 foreach (var passenger in GameCore.Instance.Vehicle.Passengers)
-                {
-                    var tabs = (passenger.Class.ToString().Length >= 6) ? "\t" : "\t\t";
-                    partyStatus.AppendLine($"{passenger.Class.ToDescriptionAttribute()}: " + (passenger.Leader ? "(You)\t" : tabs) + $"Health: {passenger.HealthState}\tStatus: {passenger.Status}");
-                }
-                partyStatus.AppendLine($"------------------------------------------{Environment.NewLine}");
-                return partyStatus.ToString();
+                    partyList.Add(new Tuple<string, string, string>(passenger.Class.ToString(), passenger.HealthState.ToString(), passenger.Status));
+
+                // Generate the formatted table of supplies we will show to user.
+                return partyList.ToStringTable(new[] { "Person", "Health", "Status" }, u => u.Item1, u => u.Item2, u => u.Item3);
             }
         }
     }
