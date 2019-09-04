@@ -172,7 +172,7 @@ namespace TeufortTrail.Entities.Trail
             // Get the current instance of the vehicle.
             var vehicle = GameCore.Instance.Vehicle;
 
-            // Tick the current location, randomizing some of it's variables (TODO)
+            // Tick the current location.
             CurrentLocation?.OnTick(false);
 
             // Tick the vehicle, updating it's current total distance travelled.

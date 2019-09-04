@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities.Item;
-using TeufortTrail.Entities.Location;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 

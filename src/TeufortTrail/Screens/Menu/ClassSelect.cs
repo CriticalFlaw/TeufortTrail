@@ -57,6 +57,7 @@ namespace TeufortTrail.Screens.MainMenu
         /// Called when the user has inputted something that needs to be processed.
         /// </summary>
         /// <param name="input">User input</param>
+        /// <remarks>TODO: Set player stats depending on the class chosen.</remarks>
         public override void OnInputBufferReturned(string input)
         {
             // Skip this step if the input is null or empty.
@@ -70,8 +71,6 @@ namespace TeufortTrail.Screens.MainMenu
                 UserData.PlayerClass = (Classes)playerChoice;
             else
                 UserData.PlayerClass = Classes.Scout;
-
-            // TODO: Set player stats depending on the class chosen.
 
             // Set the player's starting money, add them to the party.
             UserData.StartingMoney = 1000;

@@ -116,6 +116,7 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Called when the simulation is ticked.
         /// </summary>
+        /// <remarks>TODO: Trigger a random event.</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an inverval.
@@ -139,8 +140,6 @@ namespace TeufortTrail.Entities.Vehicle
 
             // Updated the total mileage travelled.
             Odometer += Mileage;
-
-            // TODO: Trigger a random event.
         }
 
         /// <summary>
@@ -183,9 +182,9 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Check if the vehicle is currently operational and is able to move.
         /// </summary>
+        /// <remarks>TODO: Add a condition to check that would cause the vehicle to be disabled.</remarks>
         public void CheckStatus()
         {
-            // TODO: Add a condition to check that would cause the vehicle to be disabled.
             if (Status == VehicleStatus.Disabled) return;
             Status = VehicleStatus.Moving;
         }

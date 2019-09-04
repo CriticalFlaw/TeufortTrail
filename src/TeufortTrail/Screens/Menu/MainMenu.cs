@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Person;
-using WolfCurses;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 
@@ -20,12 +19,11 @@ namespace TeufortTrail.Screens.MainMenu
         /// <summary>
         /// Called when the screen has been activated.
         /// </summary>
+        /// <remarks>TODO: Add a welcome message and game information</remarks>
         public override void OnWindowPostCreate()
         {
-            // TODO: Add a welcome message and game information
+            // Initialize the main menu title and available commands.
             MenuHeader = $"{Environment.NewLine}The Teurfort Trail";
-
-            // Initialize the available commands and their methods.
             AddCommand(PlayTheGame, MainMenuCommands.PlayTheGame);
             AddCommand(CloseTheGame, MainMenuCommands.CloseTheGame);
         }

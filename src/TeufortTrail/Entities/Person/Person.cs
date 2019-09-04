@@ -1,6 +1,5 @@
 ﻿using System;
 using TeufortTrail.Entities.Item;
-using WolfCurses.Utility;
 
 namespace TeufortTrail.Entities.Person
 {
@@ -92,6 +91,7 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Called when the simulation is ticked.
         /// </summary>
+        /// <remarks>TODO: Add events that would change member's health and resource consumptions</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an inverval.
@@ -99,8 +99,6 @@ namespace TeufortTrail.Entities.Person
 
             // Skip this step if the party member is already dead.
             if (Health == (int)HealthStatus.Dead) return;
-
-            // TODO: Add events that would change member's health and resource consumption
 
             // Only consume food if the whole day has passed.
             if (!skipDay) ConsumeFood();
@@ -198,6 +196,7 @@ namespace TeufortTrail.Entities.Person
         /// </summary>
         /// <param name="minAmount">Minimum amount of damage that should be randomly generated.</param>
         /// <param name="maxAmount">Maximum amount of damage that should be randomly generated.</param>
+        /// <remarks>TODO: Show a prompt, notifying the player that a party member has died.</remarks>
         private void Damage(int minAmount, int maxAmount)
         {
             // Skip this step if the party member is already dead.
@@ -205,8 +204,6 @@ namespace TeufortTrail.Entities.Person
 
             // Subtract a random amount of health from the party member.
             Health -= GameCore.Instance.Random.Next(minAmount, maxAmount);
-
-            // TODO: Show a prompt, notifying the player that a party member has died.
         }
 
         /// <summary>
@@ -242,9 +239,9 @@ namespace TeufortTrail.Entities.Person
     /// <summary>
     /// Defines all the playable classes.
     /// </summary>
+    /// <remarks>TODO: Add descriptons and unique stats to each class.</remarks>
     public enum Classes
     {
-        // TODO: Add descriptons and unique stats to each class.
         Scout = 1,
         Soldier = 2,
         Pyro = 3,
