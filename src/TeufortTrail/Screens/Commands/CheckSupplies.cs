@@ -60,7 +60,7 @@ namespace TeufortTrail.Screens.Travel.Location
             // Generate the formatted table of supplies we will show to user.
             var supplyTable = suppliesList.ToStringTable(new[] { "Item Name", "Amount" }, u => u.Item1, u => u.Item2);
 
-            // Combine then return the generated tables.
+            // Return the generated tables.
             _checkSupplies.AppendLine($"{Environment.NewLine}Your Party:{Environment.NewLine}");
             _checkSupplies.AppendLine(TravelInfo.PartyStatus);
             _checkSupplies.AppendLine($"Your Supplies:{Environment.NewLine}");
@@ -71,7 +71,7 @@ namespace TeufortTrail.Screens.Travel.Location
         /// <summary>
         /// Process the player's response to the prompt message.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse reponse)
+        protected override void OnDialogResponse(DialogResponse response)
         {
             ClearForm();
         }

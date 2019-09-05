@@ -39,7 +39,7 @@ namespace TeufortTrail.Screens.Travel.Location
         /// <summary>
         /// Process the player's response to the prompt message.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse reponse)
+        protected override void OnDialogResponse(DialogResponse response)
         {
             ClearForm();
         }

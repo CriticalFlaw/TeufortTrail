@@ -20,10 +20,8 @@ namespace TeufortTrail.Entities.Trail
                     new Town("Teufort, New Mexico")
                 };
 
-                return new Trail(teufortTrail, 50, 100);
+                return new Trail(teufortTrail, 100, 300);
             }
         }
-
-        // TODO: Add more trails.
     }
 }

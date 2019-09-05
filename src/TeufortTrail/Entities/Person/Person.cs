@@ -1,9 +1,10 @@
 ﻿using System;
 using TeufortTrail.Entities.Item;
+using TeufortTrail.Events;
 
 namespace TeufortTrail.Entities.Person
 {
-    public sealed class Person
+    public sealed class Person : IEntity
     {
         #region VARIABLES
 
@@ -204,6 +205,9 @@ namespace TeufortTrail.Entities.Person
 
             // Subtract a random amount of health from the party member.
             Health -= GameCore.Instance.Random.Next(minAmount, maxAmount);
+
+            if (Health <= (int)HealthStatus.Dead)
+                GameCore.Instance.EventDirector.TriggerEvent(this, typeof(PassengerDeath));
         }
 
         /// <summary>

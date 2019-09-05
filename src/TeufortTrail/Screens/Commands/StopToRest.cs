@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
@@ -24,7 +23,6 @@ namespace TeufortTrail.Screens.Travel.Location
         /// </summary>
         public StopToRest(IWindow window) : base(window)
         {
-
         }
 
         /// <summary>
@@ -42,7 +40,7 @@ namespace TeufortTrail.Screens.Travel.Location
         /// <summary>
         /// Process the player's response to the prompt message.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse reponse)
+        protected override void OnDialogResponse(DialogResponse response)
         {
             ClearForm();
         }

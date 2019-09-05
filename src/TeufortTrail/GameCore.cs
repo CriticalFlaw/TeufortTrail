@@ -4,6 +4,7 @@ using System.Text;
 using TeufortTrail.Entities.Person;
 using TeufortTrail.Entities.Trail;
 using TeufortTrail.Entities.Vehicle;
+using TeufortTrail.Events.Director;
 using TeufortTrail.Screens.MainMenu;
 using TeufortTrail.Screens.Travel;
 using WolfCurses;
@@ -28,6 +29,11 @@ namespace TeufortTrail
         public Vehicle Vehicle { get; private set; }
 
         /// <summary>
+        ///  Defines the event manager used for handling in-game events.
+        /// </summary>
+        public EventDirector EventDirector { get; private set; }
+
+        /// <summary>
         ///  Defines the complete trail and all points of interaction the player will encounter.
         /// </summary>
         public TrailBase Trail { get; private set; }
@@ -47,7 +53,8 @@ namespace TeufortTrail
                 var windowList = new List<Type>
                 {
                     typeof(Travel),
-                    typeof(MainMenu)
+                    typeof(MainMenu),
+                    typeof(Event)
                 };
 
                 return windowList;
@@ -68,14 +75,13 @@ namespace TeufortTrail
         /// <summary>
         /// Called by the text user interface to display a heading before the rest of the content.
         /// </summary>
-        /// <returns></returns>
         public override string OnPreRender()
         {
             // Display the current location, vehicle status and turn count.
             var _gameCore = new StringBuilder();
             _gameCore.AppendLine($"Turn: {TotalTurns:D4}");
             _gameCore.AppendLine($"Location: {Trail?.CurrentLocation?.Status}");
-            _gameCore.AppendLine($"Vehicle: {Vehicle?.Status}");
+            _gameCore.AppendLine($"Vehicle:  {Vehicle?.Status}");
             _gameCore.AppendLine("------------------------------------------");
             return _gameCore.ToString();
         }
@@ -90,6 +96,7 @@ namespace TeufortTrail
 
             // Load the necessary trail and vehicle modules.
             Trail = new TrailBase();
+            EventDirector = new EventDirector();
             Vehicle = new Vehicle();
 
             // Reset the Window Manager, attach the main screens.
@@ -105,8 +112,11 @@ namespace TeufortTrail
         {
             TotalTurns = 0;
             Trail.Destroy();
+            EventDirector.Destroy();
+            Vehicle = new Vehicle();
             Vehicle = null;
             Trail = null;
+            EventDirector = null;
             Instance = null;
         }
 

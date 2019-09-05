@@ -3,7 +3,7 @@
     /// <summary>
     /// Defines the trail location that the player will visit in their playthrough.
     /// </summary>
-    public abstract class Location
+    public abstract class Location : IEntity
     {
         #region VARIBLES
 
@@ -57,7 +57,7 @@
         /// <summary>
         /// Called when the simulation is ticked.
         /// </summary>
-        public void OnTick(bool systemTick)
+        public void OnTick(bool systemTick, bool skipDay = false)
         {
             // Only tick vehicle at an inverval.
             if (systemTick) return;

@@ -3,7 +3,7 @@
     /// <summary>
     /// Defines the base item that be purchased or acquired by the player.
     /// </summary>
-    public sealed class Item
+    public sealed class Item : IEntity
     {
         #region VARIABLES
 
@@ -100,6 +100,13 @@
             MaxQuantity = oldItem.MaxQuantity;
             Quantity = newQuantity;
             StartingQuantity = oldItem.StartingQuantity;
+        }
+
+        /// <summary>
+        /// Called when the simulation is ticked.
+        /// </summary>
+        public void OnTick(bool systemTick, bool skipDay)
+        {
         }
 
         /// <summary>

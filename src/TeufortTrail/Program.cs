@@ -11,7 +11,6 @@ namespace TeufortTrail
         /// <summary>
         /// Console application entry point.
         /// </summary>
-        /// <returns></returns>
         public static int Main()
         {
             // Setup the console.
