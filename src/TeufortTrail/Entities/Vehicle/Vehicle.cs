@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using TeufortTrail.Entities.Item;
+using WolfCurses.Utility;
 
 namespace TeufortTrail.Entities.Vehicle
 {
-    public sealed class Vehicle
+    public sealed class Vehicle : IEntity
     {
         #region VARIABLES
 
@@ -116,7 +117,7 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Called when the simulation is ticked.
         /// </summary>
-        /// <remarks>TODO: Trigger a random event.</remarks>
+        /// <remarks>TODO: Trigger a random event. Insufficient food and clothing should cause illness.</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an inverval.
@@ -180,6 +181,15 @@ namespace TeufortTrail.Entities.Vehicle
         }
 
         /// <summary>
+        /// Sets the current travel pace rate.
+        /// </summary>
+        /// <param name="pace">The travel pace rate.</param>
+        public void ChangePace(TravelPace pace)
+        {
+            Pace = pace;
+        }
+
+        /// <summary>
         /// Check if the vehicle is currently operational and is able to move.
         /// </summary>
         /// <remarks>TODO: Add a condition to check that would cause the vehicle to be disabled.</remarks>
@@ -187,6 +197,15 @@ namespace TeufortTrail.Entities.Vehicle
         {
             if (Status == VehicleStatus.Disabled) return;
             Status = VehicleStatus.Moving;
+        }
+
+        /// <summary>
+        /// Sets the current party ration rate.
+        /// </summary>
+        /// <param name="ration">The rate at which the party is permitted to consume the food.</param>
+        public void ChangeRations(RationLevel ration)
+        {
+            Ration = ration;
         }
     }
 
@@ -219,7 +238,7 @@ namespace TeufortTrail.Entities.Vehicle
     {
         Filling = 1,
         Meager = 2,
-        BareBones = 3
+        [Description("Bare Bones")] BareBones = 3
     }
 
     #endregion ENUMERABLES

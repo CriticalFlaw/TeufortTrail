@@ -113,7 +113,7 @@ namespace TeufortTrail.Screens.Travel
             _continueTrail = new StringBuilder();
             _continueTrail.Clear();
             _continueTrail.AppendLine($"{Environment.NewLine}{_swayBarText}");
-            _continueTrail.AppendLine(TravelInfo.TrailStatus);
+            _continueTrail.AppendLine(TravelInfo.TravelStatus);
             _continueTrail.AppendLine(TravelInfo.PartyStatus);
             return _continueTrail.ToString();
         }

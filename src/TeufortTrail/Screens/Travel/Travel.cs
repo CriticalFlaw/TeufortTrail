@@ -26,6 +26,9 @@ namespace TeufortTrail.Screens.Travel
             UpdateLocation();
         }
 
+        /// <summary>
+        /// Called when the screen has been activated.
+        /// </summary>
         public override void OnWindowPostCreate()
         {
             UpdateLocation();
@@ -76,15 +79,18 @@ namespace TeufortTrail.Screens.Travel
         private void UpdateLocation()
         {
             var _menuHeader = new StringBuilder();
-            _menuHeader.Append(TravelInfo.TrailStatus);
+            _menuHeader.Append(TravelInfo.TravelStatus);
             _menuHeader.Append("Here is what you can do:");
             MenuHeader = _menuHeader.ToString();
 
             // Initialize the available commands and their methods.
             ClearCommands();
             AddCommand(ContinueTrail, TravelCommands.ContinueOnTrail);
+            AddCommand(CheckMap, TravelCommands.CheckMap);
             AddCommand(CheckSupplies, TravelCommands.CheckSupplies);
             AddCommand(StopToRest, TravelCommands.StopToRest);
+            AddCommand(ChangePace, TravelCommands.ChangePace);
+            AddCommand(ChangeRation, TravelCommands.ChangeRation);
 
             // Add additional commands depending on the current vehicle state.
             var location = GameCore.Instance.Trail.CurrentLocation;
@@ -117,8 +123,23 @@ namespace TeufortTrail.Screens.Travel
             }
 
             // Throw to an appropriate screen depending on the location reached.
-            if (GameCore.Instance.Trail.CurrentLocation is Town)
-                SetForm(typeof(DepartLocation));
+            SetForm(typeof(ContinueTrail));
+        }
+
+        /// <summary>
+        /// Called when the player has chosen to check the map of the map.
+        /// </summary>
+        internal void CheckMap()
+        {
+            SetForm(typeof(Location.CheckMap));
+        }
+
+        /// <summary>
+        /// Called when the player has chosen to check their inventory and party status.
+        /// </summary>
+        internal void CheckSupplies()
+        {
+            SetForm(typeof(Location.CheckSupplies));
         }
 
         /// <summary>
@@ -130,11 +151,19 @@ namespace TeufortTrail.Screens.Travel
         }
 
         /// <summary>
-        /// Called when the player has chosen check their inventory and party status.
+        /// Called when the player has chosen to change the travel pace rate.
         /// </summary>
-        internal void CheckSupplies()
+        internal void ChangePace()
         {
-            SetForm(typeof(Location.CheckSupplies));
+            SetForm(typeof(Location.ChangePace));
+        }
+
+        /// <summary>
+        /// Called when the player has chosen to change the party ration rate.
+        /// </summary>
+        internal void ChangeRation()
+        {
+            SetForm(typeof(Location.ChangeRation));
         }
 
         /// <summary>
@@ -160,10 +189,13 @@ namespace TeufortTrail.Screens.Travel
     public enum TravelCommands
     {
         [Description("Continue on the trail")] ContinueOnTrail = 1,
-        [Description("Check supplies")] CheckSupplies = 2,
-        [Description("Stop to rest")] StopToRest = 3,
-        [Description("Talk to people")] TalkToPeople = 4,
-        [Description("Buy supplies")] BuySupplies = 5
+        [Description("Check the map")] CheckMap = 2,
+        [Description("Check supplies")] CheckSupplies = 3,
+        [Description("Stop to rest")] StopToRest = 4,
+        [Description("Change Pace")] ChangePace = 5,
+        [Description("Change Ration")] ChangeRation = 6,
+        [Description("Talk to people")] TalkToPeople = 7,
+        [Description("Buy supplies")] BuySupplies = 8
     }
 
     /// <summary>
@@ -188,16 +220,17 @@ namespace TeufortTrail.Screens.Travel
         /// Retrieves the current party status, resources and distance until next location.
         /// </summary>
         /// <remarks>TODO: Add time and weather</remarks>
-        public static string TrailStatus
+        public static string TravelStatus
         {
             get
             {
                 var game = GameCore.Instance;
                 var foodCount = game.Vehicle.Inventory[Types.Food];
                 var _trailStatus = new StringBuilder();
-                _trailStatus.AppendLine($"Available Food: {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
-                _trailStatus.AppendLine($"Next landmark is in: {game.Trail.NextLocationDistance} miles");
-                _trailStatus.AppendLine($"You've traveled: {game.Vehicle.Odometer} miles");
+                _trailStatus.AppendLine($"Food:     {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
+                _trailStatus.AppendLine($"Odometer: {game.Vehicle.Odometer} miles ({game.Trail.NextLocationDistance} miles to next location)");
+                _trailStatus.AppendLine($"Pace:     {game.Vehicle.Pace.ToDescriptionAttribute()}");
+                _trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration.ToDescriptionAttribute()}");
                 _trailStatus.AppendLine("------------------------------------------");
                 return _trailStatus.ToString();
             }
