@@ -207,6 +207,50 @@ namespace TeufortTrail.Entities.Vehicle
         {
             Ration = ration;
         }
+
+        internal bool HasInventoryItem(Item.Item wantedItem)
+        {
+            foreach (var item in Inventory)
+                if ((item.Value.Name == wantedItem.Name) &&
+                    (item.Value.Category == wantedItem.Category) &&
+                    (item.Value.Quantity >= wantedItem.MinQuantity))
+                    return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Return a schema item of random type and quantity.
+        /// </summary>
+        internal static Item.Item GetRandomItem()
+        {
+            // Loop through every item type in the schema.
+            foreach (var item in DefaultInventory)
+            {
+                // Flip a coin to decide if this item will be processed.
+                if (GameCore.Instance.Random.NextBool()) continue;
+
+                // Only certain item types will be processed.
+                switch (item.Value.Category)
+                {
+                    case Types.Food:
+                    case Types.Hats:
+                    case Types.Ammo:
+                        // Generate a value representing the number of items that will be returned.
+                        var quantity = item.Value.MaxQuantity / 4;
+
+                        // Check that the quantity value is within range.
+                        quantity = (quantity > item.Value.MaxQuantity) ? item.Value.MaxQuantity : quantity;
+                        quantity = (quantity <= 0) ? 1 : quantity;
+
+                        // Create and return the new item of random quantity.
+                        return new Item.Item(item.Value, GameCore.Instance.Random.Next(1, quantity));
+
+                    default:
+                        continue;
+                }
+            }
+            return null;
+        }
     }
 
     #region ENUMERABLES

@@ -4,6 +4,8 @@ using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Menu;
+using TeufortTrail.Screens.River;
+using TeufortTrail.Screens.Travel.River;
 using TeufortTrail.Screens.Travel.Store;
 using WolfCurses.Utility;
 using WolfCurses.Window;
@@ -103,6 +105,7 @@ namespace TeufortTrail.Screens.Travel
                 case LocationStatus.Arrived:
                     if (location.TalkingAllowed) AddCommand(TalkToPeople, TravelCommands.TalkToPeople);
                     if (location.ShoppingAllowed) AddCommand(BuySupplies, TravelCommands.BuySupplies);
+                    if (location.TalkingAllowed) AddCommand(TradeSupplies, TravelCommands.TradeSupplies);
                     break;
 
                 default:
@@ -123,7 +126,11 @@ namespace TeufortTrail.Screens.Travel
             }
 
             // Throw to an appropriate screen depending on the location reached.
-            SetForm(typeof(ContinueTrail));
+            if (GameCore.Instance.Trail.CurrentLocation is Landmark ||
+                GameCore.Instance.Trail.CurrentLocation is Settlement)
+                SetForm(typeof(ContinueTrail));
+            else if (GameCore.Instance.Trail.CurrentLocation is RiverCrossing)
+                SetForm(typeof(RiverCross));
         }
 
         /// <summary>
@@ -131,7 +138,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void CheckMap()
         {
-            SetForm(typeof(Location.CheckMap));
+            SetForm(typeof(Commands.CheckMap));
         }
 
         /// <summary>
@@ -139,7 +146,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void CheckSupplies()
         {
-            SetForm(typeof(Location.CheckSupplies));
+            SetForm(typeof(Commands.CheckSupplies));
         }
 
         /// <summary>
@@ -147,7 +154,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void StopToRest()
         {
-            SetForm(typeof(Location.StopToRest));
+            SetForm(typeof(Commands.StopToRest));
         }
 
         /// <summary>
@@ -155,7 +162,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void ChangePace()
         {
-            SetForm(typeof(Location.ChangePace));
+            SetForm(typeof(Commands.ChangePace));
         }
 
         /// <summary>
@@ -163,7 +170,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void ChangeRation()
         {
-            SetForm(typeof(Location.ChangeRation));
+            SetForm(typeof(Commands.ChangeRation));
         }
 
         /// <summary>
@@ -171,7 +178,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         internal void TalkToPeople()
         {
-            SetForm(typeof(Location.TalkToPeople));
+            SetForm(typeof(Commands.TalkToPeople));
         }
 
         /// <summary>
@@ -180,6 +187,14 @@ namespace TeufortTrail.Screens.Travel
         internal void BuySupplies()
         {
             SetForm(typeof(Store.Store));
+        }
+
+        /// <summary>
+        /// Called when the player wants to trade supplies with the towns folk.
+        /// </summary>
+        internal void TradeSupplies()
+        {
+            SetForm(typeof(Commands.TradeSupplies));
         }
     }
 
@@ -195,7 +210,8 @@ namespace TeufortTrail.Screens.Travel
         [Description("Change Pace")] ChangePace = 5,
         [Description("Change Ration")] ChangeRation = 6,
         [Description("Talk to people")] TalkToPeople = 7,
-        [Description("Buy supplies")] BuySupplies = 8
+        [Description("Buy supplies")] BuySupplies = 8,
+        [Description("Trade supplies")] TradeSupplies = 9
     }
 
     /// <summary>
@@ -209,11 +225,30 @@ namespace TeufortTrail.Screens.Travel
         public StoreGenerator Store { get; }
 
         /// <summary>
+        /// References the river object used for generating in-game river crossing locations and events.
+        /// </summary>
+        public RiverGenerator River { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.TravelInfo" /> class.
         /// </summary>
         public TravelInfo()
         {
             Store = new StoreGenerator();
+        }
+
+        public void GenerateRiver()
+        {
+            // Creates a new river. Skip if river has already been created.
+            if (River != null) return;
+            River = new RiverGenerator();
+        }
+
+        public void DestroyRiver()
+        {
+            // Destroy the river data. Skip if the river is already null.
+            if (River == null) return;
+            River = null;
         }
 
         /// <summary>
@@ -237,7 +272,7 @@ namespace TeufortTrail.Screens.Travel
         }
 
         /// <summary>
-        /// Retrieves the current party status, resources and distance until next location.
+        /// Retrieves the current party status.
         /// </summary>
         public static string PartyStatus
         {
@@ -252,6 +287,47 @@ namespace TeufortTrail.Screens.Travel
 
                 // Generate the formatted table of supplies we will show to user.
                 return partyList.ToStringTable(new[] { "Person", "Health", "Status" }, u => u.Item1, u => u.Item2, u => u.Item3);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the current party supplies.
+        /// </summary>
+        public static string PartySupplies
+        {
+            get
+            {
+                // Build up a list with tuple in it to hold our data about supplies.
+                var suppliesList = new List<Tuple<string, string>>();
+
+                // Loop through every inventory item in the vehicle.
+                foreach (var item in GameCore.Instance.Vehicle.Inventory)
+                {
+                    switch (item.Key)
+                    {
+                        case Types.Food:
+                            suppliesList.Add(new Tuple<string, string>("Food", item.Value.TotalWeight.ToString("N0")));
+                            break;
+
+                        case Types.Hats:
+                            suppliesList.Add(new Tuple<string, string>("Hats", item.Value.Quantity.ToString("N0")));
+                            break;
+
+                        case Types.Ammo:
+                            suppliesList.Add(new Tuple<string, string>("Bullets", item.Value.Quantity.ToString("N0")));
+                            break;
+
+                        case Types.Money:
+                            suppliesList.Add(new Tuple<string, string>("Money", item.Value.TotalValue.ToString("C")));
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                // Generate the formatted table of supplies we will show to user.
+                return suppliesList.ToStringTable(new[] { "Item Name", "Amount" }, u => u.Item1, u => u.Item2);
             }
         }
     }
