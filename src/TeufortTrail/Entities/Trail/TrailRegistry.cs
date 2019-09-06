@@ -1,4 +1,5 @@
 ﻿using TeufortTrail.Entities.Location;
+using TeufortTrail.Screens.River;
 
 namespace TeufortTrail.Entities.Trail
 {
@@ -16,11 +17,20 @@ namespace TeufortTrail.Entities.Trail
             {
                 var teufortTrail = new Location.Location[]
                 {
-                    new Town("Dustbowl"),
-                    new Town("Teufort, New Mexico")
+                    new Settlement("Dustbowl"),
+                    new RiverCrossing("Badwater Basin", RiverOptions.Ferry),
+                    new Landmark("The Well"),
+                    new Settlement("Coal Town"),
+                    new Landmark("Ghost Town"),
+                    new RiverCrossing("Hale River", RiverOptions.Float),
+                    new Settlement("Manhattan"),
+                    new Landmark("DeGroot Keep"),
+                    new RiverCrossing("2Fort", RiverOptions.Float),
+                    new Settlement("Gravel Pit"),
+                    new Settlement("Teufort, New Mexico")
                 };
 
-                return new Trail(teufortTrail, 100, 300);
+                return new Trail(teufortTrail, 30, 150);
             }
         }
     }
