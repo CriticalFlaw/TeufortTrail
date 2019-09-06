@@ -3,7 +3,7 @@ using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Location
+namespace TeufortTrail.Screens.Travel.Commands
 {
     [ParentWindow(typeof(Travel))]
     public sealed class StopToRest : InputForm<TravelInfo>

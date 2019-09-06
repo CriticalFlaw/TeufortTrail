@@ -1,5 +1,4 @@
 ﻿using TeufortTrail.Entities;
-using TeufortTrail.Events.Director;
 using WolfCurses.Window;
 
 namespace TeufortTrail.Events.Director

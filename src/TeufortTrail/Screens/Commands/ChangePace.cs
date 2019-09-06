@@ -4,7 +4,7 @@ using TeufortTrail.Entities.Vehicle;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Location
+namespace TeufortTrail.Screens.Travel.Commands
 {
     [ParentWindow(typeof(Travel))]
     public sealed class ChangePace : Form<TravelInfo>
@@ -31,9 +31,9 @@ namespace TeufortTrail.Screens.Travel.Location
             _changePace = new StringBuilder();
             _changePace.AppendLine("Set the pace at which your party will travel.");
             _changePace.AppendLine($"Your options are:{Environment.NewLine}");
-            _changePace.AppendLine("1. Steady pace.");
-            _changePace.AppendLine("2. Strenuous pace.");
-            _changePace.AppendLine("3. Grueling pace.");
+            _changePace.AppendLine("1. Steady");
+            _changePace.AppendLine("2. Strenuous");
+            _changePace.AppendLine("3. Grueling");
         }
 
         /// <summary>

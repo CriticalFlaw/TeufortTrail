@@ -1,6 +1,6 @@
 ﻿namespace TeufortTrail.Entities.Location
 {
-    public sealed class Town : Location
+    public sealed class Settlement : Location
     {
         #region VARIABLES
 
@@ -19,8 +19,8 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Location.Town" /> class.
         /// </summary>
-        /// <param name="name">Name of the town</param>
-        public Town(string name) : base(name)
+        /// <param name="name">Name of the location</param>
+        public Settlement(string name) : base(name)
         {
         }
     }

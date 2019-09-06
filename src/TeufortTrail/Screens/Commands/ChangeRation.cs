@@ -4,7 +4,7 @@ using TeufortTrail.Entities.Vehicle;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Location
+namespace TeufortTrail.Screens.Travel.Commands
 {
     [ParentWindow(typeof(Travel))]
     public sealed class ChangeRation : Form<TravelInfo>

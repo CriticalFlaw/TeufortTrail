@@ -55,7 +55,7 @@ namespace TeufortTrail.Screens.Travel.Store
             }
 
             // Display the player's current money balance and pending transaction cost.
-            _store.AppendLine("--------------------------------");
+            _store.AppendLine("------------------------------------------");
             var totalBill = UserData.Store.TotalTransactionCost;
             var playerBalance = GameCore.Instance.Vehicle.Balance - totalBill;
             _store.Append($"Total bill:            {totalBill:C2}" + $"{Environment.NewLine}Amount you have:       {playerBalance:C2}");
