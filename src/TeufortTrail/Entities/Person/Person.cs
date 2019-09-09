@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using TeufortTrail.Entities.Item;
+using TeufortTrail.Entities.Vehicle;
 using TeufortTrail.Events;
 
 namespace TeufortTrail.Entities.Person
@@ -101,6 +103,11 @@ namespace TeufortTrail.Entities.Person
             // Skip this step if the party member is already dead.
             if (Health == (int)HealthStatus.Dead) return;
 
+            // Check for illness if the ration level is low.
+            if ((GameCore.Instance.Vehicle.Ration == RationLevel.BareBones) ||
+                (GameCore.Instance.Vehicle.Ration == RationLevel.Meager && GameCore.Instance.Random.NextBool()))
+                CheckIllness();
+
             // Only consume food if the whole day has passed.
             if (!skipDay) ConsumeFood();
         }
@@ -113,9 +120,10 @@ namespace TeufortTrail.Entities.Person
             // Skip this step if the party member is already dead.
             if (HealthState == HealthStatus.Dead) return;
 
-            if (GameCore.Instance.Vehicle.Inventory[Types.Food].Quantity > 0)
+            var vehicle = GameCore.Instance.Vehicle;
+            if (vehicle.Inventory[Types.Food].Quantity > 0)
             {
-                GameCore.Instance.Vehicle.Inventory[Types.Food].SubtractQuantity((int)GameCore.Instance.Vehicle.Ration * GameCore.Instance.Vehicle.Passengers.Count);
+                vehicle.Inventory[Types.Food].SubtractQuantity((int)vehicle.Ration * vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead).Count());
                 Heal();
             }
             else
@@ -150,28 +158,32 @@ namespace TeufortTrail.Entities.Person
             var game = GameCore.Instance;
             if (game.Random.NextBool()) return;
 
+            // Reduce the party member's health if the ration level is low.
+            if (game.Random.Next(100) <= 10 + 35 * ((int)game.Vehicle.Ration - 1))
+                Damage(10, 50);
+
             // Reduce the party member's health depending on their health and debuff.
-            switch (Health)
+            switch (HealthState)
             {
-                case (int)HealthStatus.Great:
-                    if (Infected || Injured)
+                case HealthStatus.Great:
+                    if ((Infected || Injured) && (game.Vehicle.Status != VehicleStatus.Stopped))
                         Damage(10, 50);
                     break;
 
-                case (int)HealthStatus.Good:
-                    if (Infected || Injured)
+                case HealthStatus.Good:
+                    if ((Infected || Injured) && (game.Vehicle.Status != VehicleStatus.Stopped))
                         if (game.Random.NextBool())
                             Damage(10, 50);
                         else if (!Infected || !Injured)
                             Heal();
                     break;
 
-                case (int)HealthStatus.Fair:
-                    if (Infected || Injured)
+                case HealthStatus.Fair:
+                    if ((Infected || Injured) && (game.Vehicle.Status != VehicleStatus.Stopped))
                         Damage(5, 10);
                     break;
 
-                case (int)HealthStatus.Poor:
+                case HealthStatus.Poor:
                     Damage(1, 5);
                     break;
 

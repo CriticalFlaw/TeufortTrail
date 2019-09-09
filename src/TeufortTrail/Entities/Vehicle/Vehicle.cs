@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TeufortTrail.Entities.Item;
+using TeufortTrail.Entities.Person;
 using WolfCurses.Utility;
 
 namespace TeufortTrail.Entities.Vehicle
@@ -23,11 +25,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// Total number of miles the vehicle has traveled in this playthrough.
         /// </summary>
         public int Odometer { get; private set; }
-
-        /// <summary>
-        /// The pace at which the vehicle is travelling.
-        /// </summary>
-        public TravelPace Pace { get; private set; }
 
         /// <summary>
         /// The vehicle's current status. (Stopped, Moving, etc.)
@@ -95,7 +92,7 @@ namespace TeufortTrail.Entities.Vehicle
         {
             get
             {
-                var totalMiles = Mileage + (Inventory[Types.Food].TotalValue - 110) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
+                var totalMiles = Mileage + (100 / Passengers.Where(x => x.HealthState != HealthStatus.Dead).Count()) / 2.5 + 10 * GameCore.Instance.Random.NextDouble();
                 return (int)Math.Abs(totalMiles);
             }
         }
@@ -110,7 +107,6 @@ namespace TeufortTrail.Entities.Vehicle
             // Set the default vehicle state and values.
             ResetVehicle();
             Mileage = 1;
-            Pace = TravelPace.Steady;
             Status = VehicleStatus.Stopped;
         }
 
@@ -181,15 +177,6 @@ namespace TeufortTrail.Entities.Vehicle
         }
 
         /// <summary>
-        /// Sets the current travel pace rate.
-        /// </summary>
-        /// <param name="pace">The travel pace rate.</param>
-        public void ChangePace(TravelPace pace)
-        {
-            Pace = pace;
-        }
-
-        /// <summary>
         /// Check if the vehicle is currently operational and is able to move.
         /// </summary>
         /// <remarks>TODO: Add a condition to check that would cause the vehicle to be disabled.</remarks>
@@ -256,16 +243,6 @@ namespace TeufortTrail.Entities.Vehicle
     #region ENUMERABLES
 
     /// <summary>
-    /// Defines the pace at which the vehicle is travelling.
-    /// </summary>
-    public enum TravelPace
-    {
-        Steady = 1,
-        Strenuous = 2,
-        Grueling = 3
-    }
-
-    /// <summary>
     /// Defines the vehicle's current status.
     /// </summary>
     public enum VehicleStatus
@@ -280,9 +257,9 @@ namespace TeufortTrail.Entities.Vehicle
     /// </summary>
     public enum RationLevel
     {
-        Filling = 1,
+        Filling = 3,
         Meager = 2,
-        [Description("Bare Bones")] BareBones = 3
+        [Description("Bare Bones")] BareBones = 1
     }
 
     #endregion ENUMERABLES

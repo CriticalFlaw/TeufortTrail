@@ -68,7 +68,7 @@ namespace TeufortTrail.Screens.Travel.Store
         public override void OnInputBufferReturned(string input)
         {
             // Check that the user input is not empty.
-            if (string.IsNullOrWhiteSpace(input)) return;
+            if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input)) return;
 
             // Check that the user input is a valid enumerable.
             Enum.TryParse(input, out Types selectedItem);

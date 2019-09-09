@@ -44,9 +44,8 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         public override void OnFormPostCreate()
         {
-            base.OnFormPostCreate();
-
             // Initialize the game instance and marquee bar.
+            base.OnFormPostCreate();
             var game = GameCore.Instance;
             _continueTrail = new StringBuilder();
             _marqueeBar = new MarqueeBar();

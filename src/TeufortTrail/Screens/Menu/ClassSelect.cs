@@ -60,8 +60,8 @@ namespace TeufortTrail.Screens.MainMenu
         /// <remarks>TODO: Set player stats depending on the class chosen.</remarks>
         public override void OnInputBufferReturned(string input)
         {
-            // Skip this step if the input is null or empty.
-            if (string.IsNullOrWhiteSpace(input)) return;
+            // Check that the user input is not empty.
+            if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input)) return;
 
             // Cast user selection to the enumerable value.
             Enum.TryParse(input, out Classes playerChoice);

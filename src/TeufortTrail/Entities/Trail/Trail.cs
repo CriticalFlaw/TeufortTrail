@@ -89,6 +89,13 @@ namespace TeufortTrail.Entities.Trail
             var lastLocation = _locations.Last();
             lastLocation.LastLocation = true;
         }
+
+        public void InsertLocation(int index, Location.Location location)
+        {
+            // Marks the last location in the trail, if another location is inserted this will be re-calculated.
+            _locations.Insert(index, location);
+            FlagLastLocation();
+        }
     }
 
     public sealed class TrailBase : WolfCurses.Module.Module
@@ -210,6 +217,11 @@ namespace TeufortTrail.Entities.Trail
             // Set the status of the current location as currently being visited.
             CurrentLocation.Status = LocationStatus.Arrived;
             GameCore.Instance.WindowManager.Add(typeof(Travel));
+        }
+
+        public void InsertLocation(Location.Location location)
+        {
+            Trail.InsertLocation(LocationIndex + 1, location);
         }
     }
 }

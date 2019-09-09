@@ -8,16 +8,6 @@ namespace TeufortTrail.Screens.Travel.Commands
     [ParentWindow(typeof(Travel))]
     public sealed class StopToRest : InputForm<TravelInfo>
     {
-        #region VARIABLES
-
-        /// <summary>
-        /// The number of days the party will rest for at the location.
-        /// </summary>
-        /// <remarks>TODO: Let the player choose how many days to rest.</remarks>
-        private int daysToRest = 3;
-
-        #endregion VARIABLES
-
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Location.StopToRest" /> class.
         /// </summary>
@@ -32,9 +22,9 @@ namespace TeufortTrail.Screens.Travel.Commands
         protected override string OnDialogPrompt()
         {
             // Simulate the days to rest in time and event system, this will trigger random event game Windows if required. R
-            for (var x = 0; x < daysToRest; x++)
+            for (var x = 0; x < UserData.DaysToRest; x++)
                 GameCore.Instance.TakeTurn(false);
-            return $"{Environment.NewLine}Your party has rested for {daysToRest} days.{Environment.NewLine}{Environment.NewLine}";
+            return $"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.{Environment.NewLine}{Environment.NewLine}";
         }
 
         /// <summary>

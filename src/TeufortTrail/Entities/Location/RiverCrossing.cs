@@ -1,4 +1,4 @@
-﻿using TeufortTrail.Screens.River;
+﻿using WolfCurses.Utility;
 
 namespace TeufortTrail.Entities.Location
 {
@@ -32,5 +32,27 @@ namespace TeufortTrail.Entities.Location
             // Set the type of river crossing this location will be.
             RiverCrossOption = riverOption;
         }
+    }
+
+    /// <summary>
+    /// Defines the different types of river crossings, which will have different scenario and options for the player.
+    /// </summary>
+    public enum RiverCrossChoice
+    {
+        None = 0,
+        [Description("Ford across the river.")] Float = 1,
+        [Description("Take a ferry across.")] Ferry = 2,
+        [Description("Ask locals for help.")] Help = 3
+    }
+
+    /// <summary>
+    /// Defines the different types of river crossings, which will have different scenario and options for the player.
+    /// </summary>
+    public enum RiverOptions
+    {
+        None = 0,
+        Float = 1,
+        Ferry = 2,
+        Help = 3
     }
 }
