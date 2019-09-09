@@ -1,5 +1,5 @@
-﻿using TeufortTrail.Entities.Location;
-using TeufortTrail.Screens.River;
+﻿using System.Collections.Generic;
+using TeufortTrail.Entities.Location;
 
 namespace TeufortTrail.Entities.Trail
 {
@@ -19,6 +19,11 @@ namespace TeufortTrail.Entities.Trail
                 {
                     new Settlement("Dustbowl"),
                     new RiverCrossing("Badwater Basin", RiverOptions.Ferry),
+                    new ForkInRoad("Watchtower", new List<Location.Location>
+                    {
+                        new Landmark("Sawmill"),
+                        new TollInRoad("Decoy")
+                    }),
                     new Landmark("The Well"),
                     new Settlement("Coal Town"),
                     new Landmark("Ghost Town"),
@@ -27,6 +32,11 @@ namespace TeufortTrail.Entities.Trail
                     new Landmark("DeGroot Keep"),
                     new RiverCrossing("2Fort", RiverOptions.Float),
                     new Settlement("Gravel Pit"),
+                    new ForkInRoad("Cactus Canyon", new List<Location.Location>
+                    {
+                        new TollInRoad("Mercenary Park"),
+                        new Landmark("Asteroid")
+                    }),
                     new Settlement("Teufort, New Mexico")
                 };
 

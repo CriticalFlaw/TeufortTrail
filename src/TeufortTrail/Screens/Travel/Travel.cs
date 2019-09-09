@@ -4,9 +4,9 @@ using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Menu;
-using TeufortTrail.Screens.River;
 using TeufortTrail.Screens.Travel.River;
 using TeufortTrail.Screens.Travel.Store;
+using TeufortTrail.Screens.Travel.Toll;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
@@ -91,7 +91,6 @@ namespace TeufortTrail.Screens.Travel
             AddCommand(CheckMap, TravelCommands.CheckMap);
             AddCommand(CheckSupplies, TravelCommands.CheckSupplies);
             AddCommand(StopToRest, TravelCommands.StopToRest);
-            AddCommand(ChangePace, TravelCommands.ChangePace);
             AddCommand(ChangeRation, TravelCommands.ChangeRation);
 
             // Add additional commands depending on the current vehicle state.
@@ -127,10 +126,13 @@ namespace TeufortTrail.Screens.Travel
 
             // Throw to an appropriate screen depending on the location reached.
             if (GameCore.Instance.Trail.CurrentLocation is Landmark ||
-                GameCore.Instance.Trail.CurrentLocation is Settlement)
+                GameCore.Instance.Trail.CurrentLocation is Settlement ||
+                GameCore.Instance.Trail.CurrentLocation is TollInRoad)
                 SetForm(typeof(ContinueTrail));
             else if (GameCore.Instance.Trail.CurrentLocation is RiverCrossing)
-                SetForm(typeof(RiverCross));
+                SetForm(typeof(River.River));
+            else if (GameCore.Instance.Trail.CurrentLocation is ForkInRoad)
+                SetForm(typeof(ForkRoad));
         }
 
         /// <summary>
@@ -155,14 +157,6 @@ namespace TeufortTrail.Screens.Travel
         internal void StopToRest()
         {
             SetForm(typeof(Commands.StopToRest));
-        }
-
-        /// <summary>
-        /// Called when the player has chosen to change the travel pace rate.
-        /// </summary>
-        internal void ChangePace()
-        {
-            SetForm(typeof(Commands.ChangePace));
         }
 
         /// <summary>
@@ -203,15 +197,14 @@ namespace TeufortTrail.Screens.Travel
     /// </summary>
     public enum TravelCommands
     {
-        [Description("Continue on the trail")] ContinueOnTrail = 1,
-        [Description("Check the map")] CheckMap = 2,
-        [Description("Check supplies")] CheckSupplies = 3,
-        [Description("Stop to rest")] StopToRest = 4,
-        [Description("Change Pace")] ChangePace = 5,
-        [Description("Change Ration")] ChangeRation = 6,
-        [Description("Talk to people")] TalkToPeople = 7,
-        [Description("Buy supplies")] BuySupplies = 8,
-        [Description("Trade supplies")] TradeSupplies = 9
+        [Description("Continue on the Trail")] ContinueOnTrail = 1,
+        [Description("Check the Map")] CheckMap = 2,
+        [Description("Check Supplies")] CheckSupplies = 3,
+        [Description("Stop to Rest")] StopToRest = 4,
+        [Description("Change Ration")] ChangeRation = 5,
+        [Description("Talk to People")] TalkToPeople = 6,
+        [Description("Buy Bupplies")] BuySupplies = 7,
+        [Description("Trade Supplies")] TradeSupplies = 8
     }
 
     /// <summary>
@@ -230,26 +223,15 @@ namespace TeufortTrail.Screens.Travel
         public RiverGenerator River { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.TravelInfo" /> class.
+        /// References the toll object used for generating in-game toll road locations and events.
         /// </summary>
-        public TravelInfo()
-        {
-            Store = new StoreGenerator();
-        }
+        public TollGenerator Toll { get; private set; }
 
-        public void GenerateRiver()
-        {
-            // Creates a new river. Skip if river has already been created.
-            if (River != null) return;
-            River = new RiverGenerator();
-        }
-
-        public void DestroyRiver()
-        {
-            // Destroy the river data. Skip if the river is already null.
-            if (River == null) return;
-            River = null;
-        }
+        /// <summary>
+        /// The number of days the party will rest for at the location.
+        /// </summary>
+        /// <remarks>TODO: Let the player choose how many days to rest.</remarks>
+        public int DaysToRest = 3;
 
         /// <summary>
         /// Retrieves the current party status, resources and distance until next location.
@@ -264,7 +246,6 @@ namespace TeufortTrail.Screens.Travel
                 var _trailStatus = new StringBuilder();
                 _trailStatus.AppendLine($"Food:     {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
                 _trailStatus.AppendLine($"Odometer: {game.Vehicle.Odometer} miles ({game.Trail.NextLocationDistance} miles to next location)");
-                _trailStatus.AppendLine($"Pace:     {game.Vehicle.Pace.ToDescriptionAttribute()}");
                 _trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration.ToDescriptionAttribute()}");
                 _trailStatus.AppendLine("------------------------------------------");
                 return _trailStatus.ToString();
@@ -329,6 +310,40 @@ namespace TeufortTrail.Screens.Travel
                 // Generate the formatted table of supplies we will show to user.
                 return suppliesList.ToStringTable(new[] { "Item Name", "Amount" }, u => u.Item1, u => u.Item2);
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.TravelInfo" /> class.
+        /// </summary>
+        public TravelInfo()
+        {
+            Store = new StoreGenerator();
+        }
+
+        public void GenerateRiver()
+        {
+            // Creates a new river. Skip if river has already been created.
+            if (River != null) return;
+            River = new RiverGenerator();
+        }
+
+        public void DestroyRiver()
+        {
+            // Destroy the river data. Skip if the river is already null.
+            if (River == null) return;
+            River = null;
+        }
+
+        public void GenerateToll(TollInRoad tollRoad)
+        {
+            if (Toll != null) return;
+            Toll = new TollGenerator(tollRoad);
+        }
+
+        public void DestroyToll()
+        {
+            if (Toll == null) return;
+            Toll = null;
         }
     }
 }
