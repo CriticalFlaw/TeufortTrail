@@ -1,9 +1,7 @@
 ﻿namespace TeufortTrail.Entities.Location
 {
-    public sealed class Landmark : Location
+    public sealed class TollInRoad : Location
     {
-        #region VARIABLES
-
         /// <summary>
         /// Flags the location as having a store that the player can visit.
         /// </summary>
@@ -14,13 +12,13 @@
         /// </summary>
         public override bool TalkingAllowed => false;
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Location.Landmark" /> class.
+        /// Initializes a new instance of the <see cref="TollInRoad" /> class.
         /// </summary>
         /// <param name="name">Name of the location</param>
-        public Landmark(string name) : base(name)
+        public TollInRoad(string name) : base(name)
         {
         }
     }

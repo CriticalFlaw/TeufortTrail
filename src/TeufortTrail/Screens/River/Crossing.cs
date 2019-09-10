@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
-using TeufortTrail.Entities.Location;
-using TeufortTrail.Entities.Vehicle;
+using TeufortTrail.Entities;
 using WolfCurses.Core;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
@@ -9,20 +8,19 @@ using WolfCurses.Window.Form;
 
 namespace TeufortTrail.Screens.Travel.River
 {
+    /// <summary>
+    /// Displays the progress of crossing the river.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class Crossing : Form<TravelInfo>
     {
-        #region VARIABLES
-
-        private StringBuilder _crossing;
-
         /// <summary>
-        /// Animated sway bar that prints out as text, ping-pongs back and fourth between left and right side, moved by stepping it with tick.
+        /// Animated sway bar moving back and fourth, stepping at every tick.
         /// </summary>
         private MarqueeBar _marqueeBar;
 
         /// <summary>
-        /// Holds the text related to animated sway bar, each tick of simulation steps it.
+        /// Stores the text related to animated sway bar, each tick of simulation steps it.
         /// </summary>
         private string _swayBarText;
 
@@ -41,62 +39,58 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         private int RiverWidthCrossed;
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.River.Crossing" /> class.
+        /// Initializes a new instance of the <see cref="Crossing" /> class.
         /// </summary>
         public Crossing(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when this screen has been created and now needs information to be displayed.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         public override void OnFormPostCreate()
         {
-            // Initialize the game instance and marquee bar.
-            base.OnFormPostCreate();
-            var game = GameCore.Instance;
-            _crossing = new StringBuilder();
-            _marqueeBar = new MarqueeBar();
-
             // Advance the progress bar, step it to next phase.
+            base.OnFormPostCreate();
+            _marqueeBar = new MarqueeBar();
             _swayBarText = _marqueeBar.Step();
 
-            // Park the vehicle if it is not somehow by now.
-            game.Vehicle.Status = VehicleStatus.Stopped;
+            // Park the vehicle if it's not already.
+            GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
 
-            // Double check that the player can pay the toll, then subtract it from the player's total.
-            if ((game.Vehicle.Inventory[Entities.Item.Types.Money].TotalValue > UserData.River.FerryCost) && (UserData.River.FerryCost > 0))
+            // Double check that the player can pay to cross the river, subtract the payment from the inventory.
+            if ((GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue > UserData.River.FerryCost) && (UserData.River.FerryCost > 0))
             {
-                game.Vehicle.Inventory[Entities.Item.Types.Money].SubtractQuantity((int)UserData.River.FerryCost);
+                GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].SubtractQuantity((int)UserData.River.FerryCost);
                 UserData.River.FerryCost = 0;
             }
-
-            if ((game.Vehicle.Inventory[Entities.Item.Types.Hats].Quantity > UserData.River.HelpCost) && (UserData.River.HelpCost > 0))
+            else if ((GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].Quantity > UserData.River.HelpCost) && (UserData.River.HelpCost > 0))
             {
-                game.Vehicle.Inventory[Entities.Item.Types.Hats].SubtractQuantity(UserData.River.HelpCost);
+                GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].SubtractQuantity(UserData.River.HelpCost);
                 UserData.River.HelpCost = 0;
             }
         }
 
         /// <summary>
-        /// Called when the simulation is ticked.
+        /// Called when the simulation is ticked at a fixed or unpredictable interval.
         /// </summary>
+        /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
+        /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
         /// <remarks>TODO: Trigger events when the player is crossing the river.</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an inverval.
             base.OnTick(systemTick, skipDay);
             if (systemTick || DoneRiverCrossing) return;
-            var game = GameCore.Instance;
 
             // Advance the progress bar, step it to next phase.
             _swayBarText = _marqueeBar.Step();
 
-            // Increment the amount we have floated over the river.
-            RiverWidthCrossed += game.Random.Next(1, UserData.River.RiverWidth / 4);
+            // Increment the distance the party has travelled over the river.
+            RiverWidthCrossed += GameCore.Instance.Random.Next(1, UserData.River.RiverWidth / 4);
 
             // Check to see if we will finish crossing river before crossing more.
             if (RiverWidthCrossed >= UserData.River.RiverWidth)
@@ -109,15 +103,15 @@ namespace TeufortTrail.Screens.Travel.River
             // River crossing will allow ticking of people, vehicle, and other important events but others like consuming food are disabled.
             GameCore.Instance.TakeTurn(true);
 
-            // Attempt to throw a random event related to some failure happening with river crossing.
+            // TODO: Throw to a random event related to some disaster happening when crossing the river.
             switch (UserData.River.CrossingType)
             {
-                case RiverCrossChoice.Float:
-                case RiverCrossChoice.Ferry:
-                case RiverCrossChoice.Help:
+                case RiverOptions.Float:
+                case RiverOptions.Ferry:
+                case RiverOptions.Help:
                     break;
 
-                case RiverCrossChoice.None:
+                case RiverOptions.None:
                     throw new InvalidOperationException($"Invalid river crossing result choice {UserData.River.CrossingType}.");
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -125,32 +119,28 @@ namespace TeufortTrail.Screens.Travel.River
         }
 
         /// <summary>
-        /// Called when the user has inputted something that needs to be processed.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
         public override void OnInputBufferReturned(string input)
         {
             // Skip if we are still crossing the river.
-            if (RiverWidthCrossed < UserData.River.RiverWidth)
-                return;
+            if (RiverWidthCrossed < UserData.River.RiverWidth) return;
             SetForm(typeof(CrossingResult));
         }
 
         /// <summary>
-        /// Returns the text-only representation of the current game screen.
+        /// Called when the text representation of the current game screen needs to be returned.
         /// </summary>
         public override string OnRenderForm()
         {
-            // Show the total river crossing progress.
-            _crossing.Clear();
+            // Display the river crossing progress. Wait for user input.
+            var _crossing = new StringBuilder();
             _crossing.AppendLine($"{Environment.NewLine}{_swayBarText}");
             _crossing.AppendLine("------------------------------------------");
             _crossing.AppendLine($"Crossing the {GameCore.Instance.Trail.CurrentLocation.Name}");
             _crossing.AppendLine($"River crossed: {RiverWidthCrossed:N0}/{UserData.River.RiverWidth:N0} feet");
             _crossing.AppendLine("------------------------------------------");
-
-            // Wait for user input...
-            if (DoneRiverCrossing)
-                _crossing.AppendLine(InputManager.PRESSENTER);
+            if (DoneRiverCrossing) _crossing.AppendLine(InputManager.PRESSENTER);
             return _crossing.ToString();
         }
     }

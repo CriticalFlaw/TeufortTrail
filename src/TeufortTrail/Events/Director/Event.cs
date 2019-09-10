@@ -9,7 +9,7 @@ namespace TeufortTrail.Events.Director
     public sealed class Event : Window<EventCommands, EventInfo>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Events.Director.Event" /> class.
+        /// Initializes a new instance of the <see cref="Event" /> class.
         /// </summary>
         public Event(GameCore game) : base(game)
         {

@@ -6,11 +6,12 @@ using WolfCurses.Window.Form;
 
 namespace TeufortTrail.Screens.Travel.Store
 {
+    /// <summary>
+    /// Displays a confirmation message, asking the player how much of the item they want to buy.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class StorePurchase : Form<TravelInfo>
     {
-        #region VARIABLES
-
         private StringBuilder _storePurchase;
 
         /// <summary>
@@ -19,37 +20,34 @@ namespace TeufortTrail.Screens.Travel.Store
         private Item PurchaseItem;
 
         /// <summary>
-        /// Defines the limit on how many of this item the player can purchase.
+        /// Defines the limit on how much of this item the player can have.
         /// </summary>
         private int PurchaseLimit;
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Store.StorePurchase" /> class.
+        /// Initializes a new instance of the <see cref="StorePurchase" /> class.
         /// </summary>
         public StorePurchase(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when this screen has been created and now needs information to be displayed.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         public override void OnFormPostCreate()
         {
+            // Determine the current player balance and the limit on their purchase.
             base.OnFormPostCreate();
+            PurchaseLimit = (int)((GameCore.Instance.Vehicle.Balance - UserData.Store.TotalTransactionCost) / UserData.Store.SelectedItem.Value);
 
-            // Determine the current player balance and the limit on their purchasing.
-            var currentBalance = (int)(GameCore.Instance.Vehicle.Balance - UserData.Store.TotalTransactionCost);
-            PurchaseLimit = (int)(currentBalance / UserData.Store.SelectedItem.Value);
-
-            // Check that the limist are within range.
-            if (PurchaseLimit < 0)
-                PurchaseLimit = 0;
+            // Check that the limit is within range.
+            if (PurchaseLimit < 0) PurchaseLimit = 0;
             if (PurchaseLimit > UserData.Store.SelectedItem.MaxQuantity)
                 PurchaseLimit = UserData.Store.SelectedItem.MaxQuantity;
 
-            // Display a message indicating how much of this item the player can afford.
+            // Display a message indicating how many of this item the player can buy.
             _storePurchase = new StringBuilder();
             _storePurchase.AppendLine($"{Environment.NewLine}You can afford {PurchaseLimit} {UserData.Store.SelectedItem.Name.ToLowerInvariant()}.");
             _storePurchase.Append("How many do you want to buy?");
@@ -57,9 +55,8 @@ namespace TeufortTrail.Screens.Travel.Store
         }
 
         /// <summary>
-        /// Called when the user has inputted something that needs to be processed.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        /// <param name="input">User input</param>
         public override void OnInputBufferReturned(string input)
         {
             // Check that the user input is a valid intenger.
@@ -77,7 +74,7 @@ namespace TeufortTrail.Screens.Travel.Store
         }
 
         /// <summary>
-        /// Returns the text-only representation of the current game screen.
+        /// Called when the text representation of the current game screen needs to be returned.
         /// </summary>
         public override string OnRenderForm()
         {

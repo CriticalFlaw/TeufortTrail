@@ -5,25 +5,23 @@
     /// </summary>
     public abstract class Location : IEntity
     {
-        #region VARIBLES
-
         /// <summary>
         /// Display name of the location as it should be known to the player.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Defines the status of the location in relation to the player's trail progress.
+        /// Defines the status of the location in relation to player's trail progression.
         /// </summary>
         public LocationStatus Status { get; set; }
 
         /// <summary>
-        /// Total distance to the next location that the player must travel.
+        /// Distance to the next location that the player must travel.
         /// </summary>
         public int TotalDistance { get; set; }
 
         /// <summary>
-        /// Flags the location as just being arrived at by the player.
+        /// Flags the location as having just been arrived at by the player.
         /// </summary>
         public bool ArrivalFlag { get; set; }
 
@@ -42,10 +40,10 @@
         /// </summary>
         public abstract bool TalkingAllowed { get; }
 
-        #endregion VARIBLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Location.Location" /> class.
+        /// Initializes a new instance of the <see cref="Location" /> class.
         /// </summary>
         /// <param name="name">Name of the location</param>
         protected Location(string name)
@@ -55,26 +53,14 @@
         }
 
         /// <summary>
-        /// Called when the simulation is ticked.
+        /// Called when the simulation is ticked at a fixed or unpredictable interval.
         /// </summary>
+        /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
+        /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
         public void OnTick(bool systemTick, bool skipDay = false)
         {
-            // Only tick vehicle at an inverval.
+            // Only tick at an inverval.
             if (systemTick) return;
         }
     }
-
-    #region ENUMERABLES
-
-    /// <summary>
-    /// Defines the status of the location in relation to the player's trail progress.
-    /// </summary>
-    public enum LocationStatus
-    {
-        Unreached = 0,
-        Arrived = 1,
-        Departed = 2
-    }
-
-    #endregion ENUMERABLES
 }

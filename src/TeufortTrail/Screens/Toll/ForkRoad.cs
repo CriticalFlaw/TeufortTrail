@@ -9,30 +9,32 @@ using WolfCurses.Window.Form;
 
 namespace TeufortTrail.Screens.Travel.Toll
 {
+    /// <summary>
+    /// Displays the available routes when the player encounters a fork in the road.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class ForkRoad : Form<TravelInfo>
     {
-        #region VARIABLES
-
-        private StringBuilder _forkRoad;
-
+        /// <summary>
+        /// List of possible paths that the player can choose from.
+        /// </summary>
         private Dictionary<int, Location> PathChoices;
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Toll.ForkRoad" /> class.
+        /// Initializes a new instance of the <see cref="ForkRoad" /> class.
         /// </summary>
         public ForkRoad(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when this screen has been created and now needs information to be displayed.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         public override void OnFormPostCreate()
         {
-            // Create a dictionary that represents all the choices with index starting at one not zero.
+            // Create a dictionary of possible path choices.
             base.OnFormPostCreate();
             PathChoices = new Dictionary<int, Location>();
             var forkInRoad = GameCore.Instance.Trail.CurrentLocation as ForkInRoad;
@@ -41,7 +43,7 @@ namespace TeufortTrail.Screens.Travel.Toll
         }
 
         /// <summary>
-        /// Called when the user has inputted something that needs to be processed.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
         public override void OnInputBufferReturned(string input)
         {
@@ -68,18 +70,17 @@ namespace TeufortTrail.Screens.Travel.Toll
         }
 
         /// <summary>
-        /// Returns the text-only representation of the current game screen.
+        /// Called when the text representation of the current game screen needs to be returned.
         /// </summary>
         public override string OnRenderForm()
         {
-            // Clear the string builder and being building a new fork in the road based on current location skip choices.
-            _forkRoad = new StringBuilder();
+            var _forkRoad = new StringBuilder();
             _forkRoad.AppendLine($"{Environment.NewLine}You encounter a fork in the road. You may:{Environment.NewLine}");
             foreach (var pathChoice in PathChoices)
             {
-                _forkRoad.AppendLine($"{pathChoice.Key}. Travel to {pathChoice.Value.Name}");
-                if (pathChoice.Key == PathChoices.Last().Key)
-                    _forkRoad.Append($"{pathChoice.Key + 1}. Check the Map");
+                _forkRoad.AppendLine((pathChoice.Key == PathChoices.Last().Key)
+                    ? $"{pathChoice.Key + 1}. Check the Map"
+                    : $"{pathChoice.Key}. Travel to {pathChoice.Value.Name}");
             }
             return _forkRoad.ToString();
         }

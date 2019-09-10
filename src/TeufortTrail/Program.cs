@@ -63,7 +63,6 @@ namespace TeufortTrail
         /// <summary>
         /// Outputs all the queued game text to the screen.
         /// </summary>
-        /// <param name="input"></param>
         private static void ScreenBufferDirtyEvent(string input)
         {
             var content = input.Split(new[] { Environment.NewLine }, StringSplitOptions.None);

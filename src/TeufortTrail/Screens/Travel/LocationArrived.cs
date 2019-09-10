@@ -1,76 +1,67 @@
 ﻿using System;
 using System.Text;
-using TeufortTrail.Entities.Vehicle;
+using TeufortTrail.Entities;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
 namespace TeufortTrail.Screens.Travel
 {
+    /// <summary>
+    /// Displays a message letting the player know they have arrived at a new location.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class LocationArrived : InputForm<TravelInfo>
     {
-        #region VARIABLES
-
-        private StringBuilder _locationArrived;
-
         /// <summary>
-        /// Defines the kind of dialog prompt this screen will be (Yes/No or Press Any Key)
+        /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
         /// </summary>
         protected override DialogType DialogType => DialogType.YesNo;
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.LocationArrived" /> class.
+        /// Initializes a new instance of the <see cref="LocationArrived" /> class.
         /// </summary>
         public LocationArrived(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when the screen has been created.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         public override void OnFormPostCreate()
         {
-            base.OnFormPostCreate();
             // Stop the vehicle because it has arrived at a location.
+            base.OnFormPostCreate();
             GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
         }
 
         /// <summary>
-        /// Called when the screen needs a prompt to be displayed to the player.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            _locationArrived = new StringBuilder();
             // Display a message asking the player if they want to investigate the current location.
+            var _locationArrived = new StringBuilder();
             _locationArrived.AppendLine($"{Environment.NewLine}You've arrived at {GameCore.Instance.Trail.CurrentLocation.Name}.");
             _locationArrived.Append("Would you like to look around? Y/N");
             return _locationArrived.ToString();
         }
 
         /// <summary>
-        /// Process the player's response to the prompt message.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
+        /// <remarks>TODO: Refactor</remarks>
         protected override void OnDialogResponse(DialogResponse response)
         {
-            // Process player selection in regards to whether or not they want to investigate the current location.
-            switch (response)
+            if (response == DialogResponse.Yes)
+                ClearForm();
+            else if (response == DialogResponse.No || response == DialogResponse.Custom)
             {
-                case DialogResponse.Custom:
-                case DialogResponse.No:
-                    var travelMode = ParentWindow as Travel;
-                    if (travelMode == null) throw new InvalidCastException("Unable to cast parent game Windows into travel game Windows when it should be that!");
-                    travelMode.ContinueTrail();
-                    break;
-
-                case DialogResponse.Yes:
-                    ClearForm();
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(response), response, null);
+                var travelMode = ParentWindow as Travel;
+                if (travelMode == null) throw new InvalidCastException("Unable to cast parent game Windows into travel game Windows when it should be that!");
+                travelMode.ContinueTrail();
             }
         }
     }

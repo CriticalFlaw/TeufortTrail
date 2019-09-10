@@ -9,7 +9,7 @@ namespace TeufortTrail.Entities.Trail
     public static class TrailRegistry
     {
         /// <summary>
-        /// The Teufort Trail, taking the player across the world of Team Fortress 2
+        /// The Teufort Trail, taking the player across the world of Team Fortress 2.
         /// </summary>
         public static Trail TeufortTrail
         {
@@ -18,7 +18,7 @@ namespace TeufortTrail.Entities.Trail
                 var teufortTrail = new Location.Location[]
                 {
                     new Settlement("Dustbowl"),
-                    new RiverCrossing("Badwater Basin", RiverOptions.Ferry),
+                    new RiverCrossing("Badwater Basin", RiverOptions.Help),
                     new ForkInRoad("Watchtower", new List<Location.Location>
                     {
                         new Landmark("Sawmill"),
@@ -27,7 +27,7 @@ namespace TeufortTrail.Entities.Trail
                     new Landmark("The Well"),
                     new Settlement("Coal Town"),
                     new Landmark("Ghost Town"),
-                    new RiverCrossing("Hale River", RiverOptions.Float),
+                    new RiverCrossing("Hale River", RiverOptions.Ferry),
                     new Settlement("Manhattan"),
                     new Landmark("DeGroot Keep"),
                     new RiverCrossing("2Fort", RiverOptions.Float),

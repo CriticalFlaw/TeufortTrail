@@ -10,7 +10,7 @@ namespace TeufortTrail.Events.Director
     public sealed class EventExecutor : InputForm<EventInfo>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Events.Director.EventExecutor" /> class.
+        /// Initializes a new instance of the <see cref="EventExecutor" /> class.
         /// </summary>
         public EventExecutor(IWindow window) : base(window)
         {

@@ -6,25 +6,29 @@ using WolfCurses.Window.Form.Input;
 
 namespace TeufortTrail.Screens.Travel.Commands
 {
+    /// <summary>
+    /// Displays the party's current resource supply and individual member status.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class CheckSupplies : InputForm<TravelInfo>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Location.CheckSupplies" /> class.
+        /// Initializes a new instance of the <see cref="CheckSupplies" /> class.
         /// </summary>
         public CheckSupplies(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when the screen needs a prompt to be displayed to the player.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            // Build up representation of supplies once in constructor and then reference when asked for render.
+            // Increment the turn counter without advancing time.
             GameCore.Instance.TakeTurn(true);
+
+            // Generate a table of resources and party status.
             var _checkSupplies = new StringBuilder();
-            // Return the generated tables.
             _checkSupplies.AppendLine($"{Environment.NewLine}Your Party:{Environment.NewLine}");
             _checkSupplies.AppendLine(TravelInfo.PartyStatus);
             _checkSupplies.AppendLine($"Your Supplies:{Environment.NewLine}");
@@ -33,7 +37,7 @@ namespace TeufortTrail.Screens.Travel.Commands
         }
 
         /// <summary>
-        /// Process the player's response to the prompt message.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {

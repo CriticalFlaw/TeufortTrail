@@ -1,39 +1,34 @@
 ﻿using System;
-using System.Text;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
 namespace TeufortTrail.Screens.Menu
 {
+    /// <summary>
+    /// Displays a victory message when the player finishes the game.
+    /// </summary>
     [ParentWindow(typeof(GameOver))]
     public sealed class GameOver : InputForm<GameOverInfo>
     {
-        #region VARIABLES
-
-        private StringBuilder _gameOver;
-
-        #endregion VARIABLES
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Menu.GameOver" /> class.
+        /// Initializes a new instance of the <see cref="GameOver" /> class.
         /// </summary>
         public GameOver(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when the screen needs a prompt to be displayed to the player.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
+        /// <remarks>TODO: Display the player's total score. Expand the victory message.</remarks>
         protected override string OnDialogPrompt()
         {
-            _gameOver = new StringBuilder();
-            _gameOver.AppendLine($"{Environment.NewLine}Congratulations! You have made it to Teufort!");
-            return _gameOver.ToString();
+            return $"{Environment.NewLine}Congratulations! You have made it to Teufort!";
         }
 
         /// <summary>
-        /// Process the player's response to the prompt message.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {

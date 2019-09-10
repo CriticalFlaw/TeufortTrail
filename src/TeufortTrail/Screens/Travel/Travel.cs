@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TeufortTrail.Entities.Item;
+using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Menu;
 using TeufortTrail.Screens.Travel.River;
@@ -13,10 +13,13 @@ using WolfCurses.Window.Control;
 
 namespace TeufortTrail.Screens.Travel
 {
+    /// <summary>
+    /// Displays a list of commands the player can perform while stopped.
+    /// </summary>
     public sealed class Travel : Window<TravelCommands, TravelInfo>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Travel" /> class.
+        /// Initializes a new instance of the <see cref="Travel" /> class.
         /// </summary>
         public Travel(GameCore game) : base(game)
         {
@@ -29,7 +32,7 @@ namespace TeufortTrail.Screens.Travel
         }
 
         /// <summary>
-        /// Called when the screen has been activated.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         public override void OnWindowPostCreate()
         {
@@ -38,11 +41,17 @@ namespace TeufortTrail.Screens.Travel
                 SetForm(typeof(StoreWelcome));
         }
 
+        /// <summary>
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
+        /// </summary>
         public override void OnWindowActivate()
         {
             ArriveAtLocation();
         }
 
+        /// <summary>
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
+        /// </summary>
         public override void OnWindowAdded()
         {
             if (!GameCore.Instance.Trail.CurrentLocation.ArrivalFlag) return;
@@ -228,7 +237,7 @@ namespace TeufortTrail.Screens.Travel
         public TollGenerator Toll { get; private set; }
 
         /// <summary>
-        /// The number of days the party will rest for at the location.
+        /// Number of days the party will rest for at the location.
         /// </summary>
         /// <remarks>TODO: Let the player choose how many days to rest.</remarks>
         public int DaysToRest = 3;
@@ -242,11 +251,11 @@ namespace TeufortTrail.Screens.Travel
             get
             {
                 var game = GameCore.Instance;
-                var foodCount = game.Vehicle.Inventory[Types.Food];
+                var foodCount = game.Vehicle.Inventory[ItemTypes.Food];
                 var _trailStatus = new StringBuilder();
                 _trailStatus.AppendLine($"Food:     {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
                 _trailStatus.AppendLine($"Odometer: {game.Vehicle.Odometer} miles ({game.Trail.NextLocationDistance} miles to next location)");
-                _trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration.ToDescriptionAttribute()}");
+                _trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration}");
                 _trailStatus.AppendLine("------------------------------------------");
                 return _trailStatus.ToString();
             }
@@ -286,19 +295,19 @@ namespace TeufortTrail.Screens.Travel
                 {
                     switch (item.Key)
                     {
-                        case Types.Food:
+                        case ItemTypes.Food:
                             suppliesList.Add(new Tuple<string, string>("Food", item.Value.TotalWeight.ToString("N0")));
                             break;
 
-                        case Types.Hats:
+                        case ItemTypes.Clothing:
                             suppliesList.Add(new Tuple<string, string>("Hats", item.Value.Quantity.ToString("N0")));
                             break;
 
-                        case Types.Ammo:
+                        case ItemTypes.Ammo:
                             suppliesList.Add(new Tuple<string, string>("Bullets", item.Value.Quantity.ToString("N0")));
                             break;
 
-                        case Types.Money:
+                        case ItemTypes.Money:
                             suppliesList.Add(new Tuple<string, string>("Money", item.Value.TotalValue.ToString("C")));
                             break;
 
@@ -313,7 +322,7 @@ namespace TeufortTrail.Screens.Travel
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.TravelInfo" /> class.
+        /// Initializes a new instance of the <see cref="TravelInfo" /> class.
         /// </summary>
         public TravelInfo()
         {

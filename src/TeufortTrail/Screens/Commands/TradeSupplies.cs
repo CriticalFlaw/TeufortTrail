@@ -9,89 +9,100 @@ using WolfCurses.Window.Form.Input;
 
 namespace TeufortTrail.Screens.Travel.Commands
 {
+    /// <summary>
+    /// Displays a randomly generated trade offer for the player.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class TradeSupplies : InputForm<TravelInfo>
     {
-        #region VARIABLES
-
-        private StringBuilder _tradeSupplies;
-        private List<TradeGenerator> TradeOffers;
+        /// <summary>
+        /// Defines the index in the list of trade offers, which will be displayed to the player.
+        /// </summary>
         private int TradeIndex;
-        private bool PlayerCanTrade;
-        protected override DialogType DialogType => ((TradeOffers != null) && (TradeOffers.Count > 0) && PlayerCanTrade) ? DialogType.YesNo : DialogType.Prompt;
-
-        #endregion VARIABLES
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.Commands.TradeSupplies" /> class.
+        /// Flags the player as being able to accept or deny a given trade offer.
+        /// </summary>
+        private bool PlayerCanTrade;
+
+        /// <summary>
+        /// Defines all the generated trade offers that will be presented to the player.
+        /// </summary>
+        private List<TradeGenerator> TradeOffers;
+
+        /// <summary>
+        /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
+        /// </summary>
+        protected override DialogType DialogType => ((TradeOffers != null) && (TradeOffers.Count > 0) && PlayerCanTrade) ? DialogType.YesNo : DialogType.Prompt;
+
+        //-------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TradeSupplies" /> class.
         /// </summary>
         public TradeSupplies(IWindow window) : base(window)
         {
-            _tradeSupplies = new StringBuilder();
         }
 
         /// <summary>
-        /// Called when the screen needs a prompt to be displayed to the player.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         protected override string OnDialogPrompt()
         {
+            // Increment the turn counter without advancing time.
             GameCore.Instance.TakeTurn(false);
-            _tradeSupplies.Clear();
 
-            // Display the player's current supply.
+            // Display the party's current resource supply.
+            var _tradeSupplies = new StringBuilder();
             _tradeSupplies.AppendLine($"{Environment.NewLine}Your Supplies:{Environment.NewLine}");
             _tradeSupplies.AppendLine(TravelInfo.PartySupplies);
 
-            // Randomly generate the trades for this location.
+            // Generate random trade offers for this location.
             GenerateTrades();
 
             // Check that there are trade offers from the towns folk for the player.
-            if (TradeOffers.Count > 0)
+            if (TradeOffers.Count <= 0)
+                // Let the player know that there are no pending trade offers at this time.
+                _tradeSupplies.AppendLine($"Nobody wants to trade with you.{Environment.NewLine}");
+            else
             {
                 // Display a random trade from the list of trade offers.
                 TradeIndex = GameCore.Instance.Random.Next(TradeOffers.Count);
                 _tradeSupplies.AppendLine($"You meet another trader who wants {TradeOffers[TradeIndex].WantedItem.Quantity:N0} {TradeOffers[TradeIndex].WantedItem.Name.ToLowerInvariant()} in exchange for {TradeOffers[TradeIndex].OfferedItem.Quantity:N0} {TradeOffers[TradeIndex].OfferedItem.Name.ToLowerInvariant()}.{Environment.NewLine}");
 
-                // Display the last trade message based on whether or not the player has the item the trader wants.
+                // Display the prompt based on whether or not the player has the item the trader wants.
                 PlayerCanTrade = GameCore.Instance.Vehicle.HasInventoryItem(TradeOffers[TradeIndex].WantedItem);
                 _tradeSupplies.Append(PlayerCanTrade
                     ? $"Are you willing to trade? Y/N{Environment.NewLine}"
                     : $"Unfortunatly, you don't have this.{Environment.NewLine}");
             }
-            else
-                // Let the player know that there are no pending trades at this time.
-                _tradeSupplies.AppendLine($"Nobody wants to trade with you.{Environment.NewLine}");
             return _tradeSupplies.ToString();
         }
 
         /// <summary>
-        /// Process the player's response to the prompt message.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
-            switch (response)
+            if (response == DialogResponse.Yes)
             {
-                case DialogResponse.Yes:
-                    // Remove the quantity of item from the vehicle inventory the trader wants and give the player the item the traded for.
-                    GameCore.Instance.Vehicle.Inventory[TradeOffers[TradeIndex].WantedItem.Category].SubtractQuantity(TradeOffers[TradeIndex].WantedItem.Quantity);
-                    GameCore.Instance.Vehicle.Inventory[TradeOffers[TradeIndex].OfferedItem.Category].AddQuantity(TradeOffers[TradeIndex].OfferedItem.Quantity);
-                    break;
-
-                case DialogResponse.Custom:
-                case DialogResponse.No:
-                default:
-                    break;
+                // Subtract the item quantity from the party inventory and add the quantity of the item the player traded for.
+                GameCore.Instance.Vehicle.Inventory[TradeOffers[TradeIndex].WantedItem.Category].SubtractQuantity(TradeOffers[TradeIndex].WantedItem.Quantity);
+                GameCore.Instance.Vehicle.Inventory[TradeOffers[TradeIndex].OfferedItem.Category].AddQuantity(TradeOffers[TradeIndex].OfferedItem.Quantity);
             }
             ClearForm();
             return;
         }
 
+        /// <summary>
+        /// Generate a list of trade offers that will be presented to the player.
+        /// </summary>
         private void GenerateTrades()
         {
             // Create a new list of trade offers.
             TradeOffers = new List<TradeGenerator>();
 
-            // Determine how many trade offers will be generated. Drop out if the number is zero.
+            // Determine how many trade offers will be generated. Bail out if the number is zero.
             var totalTrades = GameCore.Instance.Random.Next(0, GameCore.Instance.Random.Next(1, 100));
             if (totalTrades <= 0) return;
 
@@ -99,9 +110,9 @@ namespace TeufortTrail.Screens.Travel.Commands
             for (var x = 0; x < totalTrades; x++)
                 TradeOffers.Add(new TradeGenerator());
 
-            // Cleanup the list of trade offers, removing duplicates and errors.
-            var _TradeOffers = new List<TradeGenerator>(TradeOffers);
-            foreach (var trade in _TradeOffers)
+            // Cleanup the trade offers list, remove duplicates and errors.
+            var _tradeOffers = new List<TradeGenerator>(TradeOffers);
+            foreach (var trade in _tradeOffers)
             {
                 // Remove trades that are the same item twice.
                 if ((trade.WantedItem != null) && (trade.OfferedItem != null) && (trade.WantedItem.Category != trade.OfferedItem.Category)) continue;
@@ -110,17 +121,18 @@ namespace TeufortTrail.Screens.Travel.Commands
         }
     }
 
+    /// <summary>
+    /// Creates a trade offer, by pulling a resource item from the schema of random type and quantity.
+    /// </summary>
     public sealed class TradeGenerator
     {
-        #region VARIABLES
-
         public Item WantedItem { get; }
         public Item OfferedItem { get; }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.TradeGenerator" /> class.
+        /// Initializes a new instance of the <see cref="TradeGenerator" /> class.
         /// </summary>
         public TradeGenerator()
         {

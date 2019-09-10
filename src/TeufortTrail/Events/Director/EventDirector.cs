@@ -5,8 +5,6 @@ namespace TeufortTrail.Events.Director
 {
     public sealed class EventDirector : WolfCurses.Module.Module
     {
-        #region VARIABLES
-
         private EventFactory _eventFactory;
 
         /// <summary>
@@ -19,10 +17,10 @@ namespace TeufortTrail.Events.Director
         /// </summary>
         public delegate void EventTriggered(IEntity gameEntity, EventProduct eventProduct);
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Events.Director.EventDirector" /> class.
+        /// Initializes a new instance of the <see cref="EventDirector" /> class.
         /// </summary>
         public EventDirector()
         {
@@ -65,8 +63,6 @@ namespace TeufortTrail.Events.Director
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
     public sealed class DirectorEventAttribute : Attribute
     {
-        #region VARIABLES
-
         /// <summary>
         /// Defines the event type (Vehicle, Party, Weather etc.).
         /// </summary>
@@ -77,10 +73,10 @@ namespace TeufortTrail.Events.Director
         /// </summary>
         public EventExecution EventExecutionType { get; }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Events.Director.DirectorEventAttribute" /> class.
+        /// Initializes a new instance of the <see cref="DirectorEventAttribute" /> class.
         /// </summary>
         public DirectorEventAttribute(EventCategory eventCategory, EventExecution eventExecutionType = EventExecution.RandomOrManual)
         {

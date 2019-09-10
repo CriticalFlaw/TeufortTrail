@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
 using WolfCurses.Utility;
 using WolfCurses.Window;
@@ -7,24 +8,30 @@ using WolfCurses.Window.Form;
 
 namespace TeufortTrail.Screens.Travel.River
 {
+    /// <summary>
+    /// Displays the notification to the player, letting them know of the river they have to cross.
+    /// </summary>
     [ParentWindow(typeof(Travel))]
     public sealed class River : Form<TravelInfo>
     {
-        #region VARIABLES
-
         private StringBuilder _river;
 
-        #endregion VARIABLES
+        /// <summary>
+        /// Retrieve instance of the river that will be crossed.
+        /// </summary>
+        private RiverCrossing river = GameCore.Instance.Trail.CurrentLocation as RiverCrossing;
+
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.River.RiverCross" /> class.
+        /// Initializes a new instance of the <see cref="River" /> class.
         /// </summary>
         public River(IWindow window) : base(window)
         {
         }
 
         /// <summary>
-        /// Called when this screen has been created and now needs information to be displayed.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         public override void OnFormPostCreate()
         {
@@ -33,33 +40,41 @@ namespace TeufortTrail.Screens.Travel.River
             _river = new StringBuilder();
             _river.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}");
             _river.AppendLine("------------------------------------------");
-            _river.AppendLine($"{Environment.NewLine}You must cross the river in order to continue.{Environment.NewLine}");
-            _river.AppendLine($"1. {RiverCrossChoice.Float.ToDescriptionAttribute()}");
-            _river.AppendLine($"2. {RiverCrossChoice.Ferry.ToDescriptionAttribute()}");
-            _river.AppendLine($"3. {RiverCrossChoice.Help.ToDescriptionAttribute()}");
+            _river.AppendLine($"{Environment.NewLine}A {UserData.River.RiverWidth} feet wide river separates from your trail.");
+            _river.AppendLine($"You must cross it in order to continue.{Environment.NewLine}");
+            _river.AppendLine($"1. {RiverOptions.Float.ToDescriptionAttribute()}");
+            if (river.CrossingOption == RiverOptions.Ferry)
+                _river.AppendLine($"2. {RiverOptions.Ferry.ToDescriptionAttribute()}");
+            else if (river.CrossingOption == RiverOptions.Help)
+                _river.AppendLine($"2. {RiverOptions.Help.ToDescriptionAttribute()}");
         }
 
         /// <summary>
-        /// Called when the user has inputted something that needs to be processed.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        /// <param name="input">User input</param>
         public override void OnInputBufferReturned(string input)
         {
+            // Check that the user input is not empty.
+            if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input)) return;
+
             switch (input.ToUpperInvariant())
             {
                 case "1":
-                    UserData.River.CrossingType = RiverCrossChoice.Float;
-                    SetForm(typeof(Crossing)); // TEMP
+                    UserData.River.CrossingType = RiverOptions.Float;
+                    SetForm(typeof(Crossing));
                     break;
 
                 case "2":
-                    UserData.River.CrossingType = RiverCrossChoice.Ferry;
-                    SetForm(typeof(Ferry)); // TEMP
-                    break;
-
-                case "3":
-                    UserData.River.CrossingType = RiverCrossChoice.Help;
-                    SetForm(typeof(Help)); // TEMP
+                    if (river.CrossingOption == RiverOptions.Ferry)
+                    {
+                        UserData.River.CrossingType = RiverOptions.Ferry;
+                        SetForm(typeof(Ferry));
+                    }
+                    else if (river.CrossingOption == RiverOptions.Help)
+                    {
+                        UserData.River.CrossingType = RiverOptions.Help;
+                        SetForm(typeof(Help));
+                    }
                     break;
 
                 default:
@@ -68,7 +83,7 @@ namespace TeufortTrail.Screens.Travel.River
         }
 
         /// <summary>
-        /// Returns the text-only representation of the current game screen.
+        /// Called when the text representation of the current game screen needs to be returned.
         /// </summary>
         public override string OnRenderForm()
         {
@@ -78,12 +93,10 @@ namespace TeufortTrail.Screens.Travel.River
 
     public sealed class RiverGenerator
     {
-        #region VARIABLES
-
         /// <summary>
-        /// Determines how the vehicle would be crossing the river.
+        /// Determines how the vehicle can cross the river.
         /// </summary>
-        public RiverCrossChoice CrossingType { get; internal set; }
+        public RiverOptions CrossingType { get; internal set; }
 
         /// <summary>
         /// How much the ferry will charge the player to cross the river.
@@ -105,18 +118,18 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         public bool DisasterHappened { get; set; }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Travel.River.RiverGenerator" />class.
+        /// Initializes a new instance of the <see cref="RiverGenerator" />class.
         /// </summary>
         /// <remarks>TODO: Set the values in relation to the player's current monetary balance.</remarks>
         public RiverGenerator()
         {
-            CrossingType = RiverCrossChoice.None;
+            CrossingType = RiverOptions.None;
             HelpCost = GameCore.Instance.Random.Next(3, 10);
             FerryCost = GameCore.Instance.Random.Next(5, 10);
-            RiverWidth = GameCore.Instance.Random.Next(100, 1500);
+            RiverWidth = GameCore.Instance.Random.Next(120, 1200);
         }
     }
 }

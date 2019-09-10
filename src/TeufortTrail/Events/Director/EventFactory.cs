@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TeufortTrail.Entities;
 using WolfCurses.Utility;
 
 namespace TeufortTrail.Events.Director
@@ -11,17 +12,15 @@ namespace TeufortTrail.Events.Director
     /// </summary>
     public sealed class EventFactory
     {
-        #region VARIABLES
-
         /// <summary>
         /// References all of the events that have been triggered, in the order they occurred.
         /// </summary>
         private Dictionary<EventKey, Type> EventReference { get; }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Events.Director.EventFactory" /> class.
+        /// Initializes a new instance of the <see cref="EventFactory" /> class.
         /// </summary>
         public EventFactory()
         {
@@ -42,10 +41,7 @@ namespace TeufortTrail.Events.Director
                 {
                     // Create key for the event execution counter.
                     var eventKey = new EventKey((EventCategory)modeType, eventObject.Name, eventAttribute.EventExecutionType);
-
-                    // Reference type for creating instances.
-                    if (!EventReference.ContainsKey(eventKey))
-                        EventReference.Add(eventKey, eventObject);
+                    if (!EventReference.ContainsKey(eventKey)) EventReference.Add(eventKey, eventObject);
                 }
             }
         }

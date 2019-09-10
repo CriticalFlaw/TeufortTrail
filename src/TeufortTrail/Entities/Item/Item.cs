@@ -1,16 +1,15 @@
 ﻿namespace TeufortTrail.Entities.Item
 {
     /// <summary>
-    /// Defines the base item that be purchased or acquired by the player.
+    /// Defines the base game items that can be purchased, acquired and traded by the player.
     /// </summary>
     public sealed class Item : IEntity
     {
-        #region VARIABLES
-
         /// <summary>
-        /// Defines what kind of item this is (Food, Ammo, Clothing etc.).
+        /// Defines what kind of item this is.
         /// </summary>
-        public Types Category { get; }
+        /// <example>Food, Hats, Ammunition</example>
+        public ItemTypes Category { get; }
 
         /// <summary>
         /// Display name of the item as it should be known to the player.
@@ -28,52 +27,46 @@
         private int Weight { get; }
 
         /// <summary>
-        /// Point value of the item awarded to the player.
-        /// </summary>
-        public int Points { get; }
-
-        /// <summary>
-        /// Minimum number of the item that the player must have.
+        /// Minimum quantity of the item that the player must have.
         /// </summary>
         public int MinQuantity { get; }
 
         /// <summary>
-        /// Maximum number of the item that the player can have.
+        /// Maximum quantity of the item that the player can have.
         /// </summary>
         public int MaxQuantity { get; }
 
         /// <summary>
-        /// Current number of the item that the player has.
+        /// Current quantity of the item that the player has.
         /// </summary>
         public int Quantity { get; private set; }
 
         /// <summary>
-        /// Starting number of the item that the player will have.
+        /// Starting quantity of the item that the player will have.
         /// </summary>
         private int StartingQuantity { get; }
 
         /// <summary>
-        /// Total weight of the item, weight multiplied by inventory quantity.
+        /// Total weight of the item, unit weight multiplied by inventory quantity.
         /// </summary>
         public int TotalWeight => Weight * Quantity;
 
         /// <summary>
-        /// Total value of the item, single value multiplied by inventory quantity.
+        /// Total value of the item, unit value multiplied by inventory quantity.
         /// </summary>
         public float TotalValue => Value * Quantity;
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Item.Item" /> class.
+        /// Initializes a new instance of the <see cref="Item" /> class.
         /// </summary>
-        public Item(Types category, string name, float value, int weight = 1, int points = 1, int minQuantity = 1, int maxQuantity = 999, int startingQuantity = 0)
+        public Item(ItemTypes category, string name, float value, int weight = 1, int minQuantity = 1, int maxQuantity = 999, int startingQuantity = 0)
         {
             Category = category;
             Name = name;
             Value = value;
             Weight = weight;
-            Points = points;
             MinQuantity = minQuantity;
             MaxQuantity = maxQuantity;
             Quantity = startingQuantity;
@@ -81,11 +74,11 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Entities.Item.Item" /> class from previous instance and with updated quantity.
+        /// Initializes a new instance of the <see cref="Item" /> class from the previous instance with updated quantities.
         /// </summary>
         public Item(Item oldItem, int newQuantity)
         {
-            // Check that the new quantity is within range.
+            // Check that the new quantity is in range.
             if (newQuantity > oldItem.MaxQuantity)
                 newQuantity = oldItem.MaxQuantity;
             if (newQuantity < oldItem.MinQuantity)
@@ -95,7 +88,6 @@
             Name = oldItem.Name;
             Value = oldItem.Value;
             Weight = oldItem.Weight;
-            Points = (oldItem.Points <= 0) ? 1 : oldItem.Points;
             MinQuantity = oldItem.MinQuantity;
             MaxQuantity = oldItem.MaxQuantity;
             Quantity = newQuantity;
@@ -103,14 +95,16 @@
         }
 
         /// <summary>
-        /// Called when the simulation is ticked.
+        /// Called when the simulation is ticked at a fixed or unpredictable interval.
         /// </summary>
+        /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
+        /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
         public void OnTick(bool systemTick, bool skipDay)
         {
         }
 
         /// <summary>
-        /// Increase the current quantity value by a given amount. Check for maximum and minimum values.
+        /// Increment the item quantity by a given amount. Check for maximum and minimum values.
         /// </summary>
         /// <param name="amount">Amount the quantity should be increased by.</param>
         public void AddQuantity(int amount)
@@ -122,7 +116,7 @@
         }
 
         /// <summary>
-        /// Subtract the current quantity value by a given amount. Check for maximum and minimum values.
+        /// Subtract the item quantity by a given amount. Check for maximum and minimum values.
         /// </summary>
         /// <param name="amount">Amount the quantity should be reduced by.</param>
         public void SubtractQuantity(int amount)
@@ -136,56 +130,11 @@
         }
 
         /// <summary>
-        /// Reset the item's quantity to the starting amount.
+        /// Reset the item quantity to the starting amount.
         /// </summary>
         public void ResetQuantity()
         {
             Quantity = StartingQuantity;
         }
     }
-
-    #region ENUMERABLES
-
-    /// <summary>
-    /// Defines all possible item types.
-    /// </summary>
-    public enum Types
-    {
-        /// <summary>
-        /// Represents the food gathered from hunting and purchasing in store. Consumed by the party during travel.
-        /// </summary>
-        Food = 1,
-
-        /// <summary>
-        /// Worn by the party members to keep them warm and avoid the risk of getting sick when it is cold outside.
-        /// </summary>
-        Hats = 2,
-
-        /// <summary>
-        /// Used for hunting and fighting off the robot army during travel. Can be purchased in-store or traded with towns folks.
-        /// </summary>
-        Ammo = 3,
-
-        /// <summary>
-        /// Represents the camper van that the party members are travelling in. Holds their inventory, money, hats, hopes and dreams. May require replacement parts to be purchased.
-        /// </summary>
-        Vehicle = 4,
-
-        /// <summary>
-        /// Represents a given party member in the vehicle, this is used mostly to separate the player entities from vehicle and ensure the game never confuses them for being items.
-        /// </summary>
-        Person = 5,
-
-        /// <summary>
-        /// Money can be exchanged for goods (and service) at the store. Rarely if ever will it be counted by the cents.
-        /// </summary>
-        Money = 6,
-
-        /// <summary>
-        /// Represents the location along the trail that the player will visit. Could be a town, river crossing, etc.
-        /// </summary>
-        Location = 7
-    }
-
-    #endregion ENUMERABLES
 }

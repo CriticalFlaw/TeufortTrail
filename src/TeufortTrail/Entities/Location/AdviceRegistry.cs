@@ -1,5 +1,8 @@
-﻿namespace TeufortTrail.Entities.Trail
+﻿namespace TeufortTrail.Entities.Location
 {
+    /// <summary>
+    /// Defines the advice the player can receive from civilians depending on the location type.
+    /// </summary>
     public static class AdviceRegistry
     {
         public static Advice[] Landmark
@@ -26,7 +29,7 @@
             }
         }
 
-        public static Advice[] Town
+        public static Advice[] Settlement
         {
             get
             {
@@ -53,13 +56,21 @@
 
     public sealed class Advice
     {
-        #region VARIABLES
-
+        /// <summary>
+        /// Display name of the civilian as it should be known to the player.
+        /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Civilian's advice to the player.
+        /// </summary>
         public string Quote { get; }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Advice" /> class.
+        /// </summary>
         public Advice(string name, string quote)
         {
             Name = name;

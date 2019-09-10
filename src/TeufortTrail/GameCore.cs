@@ -12,34 +12,32 @@ using WolfCurses;
 namespace TeufortTrail
 {
     /// <summary>
-    /// The core game singleton. Processes various game entities, ticks, inputs, modules, etc.
+    /// Core game singleton, responsible for processesing game entities, ticks, events, etc.
     /// </summary>
     public class GameCore : SimulationApp
     {
-        #region VARIABLES
-
         /// <summary>
-        /// Singleton instance for the entire game simulation, does not block the calling thread though only listens for commands.
+        /// Singleton instance for the game simulation, listens for commands.
         /// </summary>
         public static GameCore Instance { get; private set; }
 
         /// <summary>
-        ///  Defines the current vehicle in which player and their party members are travelling.
+        /// Defines the current vehicle in which party is travelling.
         /// </summary>
         public Vehicle Vehicle { get; private set; }
 
         /// <summary>
-        ///  Defines the event manager used for handling in-game events.
+        /// Defines the event director used for handling game events.
         /// </summary>
         public EventDirector EventDirector { get; private set; }
 
         /// <summary>
-        ///  Defines the complete trail and all points of interaction the player will encounter.
+        /// Defines the trail and all points of interaction the player will encounter.
         /// </summary>
-        public TrailBase Trail { get; private set; }
+        public TrailModule Trail { get; private set; }
 
         /// <summary>
-        ///  Total number of turns that have been taken.
+        /// Total number of turns that have been taken. Used as a count of days passed.
         /// </summary>
         public int TotalTurns { get; private set; }
 
@@ -61,13 +59,14 @@ namespace TeufortTrail
             }
         }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Create a new instance of the game core. Checks if an instance already exists.
+        /// Create a new instance of the game singleton.
         /// </summary>
         public static void Create()
         {
+            // Checks if an instance already exists.
             if (Instance != null) throw new InvalidOperationException("A game instance already exists!");
             Instance = new GameCore();
         }
@@ -87,15 +86,15 @@ namespace TeufortTrail
         }
 
         /// <summary>
-        /// Called on the first game tick. Meant to be used to setup and load base resources.
+        /// Called on the first game tick. Used to setup and load base resources.
         /// </summary>
         protected override void OnFirstTick()
         {
             // Reset the turn counter.
             TotalTurns = 0;
 
-            // Load the necessary trail and vehicle modules.
-            Trail = new TrailBase();
+            // Load the requierd modules.
+            Trail = new TrailModule();
             EventDirector = new EventDirector();
             Vehicle = new Vehicle();
 
@@ -106,7 +105,7 @@ namespace TeufortTrail
         }
 
         /// <summary>
-        /// Cleans up remaining resources, right before the game closes.
+        /// Clean up remaining resources, right before the game closes.
         /// </summary>
         protected override void OnPreDestroy()
         {
@@ -129,7 +128,7 @@ namespace TeufortTrail
         }
 
         /// <summary>
-        /// Clear then load in the vehicle party and starting resources.
+        /// Load in the vehicle party and starting resources.
         /// </summary>
         /// <param name="startInfo"></param>
         internal void SetStartInfo(NewGameInfo startInfo)

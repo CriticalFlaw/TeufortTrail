@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using TeufortTrail.Entities;
 using TeufortTrail.Entities.Item;
-using TeufortTrail.Entities.Person;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 
 namespace TeufortTrail.Screens.MainMenu
 {
+    /// <summary>
+    /// Displays the main menu when the game is launched.
+    /// </summary>
     public sealed class MainMenu : Window<MainMenuCommands, NewGameInfo>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.Menu.MainMenu" /> class.
+        /// Initializes a new instance of the <see cref="MainMenu" /> class.
         /// </summary>
         public MainMenu(GameCore game) : base(game)
         {
         }
 
         /// <summary>
-        /// Called when the screen has been activated.
+        /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
         /// <remarks>TODO: Add a welcome message and game information</remarks>
         public override void OnWindowPostCreate()
@@ -29,7 +32,7 @@ namespace TeufortTrail.Screens.MainMenu
         }
 
         /// <summary>
-        /// Called when the player chooses the option to play the game.
+        /// Called when the player selects the option to play the game.
         /// </summary>
         private void PlayTheGame()
         {
@@ -37,7 +40,7 @@ namespace TeufortTrail.Screens.MainMenu
         }
 
         /// <summary>
-        /// Called when the player chooses the optiont to exit the game.
+        /// Called when the player selects the option to exit the game.
         /// </summary>
         private static void CloseTheGame()
         {
@@ -55,36 +58,34 @@ namespace TeufortTrail.Screens.MainMenu
     }
 
     /// <summary>
-    /// References the information required to start the game simulation onto a trail path with people, classes, vehicle, money and starting inventory.
+    /// References the information required to start the game simulation with party, inventory and money resources.
     /// </summary>
     public sealed class NewGameInfo : WindowData
     {
-        #region VARIABLES
-
         /// <summary>
-        /// Defines the current player class
+        /// Defines the player's current class.
         /// </summary>
         public Classes PlayerClass { get; set; }
 
         /// <summary>
-        /// References all the unique classes currently in the party.
+        /// References all the classes currently in the party.
         /// </summary>
         public List<Classes> PartyClasses { get; set; }
 
         /// <summary>
-        /// References all the starting items that the player has purchased from the first store.
+        /// Starting items that the player has purchased in the first store.
         /// </summary>
         public List<Item> StartingInventory { get; set; }
 
         /// <summary>
-        /// References the starting amount of money that the player has to spend on store items.
+        /// Starting amount of money that the player will start the game with.
         /// </summary>
         public int StartingMoney { get; set; }
 
-        #endregion VARIABLES
+        //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:TeufortTrail.Screens.MainMenu.NewGameInfo" /> class.
+        /// Initializes a new instance of the <see cref="NewGameInfo" /> class.
         /// </summary>
         public NewGameInfo()
         {
