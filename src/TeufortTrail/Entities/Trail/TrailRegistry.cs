@@ -40,7 +40,7 @@ namespace TeufortTrail.Entities.Trail
                     new Settlement("Teufort, New Mexico")
                 };
 
-                return new Trail(teufortTrail, 30, 150);
+                return new Trail(teufortTrail, 75, 200);
             }
         }
     }

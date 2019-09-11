@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TeufortTrail.Entities.Location;
 
 namespace TeufortTrail.Entities.Trail
 {
@@ -66,6 +67,13 @@ namespace TeufortTrail.Entities.Trail
                 // Loop through every location, calculate the distance between points, add to the total.
                 location.TotalDistance = GameCore.Instance.Random.Next(MinLength, MaxLength);
                 _totalDistance += location.TotalDistance;
+
+                // If the location is a fork, generate the distances for its children.
+                if (location is ForkInRoad)
+                {
+                    var forkInRoad = location as ForkInRoad;
+                    GenerateDistances(forkInRoad.PathChoices);
+                }
             }
             return _totalDistance;
         }

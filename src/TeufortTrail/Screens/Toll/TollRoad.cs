@@ -82,7 +82,7 @@ namespace TeufortTrail.Screens.Travel.Toll
                     GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].SubtractQuantity(UserData.Toll.Cost);
 
                     // Only insert the location if there is one to actually insert.
-                    //if (UserData.Toll.Road != null) GameCore.Instance.Trail.InsertLocation(UserData.Toll.Road);
+                    if (UserData.Toll.Road != null) GameCore.Instance.Trail.InsertLocation(UserData.Toll.Road);
 
                     // Destroy the toll road data now that we are done with it.
                     UserData.DestroyToll();

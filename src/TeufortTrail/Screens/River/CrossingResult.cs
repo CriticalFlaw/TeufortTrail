@@ -31,20 +31,20 @@ namespace TeufortTrail.Screens.Travel.River
             {
                 case RiverOptions.Float:
                     _crossingResult.AppendLine(UserData.River.DisasterHappened
-                        ? $"{Environment.NewLine}Your party relieved to reach other side after trouble floating across.{Environment.NewLine}"
-                        : $"{Environment.NewLine}You had no trouble floating the wagon across.{Environment.NewLine}");
+                        ? $"{Environment.NewLine}Your party is relieved to have reached the other side after some trouble floating across.{Environment.NewLine}"
+                        : $"{Environment.NewLine}You had no trouble floating the camper van across the river.{Environment.NewLine}");
                     break;
 
                 case RiverOptions.Ferry:
                     _crossingResult.AppendLine(UserData.River.DisasterHappened
                         ? $"{Environment.NewLine}The ferry operator apologizes for the rough ride.{Environment.NewLine}"
-                        : $"{Environment.NewLine}The ferry got your party and wagon safely across.{Environment.NewLine}");
+                        : $"{Environment.NewLine}The ferry got your party and camper van safely across the river.{Environment.NewLine}");
                     break;
 
                 case RiverOptions.Help:
                     _crossingResult.AppendLine(UserData.River.DisasterHappened
-                        ? $"{Environment.NewLine}The Indian runs away as soon as you reach the shore.{Environment.NewLine}"
-                        : $"{Environment.NewLine}The Indian helped your wagon safely across.{Environment.NewLine}");
+                        ? $"{Environment.NewLine}The civilians bid you adieu as soon as you reach the shore.{Environment.NewLine}"
+                        : $"{Environment.NewLine}The civilians helped your party and camper van safely cross the river.{Environment.NewLine}");
                     break;
 
                 case RiverOptions.None:
