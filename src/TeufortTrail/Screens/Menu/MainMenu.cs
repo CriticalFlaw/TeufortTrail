@@ -26,7 +26,7 @@ namespace TeufortTrail.Screens.MainMenu
         public override void OnWindowPostCreate()
         {
             // Initialize the main menu title and available commands.
-            MenuHeader = $"{Environment.NewLine}The Teurfort Trail";
+            MenuHeader = $"{Environment.NewLine}The Teufort Trail";
             AddCommand(PlayTheGame, MainMenuCommands.PlayTheGame);
             AddCommand(CloseTheGame, MainMenuCommands.CloseTheGame);
         }

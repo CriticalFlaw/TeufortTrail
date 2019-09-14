@@ -59,7 +59,7 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         public override void OnInputBufferReturned(string input)
         {
-            // Check that the user input is a valid intenger.
+            // Check that the user input is a valid integer.
             if (!int.TryParse(input, out var userInput)) return;
 
             // Check that the user input is not zero, within the purchasing limit, does not exceed the set maximum and can actually afford the item. If all checks pass, then add the item to the player's inventory.

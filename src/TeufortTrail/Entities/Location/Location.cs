@@ -59,7 +59,7 @@
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
         public void OnTick(bool systemTick, bool skipDay = false)
         {
-            // Only tick at an inverval.
+            // Only tick at an interval.
             if (systemTick) return;
         }
     }

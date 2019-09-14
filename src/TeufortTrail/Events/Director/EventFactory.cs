@@ -33,7 +33,7 @@ namespace TeufortTrail.Events.Director
                 // Check if the class is abstract base class, we don't want to add that.
                 if (eventObject.GetTypeInfo().IsAbstract) continue;
 
-                // Check the attribute itself from the event we are working on, which gives us the event type enum.
+                // Check the attribute itself from the event we are working on, which gives us the event type enumerable.
                 var eventAttribute = eventObject.GetTypeInfo().GetAttributes<DirectorEventAttribute>(true).First();
 
                 // Initialize the execution history dictionary with every event type.

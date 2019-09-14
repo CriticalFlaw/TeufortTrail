@@ -42,7 +42,7 @@ namespace TeufortTrail.Screens.MainMenu
             var _storyHelp = new StringBuilder();
             _storyHelp.AppendLine($"{Environment.NewLine}The year is 1972. Gray Mann's robot army have captured majority");
             _storyHelp.AppendLine("of the Southwest. You and your team must travel from Dustbowl");
-            _storyHelp.AppendLine("to Teufort, New Mexico to escapre the mechanical menace.");
+            _storyHelp.AppendLine("to Teufort, New Mexico to escape the mechanical menace.");
             _storyHelp.AppendLine($"{Environment.NewLine}Your team will consist of:{_partyList}");
             _storyHelp.AppendLine($"{Environment.NewLine}Before leaving Dustbowl you need to buy supplies and");
             _storyHelp.AppendLine($"from the Mann Co. Store. You have {UserData.StartingMoney:C2} in cash,");

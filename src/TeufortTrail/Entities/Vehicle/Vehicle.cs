@@ -8,12 +8,12 @@ namespace TeufortTrail.Entities.Vehicle
     public sealed class Vehicle : IEntity
     {
         /// <summary>
-        /// List of passangers currently travelling in the vehicle.
+        /// List of passengers currently traveling in the vehicle.
         /// </summary>
         public List<Person.Person> Passengers;
 
         /// <summary>
-        /// Number of miles that will be travelled between locations.
+        /// Number of miles that will be traveled between locations.
         /// </summary>
         public int Mileage { get; private set; }
 
@@ -84,7 +84,7 @@ namespace TeufortTrail.Entities.Vehicle
         }
 
         /// <summary>
-        /// Determine the mile amount travelled by the party on the trail.
+        /// Determine the mile amount traveled by the party on the trail.
         /// </summary>
         private int RandomMileage
         {
@@ -114,7 +114,7 @@ namespace TeufortTrail.Entities.Vehicle
         /// <remarks>TODO: Trigger a random event. Insufficient food and clothing should cause illness.</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
-            // Only tick at an inverval.
+            // Only tick at an interval.
             if (systemTick) return;
 
             // Loop through the party and tick them moving.
@@ -133,7 +133,7 @@ namespace TeufortTrail.Entities.Vehicle
             // Make sure the mileage is never below or at zero.
             if (Mileage <= 0) Mileage = 10;
 
-            // Update the total mileage travelled.
+            // Update the total mileage traveled.
             Odometer += Mileage;
         }
 

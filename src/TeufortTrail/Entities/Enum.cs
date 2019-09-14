@@ -52,7 +52,7 @@ namespace TeufortTrail.Entities
     /// <summary>
     /// Defines all the playable classes.
     /// </summary>
-    /// <remarks>TODO: Add descriptons and unique stats to each class.</remarks>
+    /// <remarks>TODO: Add descriptions and unique stats to each class.</remarks>
     public enum Classes
     {
         Scout = 1,

@@ -28,7 +28,7 @@ namespace TeufortTrail.Events.Director
         }
 
         /// <summary>
-        /// Called when the game is closing and needs to clean up data remanents.
+        /// Called when the game is closing and needs to clean up data remnants.
         /// </summary>
         public override void Destroy()
         {

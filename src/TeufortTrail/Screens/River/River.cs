@@ -114,7 +114,7 @@ namespace TeufortTrail.Screens.Travel.River
         public int RiverWidth { get; }
 
         /// <summary>
-        /// Flags the current river crossing attempts as having encoutnered a disaster event.
+        /// Flags the current river crossing attempts as having encountered a disaster event.
         /// </summary>
         public bool DisasterHappened { get; set; }
 

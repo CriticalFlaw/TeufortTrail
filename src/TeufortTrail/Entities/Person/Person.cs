@@ -94,7 +94,7 @@ namespace TeufortTrail.Entities.Person
         /// <remarks>TODO: Add events that would change member's health and resource consumptions</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
-            // Only tick at an inverval.
+            // Only tick at an interval.
             if (systemTick) return;
 
             // Skip if the party member is already dead.
@@ -159,7 +159,7 @@ namespace TeufortTrail.Entities.Person
             if (GameCore.Instance.Random.Next(100) <= 45 * ((int)GameCore.Instance.Vehicle.Ration - 1))
                 Damage(10, 50);
 
-            // Reduce the party member's health if they are sick or injuired while the party is travelling.
+            // Reduce the party member's health if they are sick or injured while the party is traveling.
             switch (HealthState)
             {
                 case HealthStatus.Great:

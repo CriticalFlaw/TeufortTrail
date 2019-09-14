@@ -112,7 +112,7 @@ namespace TeufortTrail.Screens.Travel.Store
             // Purchase the items in queue.
             UserData.Store.PurchaseItems();
 
-            // Show the apropriate dialog screen if this is the first trail location.
+            // Show the appropriate dialog screen if this is the first trail location.
             if (GameCore.Instance.Trail.IsFirstLocation && (GameCore.Instance.Trail.CurrentLocation?.Status == LocationStatus.Unreached))
             {
                 GameCore.Instance.Trail.ArriveAtLocation();
@@ -191,7 +191,7 @@ namespace TeufortTrail.Screens.Travel.Store
         /// </summary>
         public void PurchaseItems()
         {
-            // Check that the player can afford the items they want to purhcase.
+            // Check that the player can afford the items they want to purchase.
             if (GameCore.Instance.Vehicle.Balance < TotalTransactionCost)
                 throw new InvalidOperationException("Attempted to purchase items the player does not have enough monies for!");
 

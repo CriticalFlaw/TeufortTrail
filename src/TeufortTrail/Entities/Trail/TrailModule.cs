@@ -79,13 +79,13 @@ namespace TeufortTrail.Entities.Trail
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
         public override void OnTick(bool systemTick, bool skipDay = false)
         {
-            // Only tick at an inverval.
+            // Only tick at an interval.
             if (systemTick) return;
 
             // Tick the current location.
             CurrentLocation?.OnTick(false);
 
-            // Tick the vehicle, update the total distance travelled.
+            // Tick the vehicle, update the total distance traveled.
             GameCore.Instance.Vehicle.OnTick(false, skipDay);
 
             // Prevent trail progress from ticking if the vehicle is not moving.

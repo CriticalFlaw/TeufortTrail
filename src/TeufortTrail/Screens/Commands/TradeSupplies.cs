@@ -74,7 +74,7 @@ namespace TeufortTrail.Screens.Travel.Commands
                 PlayerCanTrade = GameCore.Instance.Vehicle.HasInventoryItem(TradeOffers[TradeIndex].WantedItem);
                 _tradeSupplies.Append(PlayerCanTrade
                     ? $"Are you willing to trade? Y/N{Environment.NewLine}"
-                    : $"Unfortunatly, you don't have this.{Environment.NewLine}");
+                    : $"Unfortunately, you don't have this.{Environment.NewLine}");
             }
             return _tradeSupplies.ToString();
         }

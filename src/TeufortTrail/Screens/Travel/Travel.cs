@@ -212,7 +212,7 @@ namespace TeufortTrail.Screens.Travel
         [Description("Stop to Rest")] StopToRest = 4,
         [Description("Change Ration")] ChangeRation = 5,
         [Description("Talk to People")] TalkToPeople = 6,
-        [Description("Buy Bupplies")] BuySupplies = 7,
+        [Description("Buy Supplies")] BuySupplies = 7,
         [Description("Trade Supplies")] TradeSupplies = 8
     }
 

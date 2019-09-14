@@ -82,14 +82,14 @@ namespace TeufortTrail.Screens.Travel.River
         /// <remarks>TODO: Trigger events when the player is crossing the river.</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
-            // Only tick vehicle at an inverval.
+            // Only tick vehicle at an interval.
             base.OnTick(systemTick, skipDay);
             if (systemTick || DoneRiverCrossing) return;
 
             // Advance the progress bar, step it to next phase.
             _swayBarText = _marqueeBar.Step();
 
-            // Increment the distance the party has travelled over the river.
+            // Increment the distance the party has traveled over the river.
             RiverWidthCrossed += GameCore.Instance.Random.Next(1, UserData.River.RiverWidth / 4);
 
             // Check to see if we will finish crossing river before crossing more.

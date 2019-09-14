@@ -12,7 +12,7 @@ using WolfCurses;
 namespace TeufortTrail
 {
     /// <summary>
-    /// Core game singleton, responsible for processesing game entities, ticks, events, etc.
+    /// Core game singleton, responsible for processing game entities, ticks, events, etc.
     /// </summary>
     public class GameCore : SimulationApp
     {
@@ -22,7 +22,7 @@ namespace TeufortTrail
         public static GameCore Instance { get; private set; }
 
         /// <summary>
-        /// Defines the current vehicle in which party is travelling.
+        /// Defines the current vehicle in which party is traveling.
         /// </summary>
         public Vehicle Vehicle { get; private set; }
 
@@ -93,7 +93,7 @@ namespace TeufortTrail
             // Reset the turn counter.
             TotalTurns = 0;
 
-            // Load the requierd modules.
+            // Load the required modules.
             Trail = new TrailModule();
             EventDirector = new EventDirector();
             Vehicle = new Vehicle();

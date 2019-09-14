@@ -60,7 +60,7 @@ namespace TeufortTrail.Screens.Travel
         /// <remarks>TODO: Let the player know they are unable to continue</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
-            // Only tick vehicle at an inverval.
+            // Only tick vehicle at an interval.
             base.OnTick(systemTick, skipDay);
             if (systemTick) return;
 
@@ -95,7 +95,7 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         public override string OnRenderForm()
         {
-            // Dispaly the marquee bar and current party status
+            // Display the marquee bar and current party status
             var _continueTrail = new StringBuilder();
             _continueTrail.AppendLine($"{Environment.NewLine}{_swayBarText}");
             _continueTrail.AppendLine(TravelInfo.TravelStatus);

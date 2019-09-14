@@ -47,7 +47,7 @@ namespace TeufortTrail.Screens.Travel.Toll
         /// </summary>
         public override void OnInputBufferReturned(string input)
         {
-            // Check that the user input is a valid intenger, above zero.
+            // Check that the user input is a valid integer, above zero.
             if (!int.TryParse(input, out var userInput) || userInput <= 0) return;
 
             // Dictionary of path choices must contain key with input number.
