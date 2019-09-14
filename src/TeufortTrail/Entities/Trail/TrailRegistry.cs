@@ -32,7 +32,7 @@ namespace TeufortTrail.Entities.Trail
                     new Landmark("DeGroot Keep"),
                     new RiverCrossing("2Fort", RiverOptions.Float),
                     new Settlement("Gravel Pit"),
-                    new ForkInRoad("Cactus Canyon", new List<Location.Location>
+                    new ForkInRoad("Thunder Mountain", new List<Location.Location>
                     {
                         new TollInRoad("Mercenary Park"),
                         new Landmark("Asteroid")

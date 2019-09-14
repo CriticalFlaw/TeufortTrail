@@ -102,18 +102,21 @@ namespace TeufortTrail.Screens.Travel
             AddCommand(StopToRest, TravelCommands.StopToRest);
             AddCommand(ChangeRation, TravelCommands.ChangeRation);
 
-            // Add additional commands depending on the current vehicle state.
+            // Add additional commands depending on the current location state.
             var location = GameCore.Instance.Trail.CurrentLocation;
             switch (location.Status)
             {
                 case LocationStatus.Unreached:
-                case LocationStatus.Departed:
                     break;
 
                 case LocationStatus.Arrived:
                     if (location.TalkingAllowed) AddCommand(TalkToPeople, TravelCommands.TalkToPeople);
                     if (location.ShoppingAllowed) AddCommand(BuySupplies, TravelCommands.BuySupplies);
                     if (location.TalkingAllowed) AddCommand(TradeSupplies, TravelCommands.TradeSupplies);
+                    break;
+
+                case LocationStatus.Departed:
+                    AddCommand(TradeSupplies, TravelCommands.TradeSupplies);
                     break;
 
                 default:

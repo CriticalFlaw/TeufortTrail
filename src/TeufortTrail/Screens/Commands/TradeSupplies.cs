@@ -136,8 +136,8 @@ namespace TeufortTrail.Screens.Travel.Commands
         /// </summary>
         public TradeGenerator()
         {
-            WantedItem = Vehicle.GetRandomItem();
-            OfferedItem = Vehicle.GetRandomItem();
+            WantedItem = Vehicle.CreateRandomItem();
+            OfferedItem = Vehicle.CreateRandomItem();
         }
     }
 }

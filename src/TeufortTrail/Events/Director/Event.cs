@@ -55,5 +55,6 @@ namespace TeufortTrail.Events.Director
         public EventProduct DirectorEvent { get; set; }
         public IEntity SourceEntity { get; set; }
         public string EventText { get; set; }
+        public int DaysToSkip { get; internal set; }
     }
 }

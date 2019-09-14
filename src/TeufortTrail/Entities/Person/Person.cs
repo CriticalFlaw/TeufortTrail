@@ -145,6 +145,16 @@ namespace TeufortTrail.Entities.Person
         }
 
         /// <summary>
+        /// Fully restore a party member's health to normal.
+        /// </summary>
+        public void HealFully()
+        {
+            Infected = false;
+            Injured = false;
+            Health = (int)HealthStatus.Good;
+        }
+
+        /// <summary>
         /// Check the party member for illness or injury.
         /// </summary>
         private void CheckIllness()
@@ -193,6 +203,15 @@ namespace TeufortTrail.Entities.Person
         }
 
         /// <summary>
+        /// Decrease party member's health by a given amount.
+        /// </summary>
+        /// <param name="amount">Amount of health to decrease</param>
+        public void Damage(int amount)
+        {
+            if (amount > 0) Health -= amount;
+        }
+
+        /// <summary>
         /// Decrease party member's health by an amount between two values.
         /// </summary>
         private void Damage(int minAmount, int maxAmount)
@@ -211,7 +230,7 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Flag the party member as sick.
         /// </summary>
-        private void Infect()
+        public void Infect()
         {
             Infected = true;
         }
@@ -219,7 +238,7 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Flag the party member as hurt.
         /// </summary>
-        private void Injure()
+        public void Injure()
         {
             Injured = true;
         }
@@ -227,7 +246,7 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Flag the party member as dead.
         /// </summary>
-        private void Kill()
+        public void Kill()
         {
             // Skip if the party member is already dead.
             if (HealthState == HealthStatus.Dead) return;

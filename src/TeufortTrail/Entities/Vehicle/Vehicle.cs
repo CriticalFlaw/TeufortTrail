@@ -208,7 +208,7 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Retrieve a schema item of random type and quantity.
         /// </summary>
-        internal static Item.Item GetRandomItem()
+        internal static Item.Item CreateRandomItem()
         {
             // Loop through every item type in the schema.
             foreach (var item in DefaultInventory)
@@ -235,6 +235,24 @@ namespace TeufortTrail.Entities.Vehicle
                     continue;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Loop through the party and roll the dice to see if they should be killed.
+        /// </summary>
+        public IEnumerable<Person.Person> TryKill()
+        {
+            var peopleKilled = new List<Person.Person>();
+            foreach (var person in GameCore.Instance.Vehicle.Passengers)
+            {
+                // Roll the dice, proceed if true otherwise continue. Skip if the party member is already dead.
+                if (!GameCore.Instance.Random.NextBool() || (person.HealthState == HealthStatus.Dead)) continue;
+
+                // Kill the party member and add them to list.
+                person.Kill();
+                peopleKilled.Add(person);
+            }
+            return peopleKilled;
         }
     }
 }

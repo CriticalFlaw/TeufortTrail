@@ -103,7 +103,13 @@ namespace TeufortTrail.Entities
     /// </summary>
     public enum EventCategory
     {
-        Person
+        Animal,
+        Person,
+        River,
+        Special,
+        Vehicle,
+        Weather,
+        Wild
     }
 
     /// <summary>

@@ -39,6 +39,14 @@ namespace TeufortTrail.Events.Director
         {
             // Nothing to see here, move along...
         }
+
+        /// <summary>
+        /// Called after an event is executed and allows event prefabs to do post-event execution.
+        /// </summary>
+        internal virtual bool OnPostExecute(EventExecutor eventExecutor)
+        {
+            return false;
+        }
     }
 
     /// <summary>
