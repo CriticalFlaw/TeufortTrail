@@ -4,6 +4,7 @@ using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
 using TeufortTrail.Screens.Menu;
+using TeufortTrail.Screens.Travel.Hunt;
 using TeufortTrail.Screens.Travel.River;
 using TeufortTrail.Screens.Travel.Store;
 using TeufortTrail.Screens.Travel.Toll;
@@ -117,6 +118,7 @@ namespace TeufortTrail.Screens.Travel
 
                 case LocationStatus.Departed:
                     AddCommand(TradeSupplies, TravelCommands.TradeSupplies);
+                    AddCommand(HuntRobots, TravelCommands.HuntRobots);
                     break;
 
                 default:
@@ -202,6 +204,16 @@ namespace TeufortTrail.Screens.Travel
         {
             SetForm(typeof(Commands.TradeSupplies));
         }
+
+        /// <summary>
+        /// Called when the player wants to hunt robots for resources.
+        /// </summary>
+        internal void HuntRobots()
+        {
+            SetForm(GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo].Quantity > 0
+                ? typeof(Hunting)
+                : typeof(NoAmmo));
+        }
     }
 
     /// <summary>
@@ -216,7 +228,8 @@ namespace TeufortTrail.Screens.Travel
         [Description("Change Ration")] ChangeRation = 5,
         [Description("Talk to People")] TalkToPeople = 6,
         [Description("Buy Supplies")] BuySupplies = 7,
-        [Description("Trade Supplies")] TradeSupplies = 8
+        [Description("Trade Supplies")] TradeSupplies = 8,
+        [Description("Hunt Robots")] HuntRobots = 9
     }
 
     /// <summary>
@@ -238,6 +251,11 @@ namespace TeufortTrail.Screens.Travel
         /// References the toll object used for generating in-game toll road locations and events.
         /// </summary>
         public TollGenerator Toll { get; private set; }
+
+        /// <summary>
+        /// References the hunting object used for generating the hunting mini-game.
+        /// </summary>
+        public HuntGenerator Hunt { get; private set; }
 
         /// <summary>
         /// Number of days the party will rest for at the location.
@@ -356,6 +374,18 @@ namespace TeufortTrail.Screens.Travel
         {
             if (Toll == null) return;
             Toll = null;
+        }
+
+        public void GenerateHunt()
+        {
+            if (Hunt != null) return;
+            Hunt = new HuntGenerator();
+        }
+
+        public void DestroyHunt()
+        {
+            if (Hunt == null) return;
+            Hunt = null;
         }
     }
 }
