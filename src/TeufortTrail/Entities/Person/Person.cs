@@ -91,7 +91,6 @@ namespace TeufortTrail.Entities.Person
         /// </summary>
         /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
-        /// <remarks>TODO: Add events that would change member's health and resource consumptions</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick at an interval.
@@ -103,6 +102,11 @@ namespace TeufortTrail.Entities.Person
             // Check for illness if the ration rate is too low.
             if ((GameCore.Instance.Vehicle.Ration == RationLevel.Bare) ||
                 (GameCore.Instance.Vehicle.Ration == RationLevel.Meager && GameCore.Instance.Random.NextBool()))
+                CheckIllness();
+
+            // Check for illness if the amount of hats is too low.
+            if (GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].TotalValue > 22 + 4 * GameCore.Instance.Random.Next() ||
+                GameCore.Instance.Random.NextBool() && GameCore.Instance.Random.NextBool())
                 CheckIllness();
 
             // Only consume food if the whole day has passed.
@@ -140,8 +144,11 @@ namespace TeufortTrail.Entities.Person
             // Roll the dice to determine if the party member will be healed.
             if (GameCore.Instance.Random.NextBool()) return;
 
-            // Heal the party member a greater amount if they are currently sick or injured.
-            Health += GameCore.Instance.Random.Next(1, ((Infected || Injured) ? 20 : 10));
+            // Roll the dice, the person can get better or worse if they are injured.
+            if (Infected || Injured)
+                GameCore.Instance.EventDirector.TriggerEvent(this, GameCore.Instance.Random.NextBool() ? typeof(WellAgain) : typeof(TurnForWorse));
+            else
+                Health += GameCore.Instance.Random.Next(1, 15);
         }
 
         /// <summary>
@@ -222,9 +229,16 @@ namespace TeufortTrail.Entities.Person
             // Subtract a random amount of health from the party member.
             Health -= GameCore.Instance.Random.Next(minAmount, maxAmount);
 
-            // Display a notification letting the player know that a party member has died.
-            if (Health <= (int)HealthStatus.Dead)
-                GameCore.Instance.EventDirector.TriggerEvent(this, typeof(PassengerDeath));
+            // Chance of injury or illness if the person doesn't already have it.
+            if (!Infected || !Injured)
+                GameCore.Instance.EventDirector.TriggerEventByType(this, EventCategory.Person);
+
+            // Check if the person health has dropped to death levels.
+            if (Health != (int)HealthStatus.Dead) return;
+
+            // At this point, we assume that the person has died, and need to display a screen.
+            Health = (int)HealthStatus.Dead;
+            GameCore.Instance.EventDirector.TriggerEvent(this, (Leader) ? typeof(PlayerDeath) : typeof(PassengerDeath));
         }
 
         /// <summary>

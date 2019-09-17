@@ -36,7 +36,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Vehicle party's inventory of consumable resources and money.
         /// </summary>
-        /// <remarks>TODO: Refactor</remarks>
         public IDictionary<ItemTypes, Item.Item> Inventory => _inventory;
 
         private Dictionary<ItemTypes, Item.Item> _inventory;
@@ -111,7 +110,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// </summary>
         /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
-        /// <remarks>TODO: Trigger a random event. Insufficient food and clothing should cause illness.</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick at an interval.
@@ -179,7 +177,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Check that the vehicle is operational and is able to move.
         /// </summary>
-        /// <remarks>TODO: Add a condition to check that would cause the vehicle to be disabled.</remarks>
         public void CheckStatus()
         {
             if (Status == VehicleStatus.Disabled) return;

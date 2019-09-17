@@ -50,11 +50,13 @@ namespace TeufortTrail.Screens.Travel.River
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        /// <remarks>TODO: Add a delay (in days) for using the ferry.</remarks>
         protected override void OnDialogResponse(DialogResponse response)
         {
             if (response == DialogResponse.Yes)
             {
+                // Using the ferry will cause a time skip.
+                for (var x = 0; x < 3; x++)
+                    GameCore.Instance.TakeTurn(false);
                 GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
                 SetForm(typeof(Crossing));
             }

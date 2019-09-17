@@ -6,6 +6,7 @@ using TeufortTrail.Entities.Trail;
 using TeufortTrail.Entities.Vehicle;
 using TeufortTrail.Events.Director;
 using TeufortTrail.Screens.MainMenu;
+using TeufortTrail.Screens.Menu;
 using TeufortTrail.Screens.Travel;
 using WolfCurses;
 
@@ -52,7 +53,8 @@ namespace TeufortTrail
                 {
                     typeof(Travel),
                     typeof(MainMenu),
-                    typeof(Event)
+                    typeof(Event),
+                    typeof(GameOver)
                 };
 
                 return windowList;
@@ -140,6 +142,14 @@ namespace TeufortTrail
                 Vehicle.AddPerson(new Person(_class, ((startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1)) ? true : false));
                 crewNumber++;
             }
+        }
+
+        /// <summary>
+        /// Get the percentage of a given value.
+        /// </summary>
+        public int GetPercentage(int amount, int percentage)
+        {
+            return Convert.ToInt32((percentage / 100) * amount);
         }
     }
 }

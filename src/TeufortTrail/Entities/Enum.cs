@@ -108,7 +108,6 @@ namespace TeufortTrail.Entities
         River,
         Special,
         Vehicle,
-        Weather,
         Wild
     }
 

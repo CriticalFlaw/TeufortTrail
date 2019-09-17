@@ -22,7 +22,6 @@ namespace TeufortTrail.Screens.MainMenu
         /// <summary>
         /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
-        /// <remarks>TODO: Add a welcome message and game information</remarks>
         public override void OnWindowPostCreate()
         {
             // Initialize the main menu title and available commands.
