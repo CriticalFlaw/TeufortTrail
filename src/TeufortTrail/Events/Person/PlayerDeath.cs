@@ -6,12 +6,12 @@ using TeufortTrail.Events.Director;
 namespace TeufortTrail.Events
 {
     /// <summary>
-    /// One of the party members dies.
+    /// Party leader has died! This will end the entire simulation since the others cannot go on without the leader.
     /// </summary>
     [DirectorEvent(EventCategory.Person, EventExecution.ManualOnly)]
-    public sealed class PassengerDeath : EventProduct
+    public sealed class PlayerDeath : EventProduct
     {
-        private StringBuilder _deathCompanion;
+        private StringBuilder _deathPlayer;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -28,13 +28,12 @@ namespace TeufortTrail.Events
         /// </summary>
         public override void Execute(EventInfo eventExecutor)
         {
-            // Cast the game entity as a party member/vehicle passenger. Check that the passenger entity was cast correctly.
-            var passenger = eventExecutor.SourceEntity as Entities.Person.Person;
-            if (passenger == null) throw new ArgumentNullException(nameof(eventExecutor), "Could not cast source entity as passenger of vehicle.");
-
-            // Create the event notification message to be displayed to the player.
-            _deathCompanion = new StringBuilder();
-            _deathCompanion.AppendLine($"The {passenger.Class} has died.");
+            // Check to make sure this player is the leader (aka the player).
+            var sourcePerson = eventExecutor.SourceEntity as Entities.Person.Person;
+            if (sourcePerson == null) throw new ArgumentNullException(nameof(eventExecutor), "Could not cast source entity as player.");
+            if (!sourcePerson.Leader) throw new ArgumentException("Cannot kill this person because it is not the player!");
+            _deathPlayer = new StringBuilder();
+            _deathPlayer.AppendLine("You have died.");
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnRender(EventInfo userData)
         {
-            return _deathCompanion.ToString();
+            return _deathPlayer.ToString();
         }
     }
 }
