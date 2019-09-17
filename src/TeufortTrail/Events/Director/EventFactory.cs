@@ -63,5 +63,24 @@ namespace TeufortTrail.Events.Director
             eventInstance.OnEventCreate();
             return eventInstance;
         }
+
+        /// <summary>
+        /// Creates a new event instance of a given type, which will be kept track of in event reference dictionary.
+        /// </summary>
+        /// <param name="eventCategory">Enumerable value of the event type to create</param>
+        public EventProduct CreateRandomByType(EventCategory eventCategory)
+        {
+            // Loop through all the event types to find matching enumeration values.
+            var eventList = new List<Type>();
+            foreach (var type in EventReference)
+                if (type.Key.Category.Equals(eventCategory) && (type.Key.ExecutionType == EventExecution.RandomOrManual))
+                    eventList.Add(type.Value);
+
+            // Check that at least one event type has been returned.
+            if (eventList.Count <= 0) return null;
+
+            // Create a random event instance of a given type.
+            return CreateInstance(eventList[GameCore.Instance.Random.Next(eventList.Count)]);
+        }
     }
 }

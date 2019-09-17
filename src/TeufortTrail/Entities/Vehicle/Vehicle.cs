@@ -130,6 +130,9 @@ namespace TeufortTrail.Entities.Vehicle
             // Reduce the mileage in half if things are too slow on the trail.
             if (GameCore.Instance.Random.NextBool() && (Mileage > 0)) Mileage /= 2;
 
+            // Check for a random event that could occur.
+            GameCore.Instance.EventDirector.TriggerEventByType(this, EventCategory.Vehicle);
+
             // Make sure the mileage is never below or at zero.
             if (Mileage <= 0) Mileage = 10;
 

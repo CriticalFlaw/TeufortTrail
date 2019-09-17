@@ -1,5 +1,6 @@
 ﻿using System;
 using TeufortTrail.Entities;
+using TeufortTrail.Entities.Vehicle;
 
 namespace TeufortTrail.Events.Director
 {
@@ -45,6 +46,24 @@ namespace TeufortTrail.Events.Director
             // Create an instance of the triggered event, then execute it.
             var eventProduct = _eventFactory.CreateInstance(eventType);
             ExecuteEvent(gameEntity, eventProduct);
+        }
+
+        /// <summary>
+        /// Calls all events of a specified type, then rolls the dice to determine if any of the events should trigger.
+        /// </summary>
+        /// <param name="gameEntity">Game entity that will be effected by the event.</param>
+        /// <param name="eventCategory">Event type to trigger.</param>
+        public void TriggerEventByType(IEntity gameEntity, EventCategory eventCategory)
+        {
+            // Roll the dice to determine if an event is triggered.
+            if (GameCore.Instance.Random.Next(100) > 5) return;
+
+            // Create a random event based on a given event type enumerable.
+            var randomEvent = _eventFactory.CreateRandomByType(eventCategory);
+
+            // Check that the created event exists, then invoke it.
+            if (randomEvent == null) return;
+            ExecuteEvent(gameEntity, randomEvent);
         }
 
         /// <summary>
