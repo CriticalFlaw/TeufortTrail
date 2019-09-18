@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
@@ -18,6 +19,8 @@ namespace TeufortTrail.Screens.Travel
     /// </summary>
     public sealed class Travel : Window<TravelCommands, TravelInfo>
     {
+        private bool GameOver { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Travel" /> class.
         /// </summary>
@@ -61,19 +64,26 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the party has arrived at a location.
         /// </summary>
-        /// <remarks>TODO: Check if this is game over or all of the passengers are dead.</remarks>
         private void ArriveAtLocation()
         {
+            if (GameOver) return;
+
             var game = GameCore.Instance;
 
             // Check if the party has arrived at the last location.
             if (game.Trail.CurrentLocation.LastLocation)
             {
+                GameOver = true;
+                SetForm(typeof(GameVictory));
+                return;
+            }
+            else if (game.Vehicle.Passengers.Where(x => x.HealthState > (int)HealthStatus.Dead).Count() == 0)
+            {
+                GameOver = true;
                 SetForm(typeof(GameOver));
                 return;
             }
-
-            if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived)
+            else if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived && !GameOver)
             {
                 game.Trail.CurrentLocation.ArrivalFlag = true;
                 SetForm(typeof(LocationArrived));
@@ -86,7 +96,6 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the town information including party status and available commands need to be displayed.
         /// </summary>
-        /// <remarks>TODO: Add trading and hunting commands</remarks>
         private void UpdateLocation()
         {
             var _menuHeader = new StringBuilder();
@@ -127,7 +136,6 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when the player has chosen to continue on the trail.
         /// </summary>
-        /// <remarks>TODO: Add other location types</remarks>
         internal void ContinueTrail()
         {
             if (GameCore.Instance.Trail.CurrentLocation.Status == LocationStatus.Departed)
@@ -242,13 +250,13 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Number of days the party will rest for at the location.
         /// </summary>
-        /// <remarks>TODO: Let the player choose how many days to rest.</remarks>
+        /// <remarks>TODO: Allow the player to choose how many days to rest.</remarks>
         public int DaysToRest = 3;
 
         /// <summary>
         /// Retrieves the current party status, resources and distance until next location.
         /// </summary>
-        /// <remarks>TODO: Add time and weather</remarks>
+        /// <remarks>TODO: Display the current time and weather</remarks>
         public static string TravelStatus
         {
             get

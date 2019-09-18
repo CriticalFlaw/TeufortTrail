@@ -123,13 +123,16 @@ namespace TeufortTrail.Screens.Travel.River
         /// <summary>
         /// Initializes a new instance of the <see cref="RiverGenerator" />class.
         /// </summary>
-        /// <remarks>TODO: Set the values in relation to the player's current monetary balance.</remarks>
         public RiverGenerator()
         {
+            var game = GameCore.Instance;
+            var playerHats = GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].Quantity;
+            var playerCash = GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].Quantity;
+
             CrossingType = RiverOptions.None;
-            HelpCost = GameCore.Instance.Random.Next(3, 10);
-            FerryCost = GameCore.Instance.Random.Next(5, 10);
-            RiverWidth = GameCore.Instance.Random.Next(120, 1200);
+            HelpCost = game.Random.Next(game.GetPercentage(5, playerHats), game.GetPercentage(10, playerHats));
+            FerryCost = game.Random.Next(game.GetPercentage(5, playerCash), game.GetPercentage(10, playerCash));
+            RiverWidth = game.Random.Next(120, 1200);
         }
     }
 }

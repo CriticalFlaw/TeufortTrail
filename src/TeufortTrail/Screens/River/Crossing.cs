@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities;
+using TeufortTrail.Events;
 using WolfCurses.Core;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
@@ -79,7 +80,7 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
-        /// <remarks>TODO: Trigger events when the player is crossing the river.</remarks>
+        /// <remarks>TODO: Trigger events when the player is crossing the river via ferry or help.</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an interval.
@@ -103,10 +104,14 @@ namespace TeufortTrail.Screens.Travel.River
             // River crossing will allow ticking of people, vehicle, and other important events but others like consuming food are disabled.
             GameCore.Instance.TakeTurn(true);
 
-            // TODO: Throw to a random event related to some disaster happening when crossing the river.
+            // Trigger a random event when crossing the river.
             switch (UserData.River.CrossingType)
             {
                 case RiverOptions.Float:
+                    UserData.River.DisasterHappened = true;
+                    GameCore.Instance.EventDirector.TriggerEvent(GameCore.Instance.Vehicle, typeof(VehicleFloods));
+                    break;
+
                 case RiverOptions.Ferry:
                 case RiverOptions.Help:
                     break;

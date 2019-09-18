@@ -57,7 +57,6 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
-        /// <remarks>TODO: Let the player know they are unable to continue</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an interval.

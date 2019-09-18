@@ -52,12 +52,11 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        /// <remarks>TODO: Refactor</remarks>
         protected override void OnDialogResponse(DialogResponse response)
         {
             if (response == DialogResponse.Yes)
                 ClearForm();
-            else if (response == DialogResponse.No || response == DialogResponse.Custom)
+            else
             {
                 var travelMode = ParentWindow as Travel;
                 if (travelMode == null) throw new InvalidCastException("Unable to cast parent game Windows into travel game Windows when it should be that!");

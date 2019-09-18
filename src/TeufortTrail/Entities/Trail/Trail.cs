@@ -26,7 +26,6 @@ namespace TeufortTrail.Entities.Trail
         /// <summary>
         /// References to all the locations on this trail, indexed in the order that they will be visited.
         /// </summary>
-        /// <remarks>TODO: Refactor</remarks>
         public ReadOnlyCollection<Location.Location> Locations => _locations.AsReadOnly();
 
         private readonly List<Location.Location> _locations;

@@ -36,7 +36,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Vehicle party's inventory of consumable resources and money.
         /// </summary>
-        /// <remarks>TODO: Refactor</remarks>
         public IDictionary<ItemTypes, Item.Item> Inventory => _inventory;
 
         private Dictionary<ItemTypes, Item.Item> _inventory;
@@ -111,7 +110,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// </summary>
         /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
-        /// <remarks>TODO: Trigger a random event. Insufficient food and clothing should cause illness.</remarks>
         public void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick at an interval.
@@ -129,6 +127,9 @@ namespace TeufortTrail.Entities.Vehicle
 
             // Reduce the mileage in half if things are too slow on the trail.
             if (GameCore.Instance.Random.NextBool() && (Mileage > 0)) Mileage /= 2;
+
+            // Check for a random event that could occur.
+            GameCore.Instance.EventDirector.TriggerEventByType(this, EventCategory.Vehicle);
 
             // Make sure the mileage is never below or at zero.
             if (Mileage <= 0) Mileage = 10;
@@ -176,7 +177,6 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Check that the vehicle is operational and is able to move.
         /// </summary>
-        /// <remarks>TODO: Add a condition to check that would cause the vehicle to be disabled.</remarks>
         public void CheckStatus()
         {
             if (Status == VehicleStatus.Disabled) return;
@@ -206,7 +206,7 @@ namespace TeufortTrail.Entities.Vehicle
         }
 
         /// <summary>
-        /// Retrieve a schema item of random type and quantity.
+        /// Retrieve a schema item of random type and quantity to be added to the player inventory.
         /// </summary>
         internal static Item.Item CreateRandomItem()
         {
@@ -253,6 +253,72 @@ namespace TeufortTrail.Entities.Vehicle
                 peopleKilled.Add(person);
             }
             return peopleKilled;
+        }
+
+        /// <summary>
+        /// Retrieve a schema item list of random type and quantity to be added to the player inventory.
+        /// </summary>
+        public IDictionary<ItemTypes, int> CreateRandomItems()
+        {
+            // Create and empty item list and a copy of the current inventory.
+            var createdItems = new Dictionary<ItemTypes, int>();
+            var inventoryCopy = new Dictionary<ItemTypes, Item.Item>(Inventory);
+
+            // Loop through the inventory and decide which items to give to the player.
+            foreach (var item in inventoryCopy)
+            {
+                // Skip this step if the item quantity is at a maximum.
+                if (item.Value.Quantity >= item.Value.MaxQuantity) continue;
+
+                // Skip this step if the dice roll returns a false.
+                if (GameCore.Instance.Random.NextBool()) continue;
+
+                // Generate a random amount to represent the quantity of items created.
+                var createdAmount = GameCore.Instance.Random.Next(1, item.Value.MaxQuantity / 4);
+
+                // Check that the item quantity after the addition is still within range.
+                var simulatedAmountAdd = item.Value.Quantity + createdAmount;
+                if (simulatedAmountAdd >= item.Value.MaxQuantity) simulatedAmountAdd = item.Value.MaxQuantity;
+
+                // Add the amount of items created to the player inventory.
+                Inventory[item.Key] = new Item.Item(item.Value, simulatedAmountAdd);
+                createdItems.Add(item.Key, createdAmount);
+            }
+
+            // Clear out the copied list and return the created one.
+            inventoryCopy.Clear();
+            return createdItems;
+        }
+
+        /// <summary>
+        /// Retrieve a schema item list of random type and quantity to be removed from the player inventory.
+        /// </summary>
+        public IDictionary<ItemTypes, int> DestroyRandomItems()
+        {
+            // Create and empty item list and a copy of the current inventory.
+            var destroyedItems = new Dictionary<ItemTypes, int>();
+            var inventoryCopy = new Dictionary<ItemTypes, Item.Item>(Inventory);
+
+            // Loop through the inventory and decide which items to take away from the player.
+            foreach (var item in inventoryCopy)
+            {
+                // Skip this step if the item quantity is at a minimum.
+                if (item.Value.Quantity < 1) continue;
+
+                // Skip this step if the dice roll returns a false.
+                if (GameCore.Instance.Random.NextBool()) continue;
+
+                // Generate a random amount to represent the quantity of items created.
+                var destroyAmount = GameCore.Instance.Random.Next(1, item.Value.Quantity);
+
+                // Remove the generated amount of items from the player inventory.
+                Inventory[item.Key].SubtractQuantity(destroyAmount);
+                destroyedItems.Add(item.Key, destroyAmount);
+            }
+
+            // Clear out the copied list and return the created one.
+            inventoryCopy.Clear();
+            return destroyedItems;
         }
     }
 }
