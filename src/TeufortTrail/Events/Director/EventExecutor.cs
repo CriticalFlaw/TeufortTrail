@@ -35,7 +35,7 @@ namespace TeufortTrail.Events.Director
         }
 
         /// <summary>
-        /// Process the player's response to the prompt message.
+        /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {

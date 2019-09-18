@@ -119,4 +119,22 @@ namespace TeufortTrail.Entities
         RandomOrManual = 0,
         ManualOnly = 1
     }
+
+    /// <summary>
+    /// Defines the words the player needs to type out when fighting robots
+    /// </summary>
+    public enum HuntingWord
+    {
+        None = 0,
+        Bam = 1,
+        Bang = 2,
+        Bonk = 3,
+        Clank = 4,
+        Kapow = 5,
+        Klonk = 6,
+        Pow = 7,
+        Thunk = 8,
+        Whack = 9,
+        Wham = 10
+    }
 }
