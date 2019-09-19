@@ -89,7 +89,7 @@ namespace TeufortTrail.Entities.Vehicle
         {
             get
             {
-                return (int)Math.Abs(Mileage + (100 / Passengers.Where(x => x.HealthState != HealthStatus.Dead).Count()) / 2.5 + 10 * GameCore.Instance.Random.NextDouble());
+                return (int)Math.Abs(Mileage + 15 / 2.5 + 10 * GameCore.Instance.Random.NextDouble());
             }
         }
 

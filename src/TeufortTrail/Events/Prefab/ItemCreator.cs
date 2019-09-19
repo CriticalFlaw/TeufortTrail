@@ -48,7 +48,7 @@ namespace TeufortTrail.Events
 
             // Loop through the generated items and add them to output string.
             foreach (var createdItem in createdItems)
-                _itemCreator.AppendLine($"{createdItem.Value:N0} {createdItem.Key}");
+                _itemCreator.AppendLine($"+ {createdItem.Value:N0} {createdItem.Key}");
         }
 
         /// <summary>

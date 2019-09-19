@@ -143,13 +143,5 @@ namespace TeufortTrail
                 crewNumber++;
             }
         }
-
-        /// <summary>
-        /// Get the percentage of a given value.
-        /// </summary>
-        public int GetPercentage(int amount, int percentage)
-        {
-            return Convert.ToInt32((percentage / 100) * amount);
-        }
     }
 }

@@ -59,7 +59,7 @@ namespace TeufortTrail.Screens.MainMenu
 
             // Based on the class selection, set the player class and starting money amount.
             UserData.PlayerClass = (Enum.IsDefined(typeof(Classes), userInput)) ? userInput : Classes.Scout;
-            UserData.StartingMoney = 1000;
+            UserData.StartingMoney = 800;
             UserData.PartyClasses.Add(UserData.PlayerClass);
 
             // Add three unique, randomly selected classes to the player's party.

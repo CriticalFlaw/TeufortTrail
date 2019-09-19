@@ -108,8 +108,13 @@ namespace TeufortTrail.Screens.Travel.River
             switch (UserData.River.CrossingType)
             {
                 case RiverOptions.Float:
-                    UserData.River.DisasterHappened = true;
-                    GameCore.Instance.EventDirector.TriggerEvent(GameCore.Instance.Vehicle, typeof(VehicleFloods));
+                    if (GameCore.Instance.Random.NextBool() &&
+                        !UserData.River.DisasterHappened &&
+                        (RiverWidthCrossed >= UserData.River.RiverWidth / 2))
+                    {
+                        UserData.River.DisasterHappened = true;
+                        GameCore.Instance.EventDirector.TriggerEvent(GameCore.Instance.Vehicle, typeof(VehicleFloods));
+                    }
                     break;
 
                 case RiverOptions.Ferry:

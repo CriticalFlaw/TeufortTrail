@@ -11,7 +11,7 @@
         public static Item Food => new Item(
             category: ItemTypes.Food,
             name: "Food",
-            value: 0.20f,
+            value: 0.25f,
             weight: 1,
             minQuantity: 1,
             maxQuantity: 2000,
@@ -50,7 +50,7 @@
             value: 1,
             weight: 0,
             minQuantity: 1,
-            maxQuantity: int.MaxValue,
+            maxQuantity: 10000,
             startingQuantity: 0);
     }
 }

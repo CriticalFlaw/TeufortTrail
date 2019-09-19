@@ -49,7 +49,7 @@ namespace TeufortTrail.Screens.Travel.Store
 
             // Display a message indicating how many of this item the player can buy.
             _storePurchase = new StringBuilder();
-            _storePurchase.AppendLine($"{Environment.NewLine}You can afford {PurchaseLimit} {UserData.Store.SelectedItem.Name.ToLowerInvariant()}.");
+            _storePurchase.AppendLine($"{Environment.NewLine}Your maximum capacity is {PurchaseLimit} {UserData.Store.SelectedItem.Name.ToLowerInvariant()}.");
             _storePurchase.Append("How many do you want to buy?");
             PurchaseItem = UserData.Store.SelectedItem;
         }

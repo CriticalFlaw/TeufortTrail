@@ -126,12 +126,12 @@ namespace TeufortTrail.Screens.Travel.River
         public RiverGenerator()
         {
             var game = GameCore.Instance;
-            var playerHats = GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].Quantity;
-            var playerCash = GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].Quantity;
+            var maxHelpCost = (game.Vehicle.Inventory[ItemTypes.Clothing].Quantity >= game.Vehicle.Inventory[ItemTypes.Clothing].MaxQuantity / 2) ? 10 : 20;
+            var maxFerryCost = (game.Vehicle.Inventory[ItemTypes.Money].Quantity > 500) ? 10 : 20;
 
             CrossingType = RiverOptions.None;
-            HelpCost = game.Random.Next(game.GetPercentage(5, playerHats), game.GetPercentage(10, playerHats));
-            FerryCost = game.Random.Next(game.GetPercentage(5, playerCash), game.GetPercentage(10, playerCash));
+            HelpCost = game.Random.Next(5, maxHelpCost);
+            FerryCost = game.Random.Next(5, maxFerryCost);
             RiverWidth = game.Random.Next(120, 1200);
         }
     }

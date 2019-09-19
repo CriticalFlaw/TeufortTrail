@@ -39,13 +39,13 @@ namespace TeufortTrail.Entities.Person
         {
             get
             {
-                if (Health >= (int)HealthStatus.Great && Health >= (int)HealthStatus.Good)
+                if (Health >= (int)HealthStatus.Great && Health > (int)HealthStatus.Good)
                     return HealthStatus.Great;
-                if (Health <= (int)HealthStatus.Good && Health >= (int)HealthStatus.Fair)
+                if (Health <= (int)HealthStatus.Good && Health > (int)HealthStatus.Fair)
                     return HealthStatus.Good;
-                if (Health <= (int)HealthStatus.Fair && Health >= (int)HealthStatus.Poor)
+                if (Health <= (int)HealthStatus.Fair && Health > (int)HealthStatus.Poor)
                     return HealthStatus.Fair;
-                if (Health <= (int)HealthStatus.Poor && Health >= (int)HealthStatus.Dead)
+                if (Health <= (int)HealthStatus.Poor && Health > (int)HealthStatus.Dead)
                     return HealthStatus.Poor;
                 if (Health <= (int)HealthStatus.Dead)
                     return HealthStatus.Dead;
@@ -60,15 +60,16 @@ namespace TeufortTrail.Entities.Person
         {
             get
             {
-                if (Infected && Injured)
-                    return "Infected and Injured";
-                if (Infected && Injured)
-                    return "Injured";
-                if (Infected && Injured)
-                    return "Infected";
-                if (Health == (int)HealthStatus.Dead)
+                if (HealthState == (int)HealthStatus.Dead)
                     return "Dead";
-                return "OK";
+                else if (Infected && Injured)
+                    return "Infected and Injured";
+                else if (Infected)
+                    return "Infected";
+                else if (Injured)
+                    return "Injured";
+                else
+                    return "OK";
             }
         }
 
@@ -105,9 +106,14 @@ namespace TeufortTrail.Entities.Person
                 CheckIllness();
 
             // Check for illness if the amount of hats is too low.
-            if (GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].TotalValue > 22 + 4 * GameCore.Instance.Random.Next() ||
-                GameCore.Instance.Random.NextBool() && GameCore.Instance.Random.NextBool())
+            var playerClothing = GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing];
+            if (playerClothing.TotalValue < GameCore.Instance.Random.Next(0, Convert.ToInt32(Math.Round(0.20 * playerClothing.MaxQuantity))))
                 CheckIllness();
+            else
+            {
+                if (GameCore.Instance.Random.NextBool() && GameCore.Instance.Random.NextBool())
+                    CheckIllness();
+            }
 
             // Only consume food if the whole day has passed.
             if (!skipDay) ConsumeFood();
@@ -173,7 +179,7 @@ namespace TeufortTrail.Entities.Person
             if (GameCore.Instance.Random.NextBool()) return;
 
             // Reduce the party member's health if the ration level is too low.
-            if (GameCore.Instance.Random.Next(100) <= 45 * ((int)GameCore.Instance.Vehicle.Ration - 1))
+            if (GameCore.Instance.Random.Next(100) <= 40 * ((int)GameCore.Instance.Vehicle.Ration - 1))
                 Damage(10, 50);
 
             // Reduce the party member's health if they are sick or injured while the party is traveling.
@@ -234,7 +240,7 @@ namespace TeufortTrail.Entities.Person
                 GameCore.Instance.EventDirector.TriggerEventByType(this, EventCategory.Person);
 
             // Check if the person health has dropped to death levels.
-            if (Health != (int)HealthStatus.Dead) return;
+            if (Health > (int)HealthStatus.Dead) return;
 
             // At this point, we assume that the person has died, and need to display a screen.
             Health = (int)HealthStatus.Dead;

@@ -1,4 +1,5 @@
-﻿using TeufortTrail.Entities;
+﻿using System;
+using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
 namespace TeufortTrail.Events
@@ -14,7 +15,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPostInfection(Entities.Person.Person person)
         {
-            return $"The {person.Class} is sick.";
+            return $"The {person.Class} is sick.{Environment.NewLine}";
         }
     }
 }

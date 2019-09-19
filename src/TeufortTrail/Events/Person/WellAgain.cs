@@ -26,7 +26,7 @@ namespace TeufortTrail.Events
         {
             // Skip if the source entity is not a person.
             var person = userData.SourceEntity as Entities.Person.Person;
-            return (person == null) ? "nobody got healed." : $"{person.Class} is full healed.";
+            return (person == null) ? "nobody got healed." : $"{person.Class} has fully healed.";
         }
     }
 }

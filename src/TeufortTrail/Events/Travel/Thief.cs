@@ -15,7 +15,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return "An enemy spy snuck in the night, resulting in ";
+            return "An enemy spy snuck in the middle of the night, resulting in ";
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace TeufortTrail.Events
             GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo].SubtractQuantity(GameCore.Instance.Random.Next(1, 5));
 
             // Change event text depending on the outcome.
-            return (destroyedItems.Count > 0) ? TryKillPassengers("backstabbed") : "no loss of items.";
+            return (destroyedItems.Count > 0) ? TryKillPassengers("backstabbed") : "nothing because you've caught him before he was able to do anything.";
         }
     }
 }
