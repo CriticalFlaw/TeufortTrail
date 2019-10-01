@@ -1,6 +1,5 @@
 ﻿using System;
 using TeufortTrail.Entities;
-using TeufortTrail.Entities.Vehicle;
 
 namespace TeufortTrail.Events.Director
 {

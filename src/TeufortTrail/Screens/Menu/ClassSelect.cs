@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TeufortTrail.Entities;
+using TeufortTrail.Properties;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
@@ -59,7 +60,7 @@ namespace TeufortTrail.Screens.MainMenu
 
             // Based on the class selection, set the player class and starting money amount.
             UserData.PlayerClass = (Enum.IsDefined(typeof(Classes), userInput)) ? userInput : Classes.Scout;
-            UserData.StartingMoney = 800;
+            UserData.StartingMoney = (GameCore.UseSettings) ? GameCore.Settings.STARTING_MONEY : DefaultGame.Default.STARTING_MONEY;
             UserData.PartyClasses.Add(UserData.PlayerClass);
 
             // Add three unique, randomly selected classes to the player's party.

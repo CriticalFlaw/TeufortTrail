@@ -137,7 +137,7 @@ namespace TeufortTrail.Screens.Travel.Hunt
 
                 // Prompt the player with information about what to do.
                 _huntInfo.Append((HuntWord != HuntingWord.None)
-                    ? $"Type the word '{HuntWord.ToString().ToUpperInvariant()}' to take a shot!{Environment.NewLine}" 
+                    ? $"Type the word '{HuntWord.ToString().ToUpperInvariant()}' to take a shot!{Environment.NewLine}"
                     : $"Waiting for a robot to appear...");
                 return _huntInfo.ToString();
             }

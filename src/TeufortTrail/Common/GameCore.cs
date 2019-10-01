@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using TeufortTrail.Entities.Person;
 using TeufortTrail.Entities.Trail;
@@ -61,6 +63,16 @@ namespace TeufortTrail
             }
         }
 
+        /// <summary>
+        /// Game settings loaded from the JSON file.
+        /// </summary>
+        public static GameSettings Settings { get; set; } = new GameSettings();
+
+        /// <summary>
+        /// Flags the game as using the loaded settings instead of the defaults.
+        /// </summary>
+        public static bool UseSettings { get; private set; }
+
         //-------------------------------------------------------------------------------------------------
 
         /// <summary>
@@ -71,6 +83,7 @@ namespace TeufortTrail
             // Checks if an instance already exists.
             if (Instance != null) throw new InvalidOperationException("A game instance already exists!");
             Instance = new GameCore();
+            LoadGameSettings();
         }
 
         /// <summary>
@@ -80,7 +93,7 @@ namespace TeufortTrail
         {
             // Display the current location, vehicle status and turn count.
             var _gameCore = new StringBuilder();
-            _gameCore.AppendLine($"Turn: {TotalTurns:D4}");
+            _gameCore.AppendLine($"Day: {TotalTurns:D4}");
             _gameCore.AppendLine($"Location: {Trail?.CurrentLocation?.Status}");
             _gameCore.AppendLine($"Vehicle:  {Vehicle?.Status}");
             _gameCore.AppendLine("------------------------------------------");
@@ -142,6 +155,19 @@ namespace TeufortTrail
                 Vehicle.AddPerson(new Person(_class, ((startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1)) ? true : false));
                 crewNumber++;
             }
+        }
+
+        public static void LoadGameSettings()
+        {
+            // Check that the game settings file exists.
+            if (!File.Exists("settings.json")) return;
+
+            // Load the settings by reading the JSON file.
+            var json = new StreamReader(File.OpenRead("Settings.json"), new UTF8Encoding(false)).ReadToEnd();
+            Settings = JsonConvert.DeserializeObject<GameSettings>(json);
+
+            // Check that the loading settings are valid
+            UseSettings = (Settings.STARTING_MONEY == 0) ? false : true;
         }
     }
 }

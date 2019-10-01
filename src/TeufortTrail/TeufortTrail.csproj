@@ -2,14 +2,42 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFrameworks>netcoreapp2.2;net48</TargetFrameworks>
     <RepositoryUrl>https://github.com/CriticalFlaw/TeufortTrail</RepositoryUrl>
     <Authors>CriticalFlaw</Authors>
     <Product>TeufortTrail</Product>
+    <ApplicationIcon></ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="settings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     <PackageReference Include="WolfCurses" Version="2018.9.12.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\DefaultGame.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DefaultGame.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\DefaultGame.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DefaultGame.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

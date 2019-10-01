@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;

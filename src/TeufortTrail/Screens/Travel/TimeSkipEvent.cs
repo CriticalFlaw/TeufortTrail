@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using TeufortTrail.Events.Director;
 using WolfCurses.Core;
