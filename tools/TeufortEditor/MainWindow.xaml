@@ -1,0 +1,63 @@
+﻿<Window x:Class="TeufortEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x2="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:TeufortEditor"
+        mc:Ignorable="d"
+        Title="Teufort Editor" Height="450" Width="800">
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="Resources/background.png" />
+        </Grid.Background>
+
+        <Label
+            Content="Starting Money:"
+            Foreground="White"
+            HorizontalAlignment="Left"
+            Margin="10,10,0,0"
+            VerticalAlignment="Top" Height="37" />
+
+        <x2:IntegerUpDown
+            x:Name="StartingMoney"
+            FormatString="N0"
+            Value="0"
+            Increment="1"
+            Minimum="0"
+            Maximum="9999"
+            Margin="109,10,584.6,373"
+            HorizontalAlignment="Stretch" />
+
+        <Button
+            x:Name="Save"
+            Content="Save"
+            Click="Save_Click"
+            Margin="10,52,689.6,328"
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource Button}" />
+
+        <Button
+            x:Name="Load"
+            Content="Load"
+            Click="Load_Click"
+            Margin="115,52,584.6,328"
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource Button}" RenderTransformOrigin="0.68,0.406" />
+
+        <Label
+            Name="_FilePath"
+            Foreground="White"
+            HorizontalAlignment="Left"
+            Margin="10,378,0,0"
+            VerticalAlignment="Top" Height="32" />
+
+        <Label
+            Name="_Status"
+            Foreground="White"
+            HorizontalAlignment="Left"
+            Margin="10,346,0,0"
+            VerticalAlignment="Top" Height="32" />
+    </Grid>
+</Window>
