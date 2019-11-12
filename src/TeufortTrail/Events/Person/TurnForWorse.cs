@@ -26,7 +26,7 @@ namespace TeufortTrail.Events
         {
             // Skip this step if the source entity is not a person.
             var person = userData.SourceEntity as Entities.Person.Person;
-            return (person == null) ? "Nobody has taken a turn for the worse." : $"{person.Class} has taken a turn for the worse.";
+            return (person == null) ? "There was a health scare, but everyone is okay." : $"The {person.Class}'s health has taken a turn for the worse.";
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using TeufortTrail.Entities;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
@@ -96,8 +95,8 @@ namespace TeufortTrail.Screens.Travel
         {
             // Display the marquee bar and current party status
             var _continueTrail = new StringBuilder();
-            _continueTrail.AppendLine($"{Environment.NewLine}{_swayBarText}");
             _continueTrail.AppendLine(TravelInfo.TravelStatus);
+            _continueTrail.AppendLine($"  {_swayBarText}");
             _continueTrail.AppendLine(TravelInfo.PartyStatus);
             return _continueTrail.ToString();
         }

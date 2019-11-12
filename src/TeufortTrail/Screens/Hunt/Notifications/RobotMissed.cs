@@ -23,7 +23,7 @@ namespace TeufortTrail.Screens.Travel.Hunt
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            return $"{Environment.NewLine}You missed the shot, and the {UserData.Hunt.LastEscaped.Entity.Name.ToLowerInvariant()} robot got away!{Environment.NewLine}";
+            return $"{Environment.NewLine}You've missed the shot, and the {UserData.Hunt.LastEscaped.Entity.Name.ToLowerInvariant()} robot got away!{Environment.NewLine}";
         }
 
         /// <summary>

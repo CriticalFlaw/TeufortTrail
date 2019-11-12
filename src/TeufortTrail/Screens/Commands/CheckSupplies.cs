@@ -29,10 +29,10 @@ namespace TeufortTrail.Screens.Travel.Commands
 
             // Generate a table of resources and party status.
             var _checkSupplies = new StringBuilder();
-            _checkSupplies.AppendLine($"{Environment.NewLine}Your Party:{Environment.NewLine}");
-            _checkSupplies.AppendLine(TravelInfo.PartyStatus);
-            _checkSupplies.AppendLine($"Your Supplies:{Environment.NewLine}");
-            _checkSupplies.AppendLine(TravelInfo.PartySupplies);
+            _checkSupplies.AppendLine($"{Environment.NewLine} Your Party:");
+            _checkSupplies.AppendLine($"{Environment.NewLine}{TravelInfo.PartyStatus}");
+            _checkSupplies.AppendLine($"{Environment.NewLine} Your Supplies:");
+            _checkSupplies.AppendLine($"{Environment.NewLine}{TravelInfo.PartySupplies}");
             return _checkSupplies.ToString();
         }
 

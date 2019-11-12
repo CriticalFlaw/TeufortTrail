@@ -41,14 +41,14 @@ namespace TeufortTrail.Events
             // Append the post-create message if it exists.
             var postCreateText = OnPostCreateItems(createdItems);
             if (!string.IsNullOrEmpty(postCreateText))
-                _itemCreator.AppendLine(postCreateText);
+                _itemCreator.Append(postCreateText);
 
             // Skip this step if no items were created.
             if (!(createdItems?.Count > 0)) return;
 
             // Loop through the generated items and add them to output string.
             foreach (var createdItem in createdItems)
-                _itemCreator.AppendLine($"+ {createdItem.Value:N0} {createdItem.Key}");
+                _itemCreator.AppendLine($"  + {createdItem.Value:N0} {createdItem.Key}");
         }
 
         /// <summary>

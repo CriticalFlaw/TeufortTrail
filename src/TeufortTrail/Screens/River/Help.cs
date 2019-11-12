@@ -40,8 +40,8 @@ namespace TeufortTrail.Screens.Travel.River
             var _help = new StringBuilder();
             _help.AppendLine($"{Environment.NewLine}The local folk will help you float your camper");
             _help.AppendLine($"van across the river in exchange for {UserData.River.HelpCost:N0} hats.{Environment.NewLine}");
-            _help.AppendLine(CannotTrade
-                ? $"You do not have enough hats to be helped.{Environment.NewLine}"
+            _help.Append(CannotTrade
+                ? $"You do not have enough hats to be helped."
                 : "Do you accept this offer? Y/N");
             return _help.ToString();
         }

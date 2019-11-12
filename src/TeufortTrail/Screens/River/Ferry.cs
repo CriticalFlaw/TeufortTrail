@@ -38,11 +38,10 @@ namespace TeufortTrail.Screens.Travel.River
         protected override string OnDialogPrompt()
         {
             var _ferry = new StringBuilder();
-            _ferry.AppendLine($"{Environment.NewLine}To use a ferry means to put your camper van on");
-            _ferry.AppendLine($"on top of a flat boat and float it across. The");
-            _ferry.AppendLine($"owner of the ferry will bring it across for {UserData.River.FerryCost:C2}.{Environment.NewLine}");
-            _ferry.AppendLine(CannotAfford
-                ? $"You do not have enough monies to take the ferry.{Environment.NewLine}"
+            _ferry.AppendLine($"{Environment.NewLine}The ferry will to put your camper van on top of a flat boat and float it across.");
+            _ferry.AppendLine($"The owner of the ferry will bring it across for {UserData.River.FerryCost:C2}.{Environment.NewLine}");
+            _ferry.Append(CannotAfford
+                ? $"You do not have enough monies to take the ferry."
                 : "Do you accept this offer? Y/N");
             return _ferry.ToString();
         }

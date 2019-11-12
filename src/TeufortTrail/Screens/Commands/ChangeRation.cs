@@ -31,11 +31,12 @@ namespace TeufortTrail.Screens.Travel.Commands
         {
             base.OnFormPostCreate();
             _changeRation = new StringBuilder();
-            _changeRation.AppendLine("Set the amount of food your party will eat each day.");
+            _changeRation.AppendLine();
+            _changeRation.AppendLine("Set the amount of food your party will consume each day.");
             _changeRation.AppendLine($"Your options are:{Environment.NewLine}");
-            _changeRation.AppendLine($"1. {RationLevel.Filling.ToDescriptionAttribute()}");
-            _changeRation.AppendLine($"2. {RationLevel.Meager.ToDescriptionAttribute()}");
-            _changeRation.AppendLine($"3. {RationLevel.Bare.ToDescriptionAttribute()}");
+            _changeRation.AppendLine($"  1. {RationLevel.Filling.ToDescriptionAttribute()}");
+            _changeRation.AppendLine($"  2. {RationLevel.Meager.ToDescriptionAttribute()}");
+            _changeRation.Append($"  3. {RationLevel.Bare.ToDescriptionAttribute()}");
         }
 
         /// <summary>

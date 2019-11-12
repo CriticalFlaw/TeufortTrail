@@ -43,14 +43,14 @@ namespace TeufortTrail.Events
             // Append the post-destroy message if it exists.
             var postDestroyText = OnPostDestroyItems(destroyedItems);
             if (!string.IsNullOrEmpty(postDestroyText))
-                _itemDestroyer.AppendLine(postDestroyText);
+                _itemDestroyer.Append(postDestroyText);
 
             // Skip this step if no items were destroyed.
             if (!(destroyedItems?.Count > 0)) return;
 
             // Loop through the generated items and add them to output string.
             foreach (var destroyedItem in destroyedItems)
-                _itemDestroyer.AppendLine($"- {destroyedItem.Value:N0} {destroyedItem.Key}");
+                _itemDestroyer.AppendLine($"  - {destroyedItem.Value:N0} {destroyedItem.Key}");
         }
 
         /// <summary>
@@ -81,14 +81,14 @@ namespace TeufortTrail.Events
         {
             // Get a list of vehicle passengers killed in the event.
             var _postDestroy = new StringBuilder();
-            _postDestroy.AppendLine("The loss of:");
+            _postDestroy.Append(Environment.NewLine);
             var passengersKilled = GameCore.Instance.Vehicle.TryKill();
             var passengers = (passengersKilled as IList<Entities.Person.Person>) ?? passengersKilled.ToList();
             foreach (var person in passengers)
             {
                 // Skip this step if the passenger isn't dead.
                 if (person.HealthState != HealthStatus.Dead) continue;
-                _postDestroy.AppendLine($"- {person.Class} ({killVerb})");
+                _postDestroy.AppendLine($"  - {person.Class} ({killVerb})");
             }
             return _postDestroy.ToString();
         }

@@ -75,12 +75,12 @@ namespace TeufortTrail.Screens.Travel.Toll
         public override string OnRenderForm()
         {
             var _forkRoad = new StringBuilder();
-            _forkRoad.AppendLine($"{Environment.NewLine}You encounter a fork in the road. You may:{Environment.NewLine}");
+            _forkRoad.AppendLine($"{Environment.NewLine}You encounter a fork in the road. You can:{Environment.NewLine}");
             foreach (var pathChoice in PathChoices)
             {
-                _forkRoad.AppendLine($"{pathChoice.Key}. Travel to {pathChoice.Value.Name}");
+                _forkRoad.AppendLine($"  {pathChoice.Key}. Travel to {pathChoice.Value.Name}");
                 if (pathChoice.Key == PathChoices.Last().Key)
-                    _forkRoad.Append($"{pathChoice.Key + 1}. Check the Map");
+                    _forkRoad.Append($"  {pathChoice.Key + 1}. Check the Map");
             }
             return _forkRoad.ToString();
         }

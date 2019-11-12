@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TeufortTrail.Entities;
 
 namespace TeufortTrail.Events
@@ -13,7 +14,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return "The Pyro set your vehicle on fire, resulting in ";
+            return $"The Pyro set your vehicle on fire,{Environment.NewLine}resulting in the loss of:";
         }
 
         /// <summary>

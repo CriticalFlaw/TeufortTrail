@@ -54,11 +54,11 @@ namespace TeufortTrail.Screens.Travel.Toll
                 _tollRoad.AppendLine($"{GameCore.Instance.Trail.NextLocation.Name}.");
             else
                 _tollRoad.AppendLine($"the indefinable road.");
-
+            _tollRoad.Append(Environment.NewLine);
             // Display the prompt based on whether or not the player can afford the toll.
-            _tollRoad.AppendLine((GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue >= UserData.Toll.Cost)
-                ? $"{Environment.NewLine}Are you willing to do this? Y/N"
-                : $"{Environment.NewLine}You don't have enough cash for the toll road.");
+            _tollRoad.Append((GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue >= UserData.Toll.Cost)
+                ? $"Are you willing to do this? Y/N"
+                : $"You don't have enough cash for the toll road.");
             return _tollRoad.ToString();
         }
 

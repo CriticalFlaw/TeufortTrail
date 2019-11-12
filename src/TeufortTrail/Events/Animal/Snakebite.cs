@@ -36,7 +36,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnRender(EventInfo userData)
         {
-            return "You killed a poisonous snake, after it bit you.";
+            return "You've killed a poisonous snake, but only after it bit you.";
         }
     }
 }

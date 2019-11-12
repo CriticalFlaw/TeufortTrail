@@ -24,7 +24,7 @@ namespace TeufortTrail.Events
         {
             // Skip this step if the source entity is not of correct type.
             var person = userData.SourceEntity as Entities.Person.Person;
-            return (person == null) ? string.Empty : OnPostInfection(person);
+            return (person == null) ? "There was an illness scare, but everyone is okay." : OnPostInfection(person);
         }
 
         /// <summary>

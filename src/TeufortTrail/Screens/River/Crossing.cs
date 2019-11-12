@@ -145,11 +145,10 @@ namespace TeufortTrail.Screens.Travel.River
         {
             // Display the river crossing progress. Wait for user input.
             var _crossing = new StringBuilder();
-            _crossing.AppendLine($"{Environment.NewLine}{_swayBarText}");
-            _crossing.AppendLine("------------------------------------------");
             _crossing.AppendLine($"Crossing the {GameCore.Instance.Trail.CurrentLocation.Name}");
-            _crossing.AppendLine($"River crossed: {RiverWidthCrossed:N0}/{UserData.River.RiverWidth:N0} feet");
+            _crossing.AppendLine($"River crossed: {RiverWidthCrossed:N0} out of {UserData.River.RiverWidth:N0} feet");
             _crossing.AppendLine("------------------------------------------");
+            _crossing.AppendLine($"{Environment.NewLine}  {_swayBarText}");
             if (DoneRiverCrossing) _crossing.AppendLine(InputManager.PRESSENTER);
             return _crossing.ToString();
         }

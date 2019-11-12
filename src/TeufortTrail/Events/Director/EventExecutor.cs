@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
@@ -29,9 +28,7 @@ namespace TeufortTrail.Events.Director
             UserData.EventText = eventText;
 
             // Add event text to the user interface output.
-            var _eventExecutor = new StringBuilder();
-            _eventExecutor.AppendLine($"{Environment.NewLine}{eventText}");
-            return _eventExecutor.ToString();
+            return $"{Environment.NewLine}{eventText}{Environment.NewLine}";
         }
 
         /// <summary>

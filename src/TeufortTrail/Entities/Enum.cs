@@ -94,7 +94,7 @@ namespace TeufortTrail.Entities
     public enum RationLevel
     {
         [Description("Filling - meals are large and generous.")] Filling = 3,
-        [Description("Meager - meals are small, but adequate.")] Meager = 2,
+        [Description("Meager - meals are small but adequate.")] Meager = 2,
         [Description("Bare Bones - meals are very small, everyone stays hungry.")] Bare = 1
     }
 

@@ -38,15 +38,15 @@ namespace TeufortTrail.Screens.Travel.River
             base.OnFormPostCreate();
             UserData.GenerateRiver();
             _river = new StringBuilder();
-            _river.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}");
-            _river.AppendLine("------------------------------------------");
-            _river.AppendLine($"{Environment.NewLine}A {UserData.River.RiverWidth} feet wide river separates from your trail.");
+            //_river.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}");
+            //_river.AppendLine("------------------------------------------");
+            _river.AppendLine($"{Environment.NewLine}A {UserData.River.RiverWidth} feet wide river separates you from the trail.");
             _river.AppendLine($"You must cross it in order to continue.{Environment.NewLine}");
-            _river.AppendLine($"1. {RiverOptions.Float.ToDescriptionAttribute()}");
+            _river.AppendLine($"  1. {RiverOptions.Float.ToDescriptionAttribute()}");
             if (river.CrossingOption == RiverOptions.Ferry)
-                _river.AppendLine($"2. {RiverOptions.Ferry.ToDescriptionAttribute()}");
+                _river.Append($"  2. {RiverOptions.Ferry.ToDescriptionAttribute()}");
             else if (river.CrossingOption == RiverOptions.Help)
-                _river.AppendLine($"2. {RiverOptions.Help.ToDescriptionAttribute()}");
+                _river.Append($"  2. {RiverOptions.Help.ToDescriptionAttribute()}");
         }
 
         /// <summary>

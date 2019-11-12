@@ -16,7 +16,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return "Heavy rain, resulting in ";
+            return "Heavy rain, resulting in the loss of:";
         }
 
         /// <summary>

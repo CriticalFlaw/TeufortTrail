@@ -44,7 +44,7 @@ namespace TeufortTrail.Screens.Travel.Commands
             // Render out the advice to the form.
             return (randomAdvice == null)
                 ? $"{Environment.NewLine}AdviceRegistry.DEFAULTADVICE{Environment.NewLine}"
-                : $"{Environment.NewLine}{randomAdvice.Name},{Environment.NewLine}{randomAdvice.Quote.WordWrap()}{Environment.NewLine}";
+                : $"{Environment.NewLine}{randomAdvice.Name}:{Environment.NewLine}{Environment.NewLine}{randomAdvice.Quote.WordWrap(64)}{Environment.NewLine}";
         }
 
         /// <summary>

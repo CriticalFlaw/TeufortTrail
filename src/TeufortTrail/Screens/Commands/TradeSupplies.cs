@@ -54,8 +54,9 @@ namespace TeufortTrail.Screens.Travel.Commands
 
             // Display the party's current resource supply.
             var _tradeSupplies = new StringBuilder();
-            _tradeSupplies.AppendLine($"{Environment.NewLine}Your Supplies:{Environment.NewLine}");
-            _tradeSupplies.AppendLine(TravelInfo.PartySupplies);
+            //_tradeSupplies.AppendLine($"{Environment.NewLine}Your Supplies:{Environment.NewLine}");
+            //_tradeSupplies.AppendLine(TravelInfo.PartySupplies);
+            _tradeSupplies.AppendLine();
 
             // Generate random trade offers for this location.
             GenerateTrades();
@@ -73,8 +74,8 @@ namespace TeufortTrail.Screens.Travel.Commands
                 // Display the prompt based on whether or not the player has the item the trader wants.
                 PlayerCanTrade = GameCore.Instance.Vehicle.HasInventoryItem(TradeOffers[TradeIndex].WantedItem);
                 _tradeSupplies.Append(PlayerCanTrade
-                    ? $"Are you willing to trade? Y/N{Environment.NewLine}"
-                    : $"Unfortunately, you don't have this.{Environment.NewLine}");
+                    ? $"Are you willing to trade? Y/N"
+                    : $"Unfortunately, you don't have this.");
             }
             return _tradeSupplies.ToString();
         }

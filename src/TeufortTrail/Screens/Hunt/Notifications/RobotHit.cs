@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
@@ -24,7 +23,7 @@ namespace TeufortTrail.Screens.Travel.Hunt
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            return $"{Environment.NewLine}You shot a {((UserData.Hunt.LastDestroyed.Entity.TotalValue > 100) ? "giant" : "")} robot {UserData.Hunt.LastDestroyed.Entity.Name.ToLowerInvariant()}.";
+            return $"{Environment.NewLine}You shot a{((UserData.Hunt.LastDestroyed.Entity.TotalValue > 100) ? " giant " : " ")}robot {UserData.Hunt.LastDestroyed.Entity.Name.ToLowerInvariant()}.{Environment.NewLine}";
         }
 
         /// <summary>

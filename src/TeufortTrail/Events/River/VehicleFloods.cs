@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
@@ -23,7 +24,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return "Your vehicle got flooded when attempting to cross the river, resulting in ";
+            return $"Your vehicle flooded while attempting to cross the river,{Environment.NewLine}resulting in the loss of:";
         }
 
         /// <summary>

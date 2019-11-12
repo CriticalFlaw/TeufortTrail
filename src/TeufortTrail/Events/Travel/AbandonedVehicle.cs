@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
@@ -24,7 +23,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPostCreateItems(IDictionary<ItemTypes, int> createdItems)
         {
-            return (createdItems.Count > 0) ? $"and find:{Environment.NewLine}" : "but it's empty.";
+            return (createdItems.Count > 0) ? $"and from it you find:" : "but it's empty.";
         }
     }
 }

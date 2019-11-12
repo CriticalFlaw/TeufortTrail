@@ -24,7 +24,7 @@ namespace TeufortTrail.Screens.Menu
         /// <remarks>TODO: Display the player's total score. Expand the failure message.</remarks>
         protected override string OnDialogPrompt()
         {
-            return $"{Environment.NewLine}All the members of your party have died.{Environment.NewLine}GAME OVER.{Environment.NewLine}";
+            return $"GAME OVER{Environment.NewLine}------------------------------------------{Environment.NewLine}All the members of your party have died.";
         }
 
         /// <summary>

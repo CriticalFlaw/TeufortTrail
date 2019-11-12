@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
@@ -15,7 +16,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return "Your vehicle got into an accident, resulting in ";
+            return $"Your vehicle got into an accident,{Environment.NewLine}resulting in the loss of:";
         }
 
         /// <summary>

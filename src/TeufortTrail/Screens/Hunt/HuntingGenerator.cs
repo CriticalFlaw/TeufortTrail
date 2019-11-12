@@ -132,12 +132,12 @@ namespace TeufortTrail.Screens.Travel.Hunt
 
                 // Represent seconds remaining as daylight left percentage.
                 _huntInfo.AppendLine($"Daylight Remaining: {(HuntTime / (decimal)TotalHuntTime) * 100:N0}%");
-                _huntInfo.AppendLine($"Current Target:     {(RobotTarget != null ? RobotTarget.Entity.Name.ToUpperInvariant() + " ROBOT" : "No-one")}{Environment.NewLine}");
-                _huntInfo.AppendLine($"Robots Remaining:   {RobotsList.Count:N0} ");
+                //_huntInfo.AppendLine($"Robots Remaining:   {RobotsList.Count:N0} ");
+                _huntInfo.AppendLine($"Current Target:     {(RobotTarget != null ? "ROBOT " + RobotTarget.Entity.Name.ToUpperInvariant() : "")}{Environment.NewLine}");
 
                 // Prompt the player with information about what to do.
                 _huntInfo.Append((HuntWord != HuntingWord.None)
-                    ? $"Type the word '{HuntWord.ToString().ToUpperInvariant()}' to take a shot!{Environment.NewLine}" 
+                    ? $"Type in the word '{HuntWord.ToString().ToUpperInvariant()}' to take a shot!"
                     : $"Waiting for a robot to appear...");
                 return _huntInfo.ToString();
             }
