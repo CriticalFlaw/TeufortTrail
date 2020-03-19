@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TeufortTrail.Entities;
-using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
@@ -42,7 +41,7 @@ namespace TeufortTrail.Screens.MainMenu
             _classSelect = new StringBuilder();
             _classSelect.AppendLine($"{Environment.NewLine}Choose your class:{Environment.NewLine}");
             for (var index = 0; index < classes.Count; index++)
-                _classSelect.AppendLine($"  {(int)classes[index]}. {classes[index].ToDescriptionAttribute()}");
+                _classSelect.AppendLine($"  {(int)classes[index]}. {classes[index]}");
         }
 
         /// <summary>
@@ -60,6 +59,9 @@ namespace TeufortTrail.Screens.MainMenu
             // Based on the class selection, set the player class and starting money amount.
             UserData.PlayerClass = (Enum.IsDefined(typeof(Classes), userInput)) ? userInput : Classes.Scout;
             UserData.StartingMoney = 800;
+
+            // Add the player class to the party.
+            UserData.PartyClasses.Clear();
             UserData.PartyClasses.Add(UserData.PlayerClass);
 
             // Add three unique, randomly selected classes to the player's party.
@@ -70,7 +72,7 @@ namespace TeufortTrail.Screens.MainMenu
                 UserData.PartyClasses.Add(_class);
 
             // Go to the next screen.
-            SetForm(typeof(StorySetup));
+            SetForm(typeof(ClassConfirm));
         }
 
         /// <summary>

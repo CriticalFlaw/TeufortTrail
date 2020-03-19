@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using TeufortTrail.Entities;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
@@ -21,13 +23,30 @@ namespace TeufortTrail.Screens.Travel.Commands
         /// <summary>
         /// Called when the attached screen is activated and needs a text prompt to be returned.
         /// </summary>
-        /// <remarks>TODO: Consume resources and trigger events after resting.</remarks>
         protected override string OnDialogPrompt()
         {
+            int FoodConsumed, FoodConsumedTotal = 0;
             // Increment the turn counter depending on the number of days the party has rested.
-            for (var x = 0; x < UserData.DaysToRest; x++)
+            for (var i = 0; i < UserData.DaysToRest; i++)
+            {
                 GameCore.Instance.TakeTurn(false);
-            return $"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.{Environment.NewLine}{Environment.NewLine}";
+                foreach (var person in GameCore.Instance.Vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead))
+                {
+                    // Subtract the amount of food consumed from the party member.
+                    var vehicle = GameCore.Instance.Vehicle;
+                    if (vehicle.Inventory[ItemTypes.Food].Quantity > 0)
+                    {
+                        FoodConsumed = GameCore.Instance.Random.Next(1, 3) * vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead).Count();
+                        vehicle.Inventory[ItemTypes.Food].SubtractQuantity(FoodConsumed);
+                        FoodConsumedTotal += FoodConsumed;
+                    }
+
+                    // Increase the party member's health.
+                    if (person.HealthState != HealthStatus.Good)
+                        person.Health += GameCore.Instance.Random.Next(1, 10);
+                }
+            }
+            return $"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.{Environment.NewLine}In that time they consumed {FoodConsumedTotal} pounds of food.{Environment.NewLine}{Environment.NewLine}";
         }
 
         /// <summary>

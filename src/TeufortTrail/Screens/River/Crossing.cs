@@ -80,7 +80,6 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         /// <param name="systemTick">TRUE if ticked unpredictably by an underlying system. FALSE if ticked by the game simulation at a fixed interval.</param>
         /// <param name="skipDay">TRUE if the game has forced a tick without advancing the game progression. FALSE otherwise.</param>
-        /// <remarks>TODO: Trigger events when the player is crossing the river via ferry or help.</remarks>
         public override void OnTick(bool systemTick, bool skipDay)
         {
             // Only tick vehicle at an interval.
@@ -108,8 +107,7 @@ namespace TeufortTrail.Screens.Travel.River
             switch (UserData.River.CrossingType)
             {
                 case RiverOptions.Float:
-                    if (GameCore.Instance.Random.NextBool() &&
-                        !UserData.River.DisasterHappened &&
+                    if (GameCore.Instance.Random.NextBool() && !UserData.River.DisasterHappened &&
                         (RiverWidthCrossed >= UserData.River.RiverWidth / 2))
                     {
                         UserData.River.DisasterHappened = true;
@@ -119,6 +117,12 @@ namespace TeufortTrail.Screens.Travel.River
 
                 case RiverOptions.Ferry:
                 case RiverOptions.Help:
+                    if (GameCore.Instance.Random.NextBool() && !UserData.River.DisasterHappened &&
+                        GameCore.Instance.Random.Next(100) >= 80)
+                    {
+                        UserData.River.DisasterHappened = true;
+                        GameCore.Instance.EventDirector.TriggerEventByType(GameCore.Instance.Vehicle, EventCategory.River);
+                    }
                     break;
 
                 case RiverOptions.None:

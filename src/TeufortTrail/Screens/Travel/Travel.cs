@@ -268,7 +268,6 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Number of days the party will rest for at the location.
         /// </summary>
-        /// <remarks>TODO: Allow the player to choose how many days to rest.</remarks>
         public int DaysToRest = 3;
 
         /// <summary>

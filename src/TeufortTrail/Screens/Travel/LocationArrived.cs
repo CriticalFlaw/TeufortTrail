@@ -44,7 +44,7 @@ namespace TeufortTrail.Screens.Travel
         {
             // Display a message asking the player if they want to investigate the current location.
             var _locationArrived = new StringBuilder();
-            _locationArrived.AppendLine($"{Environment.NewLine}You've arrived at {GameCore.Instance.Trail.CurrentLocation.Name}.");
+            _locationArrived.Append($"{Environment.NewLine}You've arrived at {GameCore.Instance.Trail.CurrentLocation.Name}.");
             _locationArrived.Append($"{Environment.NewLine}Would you like to look around? Y/N");
             return _locationArrived.ToString();
         }

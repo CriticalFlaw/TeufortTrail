@@ -42,7 +42,6 @@ namespace TeufortTrail.Screens.Travel.Commands
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        /// <remarks>TODO: Add a help option, describing the purpose of rationing.</remarks>
         public override void OnInputBufferReturned(string input)
         {
             switch (input.ToUpperInvariant())

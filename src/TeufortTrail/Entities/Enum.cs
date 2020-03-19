@@ -52,18 +52,17 @@ namespace TeufortTrail.Entities
     /// <summary>
     /// Defines all the playable classes.
     /// </summary>
-    /// <remarks>TODO: Add descriptions and unique stats to each class.</remarks>
     public enum Classes
     {
-        Scout = 1,
-        Soldier = 2,
-        Pyro = 3,
-        Demoman = 4,
-        Heavy = 5,
-        Medic = 6,
-        Engineer = 7,
-        Sniper = 8,
-        Spy = 9
+        [Description("You've selected the Scout.")] Scout = 1,
+        [Description("You've selected the Soldier.")] Soldier = 2,
+        [Description("You've selected the Pyro.")] Pyro = 3,
+        [Description("You've selected the Demoman.")] Demoman = 4,
+        [Description("You've selected the Heavy.")] Heavy = 5,
+        [Description("You've selected the Medic.")] Medic = 6,
+        [Description("You've selected the Engineer.")] Engineer = 7,
+        [Description("You've selected the Sniper.")] Sniper = 8,
+        [Description("You've selected the Spy.")] Spy = 9
     }
 
     /// <summary>

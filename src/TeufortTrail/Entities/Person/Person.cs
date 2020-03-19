@@ -122,7 +122,7 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Determine how much food the party will consume, then subtract it from the inventory.
         /// </summary>
-        private void ConsumeFood()
+        public void ConsumeFood()
         {
             // Skip if the party member is already dead.
             if (HealthState == HealthStatus.Dead) return;
