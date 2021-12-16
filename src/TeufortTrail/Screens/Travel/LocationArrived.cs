@@ -43,10 +43,10 @@ namespace TeufortTrail.Screens.Travel
         protected override string OnDialogPrompt()
         {
             // Display a message asking the player if they want to investigate the current location.
-            var _locationArrived = new StringBuilder();
-            _locationArrived.Append($"{Environment.NewLine}You've arrived at {GameCore.Instance.Trail.CurrentLocation.Name}.");
-            _locationArrived.Append($"{Environment.NewLine}Would you like to look around? Y/N");
-            return _locationArrived.ToString();
+            var locationArrived = new StringBuilder();
+            locationArrived.Append($"{Environment.NewLine}You've arrived at {GameCore.Instance.Trail.CurrentLocation.Name}.");
+            locationArrived.Append($"{Environment.NewLine}Would you like to look around? Y/N");
+            return locationArrived.ToString();
         }
 
         /// <summary>
@@ -58,8 +58,7 @@ namespace TeufortTrail.Screens.Travel
                 ClearForm();
             else
             {
-                var travelMode = ParentWindow as Travel;
-                if (travelMode == null) throw new InvalidCastException("Unable to cast parent game Windows into travel game Windows when it should be that!");
+                if (ParentWindow is not Travel travelMode) throw new InvalidCastException("Unable to cast parent game Windows into travel game Windows when it should be that!");
                 travelMode.ContinueTrail();
             }
         }

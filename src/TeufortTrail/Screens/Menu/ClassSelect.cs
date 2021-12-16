@@ -6,7 +6,7 @@ using TeufortTrail.Entities;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.MainMenu
+namespace TeufortTrail.Screens.Menu
 {
     /// <summary>
     /// Displays a list of playable classes the player choose to play as.
@@ -40,8 +40,8 @@ namespace TeufortTrail.Screens.MainMenu
             var classes = new List<Classes>(Enum.GetValues(typeof(Classes)).Cast<Classes>());
             _classSelect = new StringBuilder();
             _classSelect.AppendLine($"{Environment.NewLine}Choose your class:{Environment.NewLine}");
-            for (var index = 0; index < classes.Count; index++)
-                _classSelect.AppendLine($"  {(int)classes[index]}. {classes[index]}");
+            foreach (var t in classes)
+                _classSelect.AppendLine($"  {(int)t}. {t}");
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace TeufortTrail.Screens.MainMenu
             // Add three unique, randomly selected classes to the player's party.
             var classes = Enum.GetValues(typeof(Classes)).Cast<Classes>().ToList();
             classes.Remove(UserData.PlayerClass);
-            classes = classes.OrderBy(arg => Guid.NewGuid()).Take(3).ToList();
-            foreach (var _class in classes)
-                UserData.PartyClasses.Add(_class);
+            classes = classes.OrderBy(_ => Guid.NewGuid()).Take(3).ToList();
+            foreach (var x in classes)
+                UserData.PartyClasses.Add(x);
 
             // Go to the next screen.
             SetForm(typeof(ClassConfirm));

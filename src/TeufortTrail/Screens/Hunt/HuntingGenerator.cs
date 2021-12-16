@@ -7,39 +7,39 @@ using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Robot;
 using WolfCurses;
 
-namespace TeufortTrail.Screens.Travel.Hunt
+namespace TeufortTrail.Screens.Hunt
 {
     public sealed class HuntGenerator : ITick
     {
         /// <summary>
         /// Defines the target robot that's been destroyed by the player.
         /// </summary>
-        private Robot RobotTarget;
-
-        /// <summary>
-        /// Get the last known robot that has fled the hunting grounds.
-        /// </summary>
-        public Robot LastEscaped => RobotsEscaped.LastOrDefault();
-
-        /// <summary>
-        /// Get the last known robot destroyed by the player.
-        /// </summary>
-        public Robot LastDestroyed => RobotsDestroyed.LastOrDefault();
+        private Robot _robotTarget;
 
         /// <summary>
         /// References all of the robots created for this hunting session.
         /// </summary>
-        private readonly List<Robot> RobotsList;
+        private readonly List<Robot> _robotList;
 
         /// <summary>
         /// References all of the robots that have escaped the player.
         /// </summary>
-        private readonly List<Robot> RobotsEscaped;
+        private readonly List<Robot> _robotsEscaped;
 
         /// <summary>
         /// References all of the robots that have destroyed by the player.
         /// </summary>
-        private readonly List<Robot> RobotsDestroyed;
+        private readonly List<Robot> _robotsDestroyed;
+
+        /// <summary>
+        /// Get the last known robot that has fled the hunting grounds.
+        /// </summary>
+        public Robot LastEscaped => _robotsEscaped.LastOrDefault();
+
+        /// <summary>
+        /// Get the last known robot destroyed by the player.
+        /// </summary>
+        public Robot LastDestroyed => _robotsDestroyed.LastOrDefault();
 
         /// <summary>
         /// The current hunting word that the player has to type out.
@@ -83,11 +83,8 @@ namespace TeufortTrail.Screens.Travel.Hunt
         {
             get
             {
-                if (RobotsDestroyed.Count <= 0) return 0;
-                var moneyCollected = 0.00;
-                foreach (var preyItem in RobotsDestroyed)
-                    moneyCollected += preyItem.Entity.TotalValue;
-                return moneyCollected;
+                if (_robotsDestroyed.Count <= 0) return 0;
+                return _robotsDestroyed.Aggregate(0.00, (current, preyItem) => current + preyItem.Entity.TotalValue);
             }
         }
 
@@ -124,22 +121,22 @@ namespace TeufortTrail.Screens.Travel.Hunt
         {
             get
             {
-                var _huntInfo = new StringBuilder();
-                _huntInfo.AppendLine((GameCore.Instance.Trail.CurrentLocation.Status != LocationStatus.Departed)
+                var huntInfo = new StringBuilder();
+                huntInfo.AppendLine((GameCore.Instance.Trail.CurrentLocation.Status != LocationStatus.Departed)
                     ? $"Hunting outside {GameCore.Instance.Trail.CurrentLocation.Name}"
                     : $"Hunting near {GameCore.Instance.Trail.NextLocation.Name}");
-                _huntInfo.AppendLine("------------------------------------------");
+                huntInfo.AppendLine("------------------------------------------");
 
                 // Represent seconds remaining as daylight left percentage.
-                _huntInfo.AppendLine($"Daylight Remaining: {(HuntTime / (decimal)TotalHuntTime) * 100:N0}%");
+                huntInfo.AppendLine($"Daylight Remaining: {(HuntTime / (decimal)TotalHuntTime) * 100:N0}%");
                 //_huntInfo.AppendLine($"Robots Remaining:   {RobotsList.Count:N0} ");
-                _huntInfo.AppendLine($"Current Target:     {(RobotTarget != null ? "ROBOT " + RobotTarget.Entity.Name.ToUpperInvariant() : "")}{Environment.NewLine}");
+                huntInfo.AppendLine($"Current Target:     {(_robotTarget != null ? "ROBOT " + _robotTarget.Entity.Name.ToUpperInvariant() : "")}{Environment.NewLine}");
 
                 // Prompt the player with information about what to do.
-                _huntInfo.Append((HuntWord != HuntingWord.None)
+                huntInfo.Append((HuntWord != HuntingWord.None)
                     ? $"Type in the word '{HuntWord.ToString().ToUpperInvariant()}' to take a shot!"
-                    : $"Waiting for a robot to appear...");
-                return _huntInfo.ToString();
+                    : "Waiting for a robot to appear...");
+                return huntInfo.ToString();
             }
         }
 
@@ -150,9 +147,9 @@ namespace TeufortTrail.Screens.Travel.Hunt
         /// </summary>
         public HuntGenerator()
         {
-            RobotsList = GenerateRobots();
-            RobotsEscaped = new List<Robot>();
-            RobotsDestroyed = new List<Robot>();
+            _robotList = GenerateRobots();
+            _robotsEscaped = new List<Robot>();
+            _robotsDestroyed = new List<Robot>();
             HuntTime = TotalHuntTime;
             HuntWordList = Enum.GetValues(typeof(HuntingWord)).Cast<HuntingWord>().ToList();
         }
@@ -177,10 +174,10 @@ namespace TeufortTrail.Screens.Travel.Hunt
             TickAwareness();
 
             // Loop through every spawned robot. Remove inactive ones, otherwise tick.
-            var _robotList = new List<Robot>(RobotsList);
-            foreach (var robot in _robotList)
+            var robotList = new List<Robot>(_robotList);
+            foreach (var robot in robotList)
                 if (robot.Lifetime >= robot.LifetimeMax)
-                    RobotsList.Remove(robot);
+                    _robotList.Remove(robot);
                 else
                     robot.OnTick(false, false);
 
@@ -194,19 +191,17 @@ namespace TeufortTrail.Screens.Travel.Hunt
         private void TickAwareness()
         {
             // Check if there's an active target. Roll the die to continue.
-            if (RobotTarget == null || GameCore.Instance.Random.NextBool()) return;
+            if (_robotTarget == null || GameCore.Instance.Random.NextBool()) return;
 
             // Check that there's an active hunting word, if not pick one.
-            if ((RobotTarget != null) && (HuntWord != HuntingWord.None))
-                RobotTarget.TickTarget();
+            if ((_robotTarget != null) && (HuntWord != HuntingWord.None))
+                _robotTarget.TickTarget();
 
             // Trigger an event if the robot has retreated.
-            if (RobotTarget.ShouldRetreat)
-            {
-                RobotsEscaped.Add(new Robot(RobotTarget));
-                TargetFledEvent?.Invoke(RobotTarget);
-                ClearTarget();
-            }
+            if (!_robotTarget.ShouldRetreat) return;
+            _robotsEscaped.Add(new Robot(_robotTarget));
+            TargetFledEvent?.Invoke(_robotTarget);
+            ClearTarget();
         }
 
         /// <summary>
@@ -215,7 +210,7 @@ namespace TeufortTrail.Screens.Travel.Hunt
         private void PickNextRobot()
         {
             // Skip this step if there's no active target, robot list or the dice roll returns a negative.
-            if (RobotTarget != null || RobotsList.Count <= 0 || GameCore.Instance.Random.NextBool()) return;
+            if (_robotTarget != null || _robotList.Count <= 0 || GameCore.Instance.Random.NextBool()) return;
 
             // Randomly select a key word, check that it isn't empty or same as the currently active word.
             var currentWord = (HuntingWord)GameCore.Instance.Random.Next(HuntWordList.Count);
@@ -223,12 +218,12 @@ namespace TeufortTrail.Screens.Travel.Hunt
             HuntWord = currentWord;
 
             // Randomly select robot from the list. Check that its activity timer hasn't expired.
-            var randomRobot = RobotsList[GameCore.Instance.Random.Next(RobotsList.Count)];
+            var randomRobot = _robotList[GameCore.Instance.Random.Next(_robotList.Count)];
             if (randomRobot.Lifetime > randomRobot.LifetimeMax) return;
-            RobotTarget = new Robot(randomRobot);
+            _robotTarget = new Robot(randomRobot);
 
             // Remove the selected robot from the list so it does not get picked again.
-            RobotsList.Remove(randomRobot);
+            _robotList.Remove(randomRobot);
         }
 
         /// <summary>
@@ -236,10 +231,10 @@ namespace TeufortTrail.Screens.Travel.Hunt
         /// </summary>
         private List<Robot> GenerateRobots()
         {
-            var _robotList = new List<Robot>();
+            var robotList = new List<Robot>();
             for (var index = 0; index < GameCore.Instance.Random.Next(1, 15); index++)
-                _robotList.Add(new Robot());
-            return _robotList.OrderByDescending(x => x.LifetimeMax).Distinct().ToList();
+                robotList.Add(new Robot());
+            return robotList.OrderByDescending(x => x.LifetimeMax).Distinct().ToList();
         }
 
         /// <summary>
@@ -247,7 +242,7 @@ namespace TeufortTrail.Screens.Travel.Hunt
         /// </summary>
         private void ClearTarget()
         {
-            RobotTarget = null;
+            _robotTarget = null;
             HuntWord = HuntingWord.None;
             GameCore.Instance.InputManager.ClearBuffer();
         }
@@ -258,24 +253,24 @@ namespace TeufortTrail.Screens.Travel.Hunt
         internal bool DestroyRobot()
         {
             // Skip this step if there's no active target.
-            if (RobotTarget == null) return false;
+            if (_robotTarget == null) return false;
 
             // Subtract ammo from the supply after the player takes a shot.
             var ammoSupply = GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo];
             ammoSupply.SubtractQuantity((int)ammoSupply.TotalValue - 10 - GameCore.Instance.Random.Next() * 4);
 
             // Check if the player missed their target based on the calculation or if the player fired in less than half the maximum target time.
-            if (100 * GameCore.Instance.Random.Next() < ((int)GameCore.Instance.Vehicle.Passengers.Where(x => x.Leader == true).First().Class - 13) * RobotTarget.TargetTime ||
-                RobotTarget.TargetTime > RobotTarget.TargetTimeMax / 2)
+            if (100 * GameCore.Instance.Random.Next() < ((int)GameCore.Instance.Vehicle.Passengers.First(x => x.Leader).Class - 13) * _robotTarget.TargetTime ||
+                _robotTarget.TargetTime > _robotTarget.TargetTimeMax / 2)
             {
                 // Clear the target and mark the robot as escaped if the shot missed.
-                RobotsEscaped.Add(RobotTarget);
+                _robotsEscaped.Add(_robotTarget);
                 ClearTarget();
                 return false;
             }
 
             // Add the robot to the list of destroyed robots.
-            RobotsDestroyed.Add(RobotTarget);
+            _robotsDestroyed.Add(_robotTarget);
             ClearTarget();
             return true;
         }

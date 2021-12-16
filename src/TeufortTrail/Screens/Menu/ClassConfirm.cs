@@ -5,7 +5,7 @@ using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.MainMenu
+namespace TeufortTrail.Screens.Menu
 {
     /// <summary>
     /// Displays the class attributes and asks the player if they want to proceed.
@@ -47,10 +47,7 @@ namespace TeufortTrail.Screens.MainMenu
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
-            if (response == DialogResponse.Yes)
-                SetForm(typeof(StorySetup));
-            else
-                SetForm(typeof(ClassSelect));
+            SetForm(response == DialogResponse.Yes ? typeof(StorySetup) : typeof(ClassSelect));
         }
     }
 }

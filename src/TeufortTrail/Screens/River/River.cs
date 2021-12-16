@@ -2,24 +2,25 @@
 using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.River
+namespace TeufortTrail.Screens.River
 {
     /// <summary>
     /// Displays the notification to the player, letting them know of the river they have to cross.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class River : Form<TravelInfo>
     {
-        private StringBuilder _river;
-
         /// <summary>
         /// Retrieve instance of the river that will be crossed.
         /// </summary>
-        private RiverCrossing river = GameCore.Instance.Trail.CurrentLocation as RiverCrossing;
+        private RiverCrossing _river = GameCore.Instance.Trail.CurrentLocation as RiverCrossing;
+
+        private StringBuilder _crossingOptions;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -37,16 +38,16 @@ namespace TeufortTrail.Screens.Travel.River
         {
             base.OnFormPostCreate();
             UserData.GenerateRiver();
-            _river = new StringBuilder();
+            _crossingOptions = new StringBuilder();
             //_river.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}");
             //_river.AppendLine("------------------------------------------");
-            _river.AppendLine($"{Environment.NewLine}A {UserData.River.RiverWidth} feet wide river separates you from the trail.");
-            _river.AppendLine($"You must cross it in order to continue.{Environment.NewLine}");
-            _river.AppendLine($"  1. {RiverOptions.Float.ToDescriptionAttribute()}");
-            if (river.CrossingOption == RiverOptions.Ferry)
-                _river.Append($"  2. {RiverOptions.Ferry.ToDescriptionAttribute()}");
-            else if (river.CrossingOption == RiverOptions.Help)
-                _river.Append($"  2. {RiverOptions.Help.ToDescriptionAttribute()}");
+            _crossingOptions.AppendLine($"{Environment.NewLine}A {UserData.River.RiverWidth} feet wide river separates you from the trail.");
+            _crossingOptions.AppendLine($"You must cross it in order to continue.{Environment.NewLine}");
+            _crossingOptions.AppendLine($"  1. {RiverOptions.Float.ToDescriptionAttribute()}");
+            if (_river.CrossingOption == RiverOptions.Ferry)
+                _crossingOptions.Append($"  2. {RiverOptions.Ferry.ToDescriptionAttribute()}");
+            else if (_river.CrossingOption == RiverOptions.Help)
+                _crossingOptions.Append($"  2. {RiverOptions.Help.ToDescriptionAttribute()}");
         }
 
         /// <summary>
@@ -65,19 +66,22 @@ namespace TeufortTrail.Screens.Travel.River
                     break;
 
                 case "2":
-                    if (river.CrossingOption == RiverOptions.Ferry)
+                    switch (_river.CrossingOption)
                     {
-                        UserData.River.CrossingType = RiverOptions.Ferry;
-                        SetForm(typeof(Ferry));
+                        case RiverOptions.Ferry:
+                            UserData.River.CrossingType = RiverOptions.Ferry;
+                            SetForm(typeof(Ferry));
+                            break;
+                        case RiverOptions.Help:
+                            UserData.River.CrossingType = RiverOptions.Help;
+                            SetForm(typeof(Help));
+                            break;
+                        case RiverOptions.Float:
+                            break;
+                        case RiverOptions.None:
+                        default:
+                            break;
                     }
-                    else if (river.CrossingOption == RiverOptions.Help)
-                    {
-                        UserData.River.CrossingType = RiverOptions.Help;
-                        SetForm(typeof(Help));
-                    }
-                    break;
-
-                default:
                     break;
             }
         }
@@ -87,7 +91,7 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         public override string OnRenderForm()
         {
-            return _river.ToString();
+            return _crossingOptions.ToString();
         }
     }
 

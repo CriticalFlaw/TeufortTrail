@@ -126,7 +126,6 @@
             Quantity = (subtraction <= 0) ? 0 : Quantity;
             if (Quantity == 0) return;
             Quantity = (subtraction > MaxQuantity) ? MaxQuantity : subtraction;
-            if (Quantity == MaxQuantity) return;
         }
 
         /// <summary>

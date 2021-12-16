@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Vehicle
 {
     /// <summary>
     /// Vehicle gets into an accident, supplies could be destroyed and passengers can be crushed to death.

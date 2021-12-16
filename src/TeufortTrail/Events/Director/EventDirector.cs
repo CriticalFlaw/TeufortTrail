@@ -69,7 +69,7 @@ namespace TeufortTrail.Events.Director
         /// Attaches the event to the screen and executes its function.
         /// </summary>
         /// <param name="gameEntity">Game entity that will be effected by the event.</param>
-        /// <param name="directorEvent">Instance of an event to execute.</param>
+        /// <param name="eventProduct">Instance of an event to execute.</param>
         private void ExecuteEvent(IEntity gameEntity, EventProduct eventProduct)
         {
             // Attach the base event screen then triggering the event.

@@ -1,7 +1,7 @@
 ﻿using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Animal
 {
     /// <summary>
     /// Processes an attack of snake biting one of the passengers in the vehicle at random. Depending on the outcome of the event we might kill the player if they actually get bit, otherwise the event will say they killed it.
@@ -15,8 +15,7 @@ namespace TeufortTrail.Events
         public override void Execute(EventInfo eventExecutor)
         {
             // Skip this step if the source entity is not a person.
-            var person = eventExecutor.SourceEntity as Entities.Person.Person;
-            if (person == null) return;
+            if (eventExecutor.SourceEntity is not Entities.Person.Person person) return;
 
             // Remove the player ammo used to fight off the snake.
             GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo].SubtractQuantity(5);

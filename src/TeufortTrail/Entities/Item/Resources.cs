@@ -8,7 +8,7 @@
         /// <summary>
         /// Food purchased in store or acquired through trade. Consumed by the party during travel.
         /// </summary>
-        public static Item Food => new Item(
+        public static Item Food => new(
             category: ItemTypes.Food,
             name: "Food",
             value: 0.25f,
@@ -20,7 +20,7 @@
         /// <summary>
         /// Clothing worn by the party to keep them warm and avoid the risk of contracting an illness.
         /// </summary>
-        public static Item Clothing => new Item(
+        public static Item Clothing => new(
             category: ItemTypes.Clothing,
             name: "Hats",
             value: 10,
@@ -32,7 +32,7 @@
         /// <summary>
         /// Ammunition used fighting off the robot army during travel. Can be purchased in-store or traded with towns folks.
         /// </summary>
-        public static Item Ammo => new Item(
+        public static Item Ammo => new(
             category: ItemTypes.Ammo,
             name: "Ammunition",
             value: 2,
@@ -44,7 +44,7 @@
         /// <summary>
         /// Money that can be exchanged for goods and service during the playthrough.
         /// </summary>
-        public static Item Money => new Item(
+        public static Item Money => new(
             category: ItemTypes.Money,
             name: "Money",
             value: 1,

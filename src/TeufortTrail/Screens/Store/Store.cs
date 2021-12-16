@@ -5,16 +5,17 @@ using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Vehicle;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Store
+namespace TeufortTrail.Screens.Store
 {
     /// <summary>
     /// Displays the in-game store the player can purchase items from.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class Store : Form<TravelInfo>
     {
         private StringBuilder _store;
@@ -143,10 +144,7 @@ namespace TeufortTrail.Screens.Travel.Store
             get
             {
                 // Loop through all the transactions and multiply the quantity by value.
-                float totalCost = 0;
-                foreach (var item in Transactions)
-                    totalCost += item.Value.Quantity * item.Value.Value;
-                return totalCost;
+                return Transactions.Sum(item => item.Value.Quantity * item.Value.Value);
             }
         }
 
@@ -177,12 +175,9 @@ namespace TeufortTrail.Screens.Travel.Store
         public void RemoveItem(Item item)
         {
             // Loop through ever transaction
-            foreach (var transaction in new Dictionary<ItemTypes, Item>(Transactions))
+            if (new Dictionary<ItemTypes, Item>(Transactions).Any(transaction => transaction.Key.Equals(item.Category)))
             {
-                // Reset the quantity value of the item, removing it from the player's inventory.
-                if (!transaction.Key.Equals(item.Category)) continue;
                 Transactions[item.Category].ResetQuantity();
-                break;
             }
         }
 

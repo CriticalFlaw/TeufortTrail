@@ -1,39 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TeufortTrail.Entities.Item;
 using TeufortTrail.Entities.Vehicle;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Commands
+namespace TeufortTrail.Screens.Commands
 {
     /// <summary>
     /// Displays a randomly generated trade offer for the player.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class TradeSupplies : InputForm<TravelInfo>
     {
         /// <summary>
         /// Defines the index in the list of trade offers, which will be displayed to the player.
         /// </summary>
-        private int TradeIndex;
+        private int _tradeIndex;
 
         /// <summary>
         /// Flags the player as being able to accept or deny a given trade offer.
         /// </summary>
-        private bool PlayerCanTrade;
+        private bool _playerCanTrade;
 
         /// <summary>
         /// Defines all the generated trade offers that will be presented to the player.
         /// </summary>
-        private List<TradeGenerator> TradeOffers;
+        private List<TradeGenerator> _tradeOffers;
 
         /// <summary>
         /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
         /// </summary>
-        protected override DialogType DialogType => ((TradeOffers != null) && (TradeOffers.Count > 0) && PlayerCanTrade) ? DialogType.YesNo : DialogType.Prompt;
+        protected override DialogType DialogType => (_tradeOffers is {Count: > 0} && _playerCanTrade) ? DialogType.YesNo : DialogType.Prompt;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -50,34 +52,34 @@ namespace TeufortTrail.Screens.Travel.Commands
         protected override string OnDialogPrompt()
         {
             // Increment the turn counter without advancing time.
-            GameCore.Instance.TakeTurn(false);
+            GameCore.Instance.TakeTurn();
 
             // Display the party's current resource supply.
-            var _tradeSupplies = new StringBuilder();
+            var tradeSupplies = new StringBuilder();
             //_tradeSupplies.AppendLine($"{Environment.NewLine}Your Supplies:{Environment.NewLine}");
             //_tradeSupplies.AppendLine(TravelInfo.PartySupplies);
-            _tradeSupplies.AppendLine();
+            tradeSupplies.AppendLine();
 
             // Generate random trade offers for this location.
             GenerateTrades();
 
             // Check that there are trade offers from the towns folk for the player.
-            if (TradeOffers.Count <= 0)
+            if (_tradeOffers.Count <= 0)
                 // Let the player know that there are no pending trade offers at this time.
-                _tradeSupplies.AppendLine($"Nobody wants to trade with you.{Environment.NewLine}");
+                tradeSupplies.AppendLine($"Nobody wants to trade with you.{Environment.NewLine}");
             else
             {
                 // Display a random trade from the list of trade offers.
-                TradeIndex = GameCore.Instance.Random.Next(TradeOffers.Count);
-                _tradeSupplies.AppendLine($"You meet another trader who wants {TradeOffers[TradeIndex].WantedItem.Quantity:N0} {TradeOffers[TradeIndex].WantedItem.Name.ToLowerInvariant()} in exchange for {TradeOffers[TradeIndex].OfferedItem.Quantity:N0} {TradeOffers[TradeIndex].OfferedItem.Name.ToLowerInvariant()}.{Environment.NewLine}");
+                _tradeIndex = GameCore.Instance.Random.Next(_tradeOffers.Count);
+                tradeSupplies.AppendLine($"You meet another trader who wants {_tradeOffers[_tradeIndex].WantedItem.Quantity:N0} {_tradeOffers[_tradeIndex].WantedItem.Name.ToLowerInvariant()} in exchange for {_tradeOffers[_tradeIndex].OfferedItem.Quantity:N0} {_tradeOffers[_tradeIndex].OfferedItem.Name.ToLowerInvariant()}.{Environment.NewLine}");
 
                 // Display the prompt based on whether or not the player has the item the trader wants.
-                PlayerCanTrade = GameCore.Instance.Vehicle.HasInventoryItem(TradeOffers[TradeIndex].WantedItem);
-                _tradeSupplies.Append(PlayerCanTrade
-                    ? $"Are you willing to trade? Y/N"
-                    : $"Unfortunately, you don't have this.");
+                _playerCanTrade = GameCore.Instance.Vehicle.HasInventoryItem(_tradeOffers[_tradeIndex].WantedItem);
+                tradeSupplies.Append(_playerCanTrade
+                    ? "Are you willing to trade? Y/N"
+                    : "Unfortunately, you don't have this.");
             }
-            return _tradeSupplies.ToString();
+            return tradeSupplies.ToString();
         }
 
         /// <summary>
@@ -88,11 +90,10 @@ namespace TeufortTrail.Screens.Travel.Commands
             if (response == DialogResponse.Yes)
             {
                 // Subtract the item quantity from the party inventory and add the quantity of the item the player traded for.
-                GameCore.Instance.Vehicle.Inventory[TradeOffers[TradeIndex].WantedItem.Category].SubtractQuantity(TradeOffers[TradeIndex].WantedItem.Quantity);
-                GameCore.Instance.Vehicle.Inventory[TradeOffers[TradeIndex].OfferedItem.Category].AddQuantity(TradeOffers[TradeIndex].OfferedItem.Quantity);
+                GameCore.Instance.Vehicle.Inventory[_tradeOffers[_tradeIndex].WantedItem.Category].SubtractQuantity(_tradeOffers[_tradeIndex].WantedItem.Quantity);
+                GameCore.Instance.Vehicle.Inventory[_tradeOffers[_tradeIndex].OfferedItem.Category].AddQuantity(_tradeOffers[_tradeIndex].OfferedItem.Quantity);
             }
             ClearForm();
-            return;
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace TeufortTrail.Screens.Travel.Commands
         private void GenerateTrades()
         {
             // Create a new list of trade offers.
-            TradeOffers = new List<TradeGenerator>();
+            _tradeOffers = new List<TradeGenerator>();
 
             // Determine how many trade offers will be generated. Bail out if the number is zero.
             var totalTrades = GameCore.Instance.Random.Next(0, GameCore.Instance.Random.Next(1, 100));
@@ -109,15 +110,13 @@ namespace TeufortTrail.Screens.Travel.Commands
 
             // Generate a given amount of trade offers.
             for (var x = 0; x < totalTrades; x++)
-                TradeOffers.Add(new TradeGenerator());
+                _tradeOffers.Add(new TradeGenerator());
 
             // Cleanup the trade offers list, remove duplicates and errors.
-            var _tradeOffers = new List<TradeGenerator>(TradeOffers);
-            foreach (var trade in _tradeOffers)
+            var tradeOffers = new List<TradeGenerator>(_tradeOffers);
+            foreach (var trade in tradeOffers.Where(trade => (trade.WantedItem == null) || (trade.OfferedItem == null) || (trade.WantedItem.Category == trade.OfferedItem.Category)))
             {
-                // Remove trades that are the same item twice.
-                if ((trade.WantedItem != null) && (trade.OfferedItem != null) && (trade.WantedItem.Category != trade.OfferedItem.Category)) continue;
-                TradeOffers.Remove(trade);
+                _tradeOffers.Remove(trade);
             }
         }
     }

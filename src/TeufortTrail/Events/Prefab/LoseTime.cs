@@ -1,7 +1,7 @@
 ﻿using TeufortTrail.Events.Director;
 using TeufortTrail.Screens.Travel;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Prefab
 {
     /// <summary>
     /// Event prefab used when the time needs to be advanced.

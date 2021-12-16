@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.River
+namespace TeufortTrail.Screens.River
 {
     /// <summary>
     /// Displays information on crossing the river by asking civilians for help.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class Help : InputForm<TravelInfo>
     {
         /// <summary>
@@ -37,13 +38,13 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            var _help = new StringBuilder();
-            _help.AppendLine($"{Environment.NewLine}The local folk will help you float your camper");
-            _help.AppendLine($"van across the river in exchange for {UserData.River.HelpCost:N0} hats.{Environment.NewLine}");
-            _help.Append(CannotTrade
-                ? $"You do not have enough hats to be helped."
+            var help = new StringBuilder();
+            help.AppendLine($"{Environment.NewLine}The local folk will help you float your camper");
+            help.AppendLine($"van across the river in exchange for {UserData.River.HelpCost:N0} hats.{Environment.NewLine}");
+            help.Append(CannotTrade
+                ? "You do not have enough hats to be helped."
                 : "Do you accept this offer? Y/N");
-            return _help.ToString();
+            return help.ToString();
         }
 
         /// <summary>
@@ -51,15 +52,17 @@ namespace TeufortTrail.Screens.Travel.River
         /// </summary>
         protected override void OnDialogResponse(DialogResponse response)
         {
-            if (response == DialogResponse.Yes)
+            switch (response)
             {
-                UserData.River.CrossingType = RiverOptions.Help;
-                SetForm(typeof(Crossing));
-            }
-            else if (response == DialogResponse.No || response == DialogResponse.Custom)
-            {
-                UserData.River.CrossingType = RiverOptions.None;
-                SetForm(typeof(River));
+                case DialogResponse.Yes:
+                    UserData.River.CrossingType = RiverOptions.Help;
+                    SetForm(typeof(Crossing));
+                    break;
+                case DialogResponse.No:
+                case DialogResponse.Custom:
+                    UserData.River.CrossingType = RiverOptions.None;
+                    SetForm(typeof(River));
+                    break;
             }
         }
     }

@@ -2,22 +2,23 @@
 using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Toll
+namespace TeufortTrail.Screens.Toll
 {
     /// <summary>
     /// Displays the toll road and the amount the player needs to pay to pass.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class TollRoad : InputForm<TravelInfo>
     {
         /// <summary>
         /// Flags the player as being able to pay the toll.
         /// </summary>
-        private bool CannotAfford => (GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue <= UserData.Toll.Cost) ? true : false;
+        private bool CannotAfford => GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue <= UserData.Toll.Cost;
 
         /// <summary>
         /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
@@ -44,22 +45,23 @@ namespace TeufortTrail.Screens.Travel.Toll
         protected override string OnDialogPrompt()
         {
             // Display the toll payment prompt message to the player.
-            var _tollRoad = new StringBuilder();
-            _tollRoad.Append($"{Environment.NewLine}You must pay the toll {UserData.Toll.Cost:C0} to travel to ");
+            var tollRoad = new StringBuilder();
+            tollRoad.Append($"{Environment.NewLine}You must pay the toll {UserData.Toll.Cost:C0} to travel to ");
             if (UserData.Toll.Road != null)
-                _tollRoad.AppendLine($"{UserData.Toll.Road.Name}.");
+                tollRoad.AppendLine($"{UserData.Toll.Road.Name}.");
             else if (GameCore.Instance.Trail.CurrentLocation != null)
-                _tollRoad.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}.");
+                tollRoad.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}.");
             else if (GameCore.Instance.Trail.NextLocation != null)
-                _tollRoad.AppendLine($"{GameCore.Instance.Trail.NextLocation.Name}.");
+                tollRoad.AppendLine($"{GameCore.Instance.Trail.NextLocation.Name}.");
             else
-                _tollRoad.AppendLine($"the indefinable road.");
-            _tollRoad.Append(Environment.NewLine);
+                tollRoad.AppendLine("the indefinable road.");
+            tollRoad.Append(Environment.NewLine);
+
             // Display the prompt based on whether or not the player can afford the toll.
-            _tollRoad.Append((GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue >= UserData.Toll.Cost)
-                ? $"Are you willing to do this? Y/N"
-                : $"You don't have enough cash for the toll road.");
-            return _tollRoad.ToString();
+            tollRoad.Append((GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue >= UserData.Toll.Cost)
+                ? "Are you willing to do this? Y/N"
+                : "You don't have enough cash for the toll road.");
+            return tollRoad.ToString();
         }
 
         /// <summary>

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Travel
 {
     /// <summary>
     /// Enemy spy sneaks in the middle of the night and steals from the player. There is a chance some of your party members may get backstabbed.
@@ -16,7 +17,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return $"An enemy spy snuck in the middle of the night,{Environment.NewLine}resulting in the loss of:";
+            return $"An enemy spy sneaked in the middle of the night,{Environment.NewLine}resulting in the loss of:";
         }
 
         /// <summary>

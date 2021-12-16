@@ -1,6 +1,6 @@
 ﻿using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Prefab
 {
     /// <summary>
     /// Event prefab used when a person in the party needs to infected.
@@ -23,8 +23,7 @@ namespace TeufortTrail.Events
         protected override string OnRender(EventInfo userData)
         {
             // Skip this step if the source entity is not of correct type.
-            var person = userData.SourceEntity as Entities.Person.Person;
-            return (person == null) ? "There was an illness scare, but everyone is okay." : OnPostInfection(person);
+            return (userData.SourceEntity is not Entities.Person.Person person) ? "There was an illness scare, but everyone is okay." : OnPostInfection(person);
         }
 
         /// <summary>

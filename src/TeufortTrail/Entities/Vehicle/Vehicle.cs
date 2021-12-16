@@ -84,13 +84,7 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Determine the mile amount traveled by the party on the trail.
         /// </summary>
-        private int RandomMileage
-        {
-            get
-            {
-                return (int)Math.Abs(Mileage + 15 / 2.5 + 10 * GameCore.Instance.Random.NextDouble());
-            }
-        }
+        private int RandomMileage => (int)Math.Abs(Mileage + 15 / 2.5 + 10 * GameCore.Instance.Random.NextDouble());
 
         //-------------------------------------------------------------------------------------------------
 
@@ -230,8 +224,6 @@ namespace TeufortTrail.Entities.Vehicle
                     // Create and return the new item of random quantity.
                     return new Item.Item(item.Value, GameCore.Instance.Random.Next(1, quantity));
                 }
-                else
-                    continue;
             }
             return null;
         }

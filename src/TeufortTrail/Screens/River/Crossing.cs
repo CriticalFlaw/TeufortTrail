@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities;
-using TeufortTrail.Events;
+using TeufortTrail.Events.River;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Core;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.River
+namespace TeufortTrail.Screens.River
 {
     /// <summary>
     /// Displays the progress of crossing the river.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class Crossing : Form<TravelInfo>
     {
         /// <summary>
@@ -38,7 +39,7 @@ namespace TeufortTrail.Screens.Travel.River
         /// <summary>
         /// Total distance that has crossed by the player on the river.
         /// </summary>
-        private int RiverWidthCrossed;
+        public int RiverWidthCrossed;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -63,7 +64,7 @@ namespace TeufortTrail.Screens.Travel.River
             GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
 
             // Double check that the player can pay to cross the river, subtract the payment from the inventory.
-            if ((GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue > UserData.River.FerryCost) && (UserData.River.FerryCost > 0))
+            if (GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue > UserData.River.FerryCost && UserData.River.FerryCost > 0)
             {
                 GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].SubtractQuantity((int)UserData.River.FerryCost);
                 UserData.River.FerryCost = 0;
@@ -148,13 +149,13 @@ namespace TeufortTrail.Screens.Travel.River
         public override string OnRenderForm()
         {
             // Display the river crossing progress. Wait for user input.
-            var _crossing = new StringBuilder();
-            _crossing.AppendLine($"Crossing the {GameCore.Instance.Trail.CurrentLocation.Name}");
-            _crossing.AppendLine($"River crossed: {RiverWidthCrossed:N0} out of {UserData.River.RiverWidth:N0} feet");
-            _crossing.AppendLine("------------------------------------------");
-            _crossing.AppendLine($"{Environment.NewLine}  {_swayBarText}");
-            if (DoneRiverCrossing) _crossing.AppendLine(InputManager.PRESSENTER);
-            return _crossing.ToString();
+            var crossing = new StringBuilder();
+            crossing.AppendLine($"Crossing the {GameCore.Instance.Trail.CurrentLocation.Name}");
+            crossing.AppendLine($"River crossed: {RiverWidthCrossed:N0} out of {UserData.River.RiverWidth:N0} feet");
+            crossing.AppendLine("------------------------------------------");
+            crossing.AppendLine($"{Environment.NewLine}  {_swayBarText}");
+            if (DoneRiverCrossing) crossing.AppendLine(InputManager.PRESSENTER);
+            return crossing.ToString();
         }
     }
 }

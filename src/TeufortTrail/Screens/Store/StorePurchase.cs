@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities.Item;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Store
+namespace TeufortTrail.Screens.Store
 {
     /// <summary>
     /// Displays a confirmation message, asking the player how much of the item they want to buy.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class StorePurchase : Form<TravelInfo>
     {
         private StringBuilder _storePurchase;
@@ -17,12 +18,12 @@ namespace TeufortTrail.Screens.Travel.Store
         /// <summary>
         /// Defines the store item that the player has chosen to purchase.
         /// </summary>
-        private Item PurchaseItem;
+        private Item _purchaseItem;
 
         /// <summary>
         /// Defines the limit on how much of this item the player can have.
         /// </summary>
-        private int PurchaseLimit;
+        private int _purchaseLimit;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -40,18 +41,18 @@ namespace TeufortTrail.Screens.Travel.Store
         {
             // Determine the current player balance and the limit on their purchase.
             base.OnFormPostCreate();
-            PurchaseLimit = (int)((GameCore.Instance.Vehicle.Balance - UserData.Store.TotalTransactionCost) / UserData.Store.SelectedItem.Value);
+            _purchaseLimit = (int)((GameCore.Instance.Vehicle.Balance - UserData.Store.TotalTransactionCost) / UserData.Store.SelectedItem.Value);
 
             // Check that the limit is within range.
-            if (PurchaseLimit < 0) PurchaseLimit = 0;
-            if (PurchaseLimit > UserData.Store.SelectedItem.MaxQuantity)
-                PurchaseLimit = UserData.Store.SelectedItem.MaxQuantity;
+            if (_purchaseLimit < 0) _purchaseLimit = 0;
+            if (_purchaseLimit > UserData.Store.SelectedItem.MaxQuantity)
+                _purchaseLimit = UserData.Store.SelectedItem.MaxQuantity;
 
             // Display a message indicating how many of this item the player can buy.
             _storePurchase = new StringBuilder();
-            _storePurchase.AppendLine($"{Environment.NewLine}Your maximum capacity is {PurchaseLimit} {UserData.Store.SelectedItem.Name.ToLowerInvariant()}.");
+            _storePurchase.AppendLine($"{Environment.NewLine}Your maximum capacity is {_purchaseLimit} {UserData.Store.SelectedItem.Name.ToLowerInvariant()}.");
             _storePurchase.Append("How many do you want to buy?");
-            PurchaseItem = UserData.Store.SelectedItem;
+            _purchaseItem = UserData.Store.SelectedItem;
         }
 
         /// <summary>
@@ -63,10 +64,10 @@ namespace TeufortTrail.Screens.Travel.Store
             if (!int.TryParse(input, out var userInput)) return;
 
             // Check that the user input is not zero, within the purchasing limit, does not exceed the set maximum and can actually afford the item. If all checks pass, then add the item to the player's inventory.
-            if (userInput <= 0 || userInput > PurchaseLimit || userInput > PurchaseItem.MaxQuantity || GameCore.Instance.Vehicle.Balance < PurchaseItem.TotalValue * userInput)
-                UserData.Store.RemoveItem(PurchaseItem);
+            if (userInput <= 0 || userInput > _purchaseLimit || userInput > _purchaseItem.MaxQuantity || GameCore.Instance.Vehicle.Balance < _purchaseItem.TotalValue * userInput)
+                UserData.Store.RemoveItem(_purchaseItem);
             else
-                UserData.Store.AddItem(PurchaseItem, userInput);
+                UserData.Store.AddItem(_purchaseItem, userInput);
 
             // Deselect the item and return to the store.
             UserData.Store.SelectedItem = null;

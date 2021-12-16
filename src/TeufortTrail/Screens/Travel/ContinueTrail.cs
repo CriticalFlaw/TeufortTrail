@@ -66,12 +66,10 @@ namespace TeufortTrail.Screens.Travel
             GameCore.Instance.Vehicle.CheckStatus();
 
             // Continue on the trail if the vehicle is already in motion.
-            if (GameCore.Instance.Vehicle.Status == VehicleStatus.Moving)
-            {
-                _swayBarText = _marqueeBar.Step();
-                GameCore.Instance.TakeTurn();
-                GameCore.Instance.Trail.OnTick(false, skipDay);
-            }
+            if (GameCore.Instance.Vehicle.Status != VehicleStatus.Moving) return;
+            _swayBarText = _marqueeBar.Step();
+            GameCore.Instance.TakeTurn();
+            GameCore.Instance.Trail.OnTick(false, skipDay);
         }
 
         /// <summary>
@@ -94,11 +92,11 @@ namespace TeufortTrail.Screens.Travel
         public override string OnRenderForm()
         {
             // Display the marquee bar and current party status
-            var _continueTrail = new StringBuilder();
-            _continueTrail.AppendLine(TravelInfo.TravelStatus);
-            _continueTrail.AppendLine($"  {_swayBarText}");
-            _continueTrail.AppendLine(TravelInfo.PartyStatus);
-            return _continueTrail.ToString();
+            var continueTrail = new StringBuilder();
+            continueTrail.AppendLine(TravelInfo.TravelStatus);
+            continueTrail.AppendLine($"  {_swayBarText}");
+            continueTrail.AppendLine(TravelInfo.PartyStatus);
+            return continueTrail.ToString();
         }
     }
 }

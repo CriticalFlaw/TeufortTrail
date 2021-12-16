@@ -1,8 +1,9 @@
 ﻿using System;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Person
 {
     /// <summary>
     /// One of the members of the vehicle passenger manifest is injured.

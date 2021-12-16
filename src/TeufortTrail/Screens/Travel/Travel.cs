@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Screens.Hunt;
+using TeufortTrail.Screens.Hunt.Notifications;
 using TeufortTrail.Screens.Menu;
-using TeufortTrail.Screens.Travel.Hunt;
-using TeufortTrail.Screens.Travel.River;
-using TeufortTrail.Screens.Travel.Store;
-using TeufortTrail.Screens.Travel.Toll;
+using TeufortTrail.Screens.River;
+using TeufortTrail.Screens.Store;
+using TeufortTrail.Screens.Toll;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
@@ -78,13 +79,15 @@ namespace TeufortTrail.Screens.Travel
                 SetForm(typeof(GameVictory));
                 return;
             }
-            else if (game.Vehicle.Passengers.Where(x => x.HealthState > (int)HealthStatus.Dead).Count() == 0)
+            
+            if (!game.Vehicle.Passengers.Any(x => x.HealthState > (int)HealthStatus.Dead))
             {
                 GameOver = true;
                 SetForm(typeof(GameOver));
                 return;
             }
-            else if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived && !GameOver)
+            
+            if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived && !GameOver)
             {
                 game.Trail.CurrentLocation.ArrivalFlag = true;
                 SetForm(typeof(LocationArrived));
@@ -99,10 +102,10 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         private void UpdateLocation()
         {
-            var _menuHeader = new StringBuilder();
-            _menuHeader.Append(TravelInfo.TravelStatus);
-            _menuHeader.Append("Here is what you can do:");
-            MenuHeader = _menuHeader.ToString();
+            var menuHeader = new StringBuilder();
+            menuHeader.Append(TravelInfo.TravelStatus);
+            menuHeader.Append("Here is what you can do:");
+            MenuHeader = menuHeader.ToString();
 
             // Initialize the available commands and their methods.
             ClearCommands();
@@ -146,15 +149,21 @@ namespace TeufortTrail.Screens.Travel
                 return;
             }
 
-            // Throw to an appropriate screen depending on the location reached.
-            if (GameCore.Instance.Trail.CurrentLocation is Landmark ||
-                GameCore.Instance.Trail.CurrentLocation is Settlement ||
-                GameCore.Instance.Trail.CurrentLocation is TollInRoad)
-                SetForm(typeof(ContinueTrail));
-            else if (GameCore.Instance.Trail.CurrentLocation is RiverCrossing)
-                SetForm(typeof(River.River));
-            else if (GameCore.Instance.Trail.CurrentLocation is ForkInRoad)
-                SetForm(typeof(ForkRoad));
+            switch (GameCore.Instance.Trail.CurrentLocation)
+            {
+                // Throw to an appropriate screen depending on the location reached.
+                case Landmark:
+                case Settlement:
+                case TollInRoad:
+                    SetForm(typeof(ContinueTrail));
+                    break;
+                case RiverCrossing:
+                    SetForm(typeof(River.River));
+                    break;
+                case ForkInRoad:
+                    SetForm(typeof(ForkRoad));
+                    break;
+            }
         }
 
         /// <summary>
@@ -280,12 +289,12 @@ namespace TeufortTrail.Screens.Travel
             {
                 var game = GameCore.Instance;
                 var foodCount = game.Vehicle.Inventory[ItemTypes.Food];
-                var _trailStatus = new StringBuilder();
-                _trailStatus.AppendLine($"Food:     {((foodCount != null) ? foodCount.TotalWeight : 0)} pounds");
-                _trailStatus.AppendLine($"Odometer: {game.Vehicle.Odometer} miles ({game.Trail.NextLocationDistance} miles to next location)");
-                _trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration}");
-                _trailStatus.AppendLine("------------------------------------------");
-                return _trailStatus.ToString();
+                var trailStatus = new StringBuilder();
+                trailStatus.AppendLine($"Food:     {foodCount?.TotalWeight ?? 0} pounds");
+                trailStatus.AppendLine($"Odometer: {game.Vehicle.Odometer} miles ({game.Trail.NextLocationDistance} miles to next location)");
+                trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration}");
+                trailStatus.AppendLine("------------------------------------------");
+                return trailStatus.ToString();
             }
         }
 
@@ -296,12 +305,8 @@ namespace TeufortTrail.Screens.Travel
         {
             get
             {
-                // Build up a list with tuple in it to hold our data about the party (health and debuffs).
-                var partyList = new List<Tuple<string, string, string>>();
-
-                // Loop through every passenger in the vehicle.
-                foreach (var passenger in GameCore.Instance.Vehicle.Passengers)
-                    partyList.Add(new Tuple<string, string, string>(passenger.Class.ToString(), passenger.HealthState.ToString(), passenger.Status));
+                // Loop through every passenger in the vehicle. Build up a list with tuple in it to hold our data about the party (health and debuffs).
+                var partyList = GameCore.Instance.Vehicle.Passengers.Select(passenger => new Tuple<string, string, string>(passenger.Class.ToString(), passenger.HealthState.ToString(), passenger.Status)).ToList();
 
                 // Generate the formatted table of supplies we will show to user.
                 return partyList.ToStringTable(new[] { "Person", "Health", "Status" }, u => u.Item1, u => u.Item2, u => u.Item3);
@@ -319,24 +324,24 @@ namespace TeufortTrail.Screens.Travel
                 var suppliesList = new List<Tuple<string, string>>();
 
                 // Loop through every inventory item in the vehicle.
-                foreach (var item in GameCore.Instance.Vehicle.Inventory)
+                foreach (var (key, value) in GameCore.Instance.Vehicle.Inventory)
                 {
-                    switch (item.Key)
+                    switch (key)
                     {
                         case ItemTypes.Food:
-                            suppliesList.Add(new Tuple<string, string>("Food", item.Value.TotalWeight.ToString("N0")));
+                            suppliesList.Add(new Tuple<string, string>("Food", value.TotalWeight.ToString("N0")));
                             break;
 
                         case ItemTypes.Clothing:
-                            suppliesList.Add(new Tuple<string, string>("Hats", item.Value.Quantity.ToString("N0")));
+                            suppliesList.Add(new Tuple<string, string>("Hats", value.Quantity.ToString("N0")));
                             break;
 
                         case ItemTypes.Ammo:
-                            suppliesList.Add(new Tuple<string, string>("Bullets", item.Value.Quantity.ToString("N0")));
+                            suppliesList.Add(new Tuple<string, string>("Bullets", value.Quantity.ToString("N0")));
                             break;
 
                         case ItemTypes.Money:
-                            suppliesList.Add(new Tuple<string, string>("Money", item.Value.TotalValue.ToString("C")));
+                            suppliesList.Add(new Tuple<string, string>("Money", value.TotalValue.ToString("C")));
                             break;
 
                         default:

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Commands
+namespace TeufortTrail.Screens.Commands
 {
     /// <summary>
     /// Displays the map and current trail progress.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class CheckMap : InputForm<TravelInfo>
     {
         /// <summary>
@@ -27,11 +28,11 @@ namespace TeufortTrail.Screens.Travel.Commands
         protected override string OnDialogPrompt()
         {
             // Generate a progress bar of the trail progress, then format it into a table.
-            var _checkMap = new StringBuilder();
-            _checkMap.AppendLine($"{Environment.NewLine}Trail progress:{Environment.NewLine}");
-            _checkMap.AppendLine(TextProgress.DrawProgressBar(GameCore.Instance.Trail.LocationIndex + 1, GameCore.Instance.Trail.Locations.Count, 32) + Environment.NewLine);
-            _checkMap.AppendLine(GameCore.Instance.Trail.Locations.ToStringTable(new[] { "Visited", "Location" }, u => u.Status >= LocationStatus.Arrived, u => u.Name));
-            return _checkMap.ToString();
+            var checkMap = new StringBuilder();
+            checkMap.AppendLine($"{Environment.NewLine}Trail progress:{Environment.NewLine}");
+            checkMap.AppendLine(TextProgress.DrawProgressBar(GameCore.Instance.Trail.LocationIndex + 1, GameCore.Instance.Trail.Locations.Count, 32) + Environment.NewLine);
+            checkMap.AppendLine(GameCore.Instance.Trail.Locations.ToStringTable(new[] { "Visited", "Location" }, u => u.Status >= LocationStatus.Arrived, u => u.Name));
+            return checkMap.ToString();
         }
 
         /// <summary>

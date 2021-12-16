@@ -3,7 +3,7 @@ using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Person
 {
     /// <summary>
     /// Party leader has died! This will end the entire simulation since the others cannot go on without the leader.
@@ -16,21 +16,12 @@ namespace TeufortTrail.Events
         //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Called after the event has been created by the event factory, but before it is executed.
-        /// </summary>
-        public override void OnEventCreate()
-        {
-            base.OnEventCreate();
-        }
-
-        /// <summary>
         /// Called when the event handler is triggering an event.
         /// </summary>
         public override void Execute(EventInfo eventExecutor)
         {
             // Check to make sure this player is the leader (aka the player).
-            var sourcePerson = eventExecutor.SourceEntity as Entities.Person.Person;
-            if (sourcePerson == null) throw new ArgumentNullException(nameof(eventExecutor), "Could not cast source entity as player.");
+            if (eventExecutor.SourceEntity is not Entities.Person.Person sourcePerson) throw new ArgumentNullException(nameof(eventExecutor), "Could not cast source entity as player.");
             if (!sourcePerson.Leader) throw new ArgumentException("Cannot kill this person because it is not the player!");
             _deathPlayer = new StringBuilder();
             _deathPlayer.AppendLine("You have died.");

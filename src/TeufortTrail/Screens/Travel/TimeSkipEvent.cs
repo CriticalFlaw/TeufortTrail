@@ -62,7 +62,7 @@ namespace TeufortTrail.Screens.Travel
 
             // Decrease number of days needed to skip, increment number of days skipped.
             UserData.DaysToSkip--;
-            GameCore.Instance.TakeTurn(false);
+            GameCore.Instance.TakeTurn();
             UpdateDaysLeft();
         }
 

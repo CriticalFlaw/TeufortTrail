@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using TeufortTrail.Events;
+using TeufortTrail.Events.Person;
 
 namespace TeufortTrail.Entities.Person
 {
@@ -39,17 +39,15 @@ namespace TeufortTrail.Entities.Person
         {
             get
             {
-                if (Health >= (int)HealthStatus.Great && Health > (int)HealthStatus.Good)
-                    return HealthStatus.Great;
-                if (Health <= (int)HealthStatus.Good && Health > (int)HealthStatus.Fair)
-                    return HealthStatus.Good;
-                if (Health <= (int)HealthStatus.Fair && Health > (int)HealthStatus.Poor)
-                    return HealthStatus.Fair;
-                if (Health <= (int)HealthStatus.Poor && Health > (int)HealthStatus.Dead)
-                    return HealthStatus.Poor;
-                if (Health <= (int)HealthStatus.Dead)
-                    return HealthStatus.Dead;
-                return HealthStatus.Good;
+                return Health switch
+                {
+                    >= (int) HealthStatus.Great and > (int) HealthStatus.Good => HealthStatus.Great,
+                    <= (int) HealthStatus.Good and > (int) HealthStatus.Fair => HealthStatus.Good,
+                    <= (int) HealthStatus.Fair and > (int) HealthStatus.Poor => HealthStatus.Fair,
+                    <= (int) HealthStatus.Poor and > (int) HealthStatus.Dead => HealthStatus.Poor,
+                    <= (int) HealthStatus.Dead => HealthStatus.Dead,
+                    _ => HealthStatus.Good
+                };
             }
         }
 
@@ -62,14 +60,13 @@ namespace TeufortTrail.Entities.Person
             {
                 if (HealthState == (int)HealthStatus.Dead)
                     return "Dead";
-                else if (Infected && Injured)
-                    return "Infected and Injured";
-                else if (Infected)
+                if (Infected)
                     return "Infected";
-                else if (Injured)
+                if (Injured)
                     return "Injured";
-                else
-                    return "OK";
+                if (Infected && Injured)
+                    return "Infected and Injured";
+                return "OK";
             }
         }
 
@@ -78,9 +75,9 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Initializes a new instance of the <see cref="Person" /> class.
         /// </summary>
-        public Person(Classes class_, bool leader)
+        public Person(Classes player, bool leader)
         {
-            Class = class_;
+            Class = player;
             Leader = leader;
             Infected = false;
             Injured = false;
@@ -131,7 +128,7 @@ namespace TeufortTrail.Entities.Person
             if (vehicle.Inventory[ItemTypes.Food].Quantity > 0)
             {
                 // Subtract the amount of food consumed from the party inventory. Ration Rate x Passengers (Alive)
-                vehicle.Inventory[ItemTypes.Food].SubtractQuantity((int)vehicle.Ration * vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead).Count());
+                vehicle.Inventory[ItemTypes.Food].SubtractQuantity((int)vehicle.Ration * vehicle.Passengers.Count(x => x.HealthState != HealthStatus.Dead));
                 Heal();
             }
             else

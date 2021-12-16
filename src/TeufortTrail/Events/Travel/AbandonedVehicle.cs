@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Travel
 {
     /// <summary>
     /// The party discovers an abandoned vehicle on the side of the road with supplies inside for the player to take.
@@ -23,7 +24,7 @@ namespace TeufortTrail.Events
         /// </summary>
         protected override string OnPostCreateItems(IDictionary<ItemTypes, int> createdItems)
         {
-            return (createdItems.Count > 0) ? $"and from it you find:" : "but it's empty.";
+            return (createdItems.Count > 0) ? "and from it you find:" : "but it's empty.";
         }
     }
 }

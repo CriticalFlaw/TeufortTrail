@@ -1,14 +1,15 @@
 ﻿using System;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Hunt
+namespace TeufortTrail.Screens.Hunt.Notifications
 {
     /// <summary>
     /// Displayed when the player misses their shot on the target.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class RobotMissed : InputForm<TravelInfo>
     {
         /// <summary>

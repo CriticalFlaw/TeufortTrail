@@ -1,6 +1,6 @@
 ﻿using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Prefab
 {
     /// <summary>
     /// Event prefab used when a random amount of food needs to removed from the player inventory.
@@ -13,8 +13,7 @@ namespace TeufortTrail.Events
         public override void Execute(EventInfo eventExecutor)
         {
             // Skip this step if the source entity is not of correct type.
-            var vehicle = eventExecutor.SourceEntity as Entities.Vehicle.Vehicle;
-            if (vehicle == null) return;
+            if (eventExecutor.SourceEntity is not Entities.Vehicle.Vehicle vehicle) return;
 
             // Check that the player has enough food to remove.
             if (vehicle.Inventory[Entities.ItemTypes.Food].Quantity < 4) return;

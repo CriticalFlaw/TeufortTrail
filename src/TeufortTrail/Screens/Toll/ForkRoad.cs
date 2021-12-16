@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TeufortTrail.Entities.Location;
-using TeufortTrail.Screens.Travel.Commands;
+using TeufortTrail.Screens.Commands;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Toll
+namespace TeufortTrail.Screens.Toll
 {
     /// <summary>
     /// Displays the available routes when the player encounters a fork in the road.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class ForkRoad : Form<TravelInfo>
     {
         /// <summary>
         /// List of possible paths that the player can choose from.
         /// </summary>
-        private Dictionary<int, Location> PathChoices;
+        private Dictionary<int, Location> _pathChoices;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -36,10 +37,10 @@ namespace TeufortTrail.Screens.Travel.Toll
         {
             // Create a dictionary of possible path choices.
             base.OnFormPostCreate();
-            PathChoices = new Dictionary<int, Location>();
-            var forkInRoad = GameCore.Instance.Trail.CurrentLocation as ForkInRoad;
+            _pathChoices = new Dictionary<int, Location>();
+            if (GameCore.Instance.Trail.CurrentLocation is not ForkInRoad forkInRoad) return;
             for (var index = 0; index < forkInRoad.PathChoices.Count; index++)
-                PathChoices.Add(index + 1, forkInRoad.PathChoices[index]);
+                _pathChoices.Add(index + 1, forkInRoad.PathChoices[index]);
         }
 
         /// <summary>
@@ -51,17 +52,17 @@ namespace TeufortTrail.Screens.Travel.Toll
             if (!int.TryParse(input, out var userInput) || userInput <= 0) return;
 
             // Dictionary of path choices must contain key with input number.
-            if (PathChoices.ContainsKey(userInput))
+            if (_pathChoices.ContainsKey(userInput))
             {
                 // Generate a toll point if that's the selected location choice.
-                if (PathChoices[userInput] is TollInRoad tollRoad)
+                if (_pathChoices[userInput] is TollInRoad tollRoad)
                 {
                     UserData.GenerateToll(tollRoad);
                     SetForm(typeof(TollRoad));
                 }
                 else
                 {
-                    GameCore.Instance.Trail.InsertLocation(PathChoices[userInput]);
+                    GameCore.Instance.Trail.InsertLocation(_pathChoices[userInput]);
                     SetForm(typeof(ContinueTrail));
                 }
             }
@@ -74,15 +75,15 @@ namespace TeufortTrail.Screens.Travel.Toll
         /// </summary>
         public override string OnRenderForm()
         {
-            var _forkRoad = new StringBuilder();
-            _forkRoad.AppendLine($"{Environment.NewLine}You encounter a fork in the road. You can:{Environment.NewLine}");
-            foreach (var pathChoice in PathChoices)
+            var forkRoad = new StringBuilder();
+            forkRoad.AppendLine($"{Environment.NewLine}You encounter a fork in the road. You can:{Environment.NewLine}");
+            foreach (var (key, value) in _pathChoices)
             {
-                _forkRoad.AppendLine($"  {pathChoice.Key}. Travel to {pathChoice.Value.Name}");
-                if (pathChoice.Key == PathChoices.Last().Key)
-                    _forkRoad.Append($"  {pathChoice.Key + 1}. Check the Map");
+                forkRoad.AppendLine($"  {key}. Travel to {value.Name}");
+                if (key == _pathChoices.Last().Key)
+                    forkRoad.Append($"  {key + 1}. Check the Map");
             }
-            return _forkRoad.ToString();
+            return forkRoad.ToString();
         }
     }
 }

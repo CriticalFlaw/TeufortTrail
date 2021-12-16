@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using TeufortTrail.Entities;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Special
 {
     /// <summary>
     /// Fire in the vehicle occurs, there is a chance that some of the inventory items or people were burned to death.

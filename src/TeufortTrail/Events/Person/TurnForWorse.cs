@@ -1,7 +1,7 @@
 ﻿using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Person
 {
     /// <summary>
     /// To start to get worse. It appeared that person was going to get well; then, unfortunately, they took a turn for the worse.
@@ -25,8 +25,7 @@ namespace TeufortTrail.Events
         protected override string OnRender(EventInfo userData)
         {
             // Skip this step if the source entity is not a person.
-            var person = userData.SourceEntity as Entities.Person.Person;
-            return (person == null) ? "There was a health scare, but everyone is okay." : $"The {person.Class}'s health has taken a turn for the worse.";
+            return (userData.SourceEntity is not Entities.Person.Person person) ? "There was a health scare, but everyone is okay." : $"The {person.Class}'s health has taken a turn for the worse.";
         }
     }
 }

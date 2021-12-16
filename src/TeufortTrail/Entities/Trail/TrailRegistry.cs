@@ -30,7 +30,7 @@ namespace TeufortTrail.Entities.Trail
                     new RiverCrossing("Hale River", RiverOptions.Ferry),
                     new Settlement("Manhattan"),
                     new Landmark("DeGroot Keep"),
-                    new RiverCrossing("2Fort", RiverOptions.Float),
+                    new RiverCrossing("2Fort"),
                     new Settlement("Gravel Pit"),
                     new ForkInRoad("Thunder Mountain", new List<Location.Location>
                     {

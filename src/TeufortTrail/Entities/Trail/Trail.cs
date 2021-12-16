@@ -60,21 +60,18 @@ namespace TeufortTrail.Entities.Trail
         /// <param name="locations">List of locations in the order they will be visited on the trail.</param>
         private int GenerateDistances(IEnumerable<Location.Location> locations)
         {
-            var _totalDistance = 0;
+            var totalDistance = 0;
             foreach (var location in locations)
             {
                 // Loop through every location, calculate the distance between points, add to the total.
                 location.TotalDistance = GameCore.Instance.Random.Next(MinLength, MaxLength);
-                _totalDistance += location.TotalDistance;
+                totalDistance += location.TotalDistance;
 
                 // If the location is a fork, generate the distances for its children.
-                if (location is ForkInRoad)
-                {
-                    var forkInRoad = location as ForkInRoad;
-                    GenerateDistances(forkInRoad.PathChoices);
-                }
+                if (location is not ForkInRoad forkInRoad) continue;
+                GenerateDistances(forkInRoad.PathChoices);
             }
-            return _totalDistance;
+            return totalDistance;
         }
 
         /// <summary>

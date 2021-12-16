@@ -5,7 +5,6 @@ using TeufortTrail.Entities.Person;
 using TeufortTrail.Entities.Trail;
 using TeufortTrail.Entities.Vehicle;
 using TeufortTrail.Events.Director;
-using TeufortTrail.Screens.MainMenu;
 using TeufortTrail.Screens.Menu;
 using TeufortTrail.Screens.Travel;
 using WolfCurses;
@@ -79,12 +78,12 @@ namespace TeufortTrail
         public override string OnPreRender()
         {
             // Display the current location, vehicle status and turn count.
-            var _gameCore = new StringBuilder();
-            _gameCore.AppendLine($"Turn: {TotalTurns:D4}");
-            _gameCore.AppendLine($"Location: {Trail?.CurrentLocation?.Status}");
-            _gameCore.AppendLine($"Vehicle:  {Vehicle?.Status}");
-            _gameCore.AppendLine("------------------------------------------");
-            return _gameCore.ToString();
+            var gameCore = new StringBuilder();
+            gameCore.AppendLine($"Turn: {TotalTurns:D4}");
+            gameCore.AppendLine($"Location: {Trail?.CurrentLocation?.Status}");
+            gameCore.AppendLine($"Vehicle:  {Vehicle?.Status}");
+            gameCore.AppendLine("------------------------------------------");
+            return gameCore.ToString();
         }
 
         /// <summary>
@@ -137,9 +136,9 @@ namespace TeufortTrail
         {
             var crewNumber = 1;
             Vehicle.ResetVehicle(startInfo.StartingMoney);
-            foreach (var _class in startInfo.PartyClasses)
+            foreach (var x in startInfo.PartyClasses)
             {
-                Vehicle.AddPerson(new Person(_class, ((startInfo.PartyClasses.IndexOf(_class) == 0) && (crewNumber == 1)) ? true : false));
+                Vehicle.AddPerson(new Person(x, ((startInfo.PartyClasses.IndexOf(x) == 0) && (crewNumber == 1))));
                 crewNumber++;
             }
         }

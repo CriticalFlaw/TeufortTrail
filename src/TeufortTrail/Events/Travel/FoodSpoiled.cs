@@ -1,7 +1,8 @@
 ﻿using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Travel
 {
     /// <summary>
     /// Food in the inventory is lost due to spoilage or improper storage.

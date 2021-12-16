@@ -1,6 +1,8 @@
-﻿namespace TeufortTrail.Entities.Location
+﻿using System.Collections.Generic;
+
+namespace TeufortTrail.Entities.Location
 {
-    public sealed class RiverCrossing : Location
+    public sealed class ForkInRoad : Location
     {
         /// <summary>
         /// Flags the location as having a store that the player can visit.
@@ -13,20 +15,20 @@
         public override bool TalkingAllowed => false;
 
         /// <summary>
-        /// Defines the type of river crossing this location will be.
+        /// List of possible paths that the player can choose from.
         /// </summary>
-        public RiverOptions CrossingOption { get; }
+        public List<Location> PathChoices;
 
         //-------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RiverCrossing" /> class.
+        /// Initializes a new instance of the <see cref="ForkInRoad" /> class.
         /// </summary>
         /// <param name="name">Name of the location</param>
-        public RiverCrossing(string name, RiverOptions crossingOption = RiverOptions.Float) : base(name)
+        /// <param name="paths">List of locations</param>
+        public ForkInRoad(string name, IEnumerable<Location> paths) : base(name)
         {
-            // Set the type of river crossing this location will be.
-            CrossingOption = crossingOption;
+            if (paths != null) PathChoices = new List<Location>(paths);
         }
     }
 }

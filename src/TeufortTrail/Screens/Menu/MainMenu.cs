@@ -5,7 +5,7 @@ using TeufortTrail.Entities.Item;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 
-namespace TeufortTrail.Screens.MainMenu
+namespace TeufortTrail.Screens.Menu
 {
     /// <summary>
     /// Displays the main menu when the game is launched.

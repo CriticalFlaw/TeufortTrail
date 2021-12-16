@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using TeufortTrail.Entities.Location;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Commands
+namespace TeufortTrail.Screens.Commands
 {
     /// <summary>
     /// Displays a random piece of advice given to the player by civilians.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class TalkToPeople : InputForm<TravelInfo>
     {
         /// <summary>
@@ -27,16 +28,14 @@ namespace TeufortTrail.Screens.Travel.Commands
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            List<Advice> advice;
-            // Determine the type of advice to display.
-            if (GameCore.Instance.Trail.CurrentLocation is Landmark)
-                advice = new List<Advice>(AdviceRegistry.Landmark);
-            else if (GameCore.Instance.Trail.CurrentLocation is RiverCrossing)
-                advice = new List<Advice>(AdviceRegistry.River);
-            else if (GameCore.Instance.Trail.CurrentLocation is Settlement)
-                advice = new List<Advice>(AdviceRegistry.Settlement);
-            else
-                advice = new List<Advice>(AdviceRegistry.Default);
+            var advice = GameCore.Instance.Trail.CurrentLocation switch
+            {
+                // Determine the type of advice to display.
+                Landmark => new List<Advice>(AdviceRegistry.Landmark),
+                RiverCrossing => new List<Advice>(AdviceRegistry.River),
+                Settlement => new List<Advice>(AdviceRegistry.Settlement),
+                _ => new List<Advice>(AdviceRegistry.Default)
+            };
 
             // Retrieve a random piece of advice from the registry.
             var randomAdvice = advice.PickRandom(1).FirstOrDefault();

@@ -1,14 +1,15 @@
 ﻿using System;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Hunt
+namespace TeufortTrail.Screens.Hunt.Notifications
 {
     /// <summary>
     /// Displayed when the player hits their shot on the target.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class RobotHit : InputForm<TravelInfo>
     {
         /// <summary>

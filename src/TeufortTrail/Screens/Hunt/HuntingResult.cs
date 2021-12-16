@@ -1,14 +1,15 @@
 ﻿using System;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Hunt
+namespace TeufortTrail.Screens.Hunt
 {
     /// <summary>
     /// Displays the results of the hunting session after it's over. The player is awarded the cash amount collected from defeated robots.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class HuntingResult : InputForm<TravelInfo>
     {
         /// <summary>
@@ -24,7 +25,7 @@ namespace TeufortTrail.Screens.Travel.Hunt
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
-            GameCore.Instance.TakeTurn(false);
+            GameCore.Instance.TakeTurn();
         }
 
         /// <summary>

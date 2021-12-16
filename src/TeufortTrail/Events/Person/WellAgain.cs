@@ -1,7 +1,7 @@
 ﻿using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Person
 {
     /// <summary>
     /// Makes the person whom the event was fired on no loner afflicted by any illness.
@@ -25,8 +25,7 @@ namespace TeufortTrail.Events
         protected override string OnRender(EventInfo userData)
         {
             // Skip if the source entity is not a person.
-            var person = userData.SourceEntity as Entities.Person.Person;
-            return (person == null) ? "nobody got healed." : $"{person.Class} has fully healed.";
+            return (userData.SourceEntity is not Entities.Person.Person person) ? "nobody got healed." : $"{person.Class} has fully healed.";
         }
     }
 }

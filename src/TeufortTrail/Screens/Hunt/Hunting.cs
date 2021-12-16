@@ -1,14 +1,16 @@
 ﻿using System;
 using TeufortTrail.Entities.Robot;
+using TeufortTrail.Screens.Hunt.Notifications;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Hunt
+namespace TeufortTrail.Screens.Hunt
 {
     /// <summary>
     /// Displays the robot hunting mini-game.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class Hunting : Form<TravelInfo>
     {
         /// <summary>

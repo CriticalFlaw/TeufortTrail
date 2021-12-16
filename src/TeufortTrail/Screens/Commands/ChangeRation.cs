@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Utility;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 
-namespace TeufortTrail.Screens.Travel.Commands
+namespace TeufortTrail.Screens.Commands
 {
     /// <summary>
     /// Displays a prompt, asking the player to set the party's food consumption rate.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class ChangeRation : Form<TravelInfo>
     {
         private StringBuilder _changeRation;

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
+using TeufortTrail.Events.Prefab;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.River
 {
     /// <summary>
     /// Player forded the river and it was to deep, they have been washed out by the current and some items destroyed.
@@ -11,14 +12,6 @@ namespace TeufortTrail.Events
     [DirectorEvent(EventCategory.River, EventExecution.ManualOnly)]
     public sealed class VehicleFloods : ItemDestroyer
     {
-        /// <summary>
-        /// Called when the event directory triggers the event action.
-        /// </summary>
-        public override void Execute(EventInfo eventExecutor)
-        {
-            base.Execute(eventExecutor);
-        }
-
         /// <summary>
         /// Called before the event has been executed.
         /// </summary>

@@ -5,7 +5,7 @@ using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Prefab
 {
     /// <summary>
     /// Event prefab used when a random amount of items needs to removed from the player inventory.
@@ -49,8 +49,8 @@ namespace TeufortTrail.Events
             if (!(destroyedItems?.Count > 0)) return;
 
             // Loop through the generated items and add them to output string.
-            foreach (var destroyedItem in destroyedItems)
-                _itemDestroyer.AppendLine($"  - {destroyedItem.Value:N0} {destroyedItem.Key}");
+            foreach (var (key, value) in destroyedItems)
+                _itemDestroyer.AppendLine($"  - {value:N0} {key}");
         }
 
         /// <summary>
@@ -80,17 +80,17 @@ namespace TeufortTrail.Events
         internal static string TryKillPassengers(string killVerb)
         {
             // Get a list of vehicle passengers killed in the event.
-            var _postDestroy = new StringBuilder();
-            _postDestroy.Append(Environment.NewLine);
+            var postDestroy = new StringBuilder();
+            postDestroy.Append(Environment.NewLine);
             var passengersKilled = GameCore.Instance.Vehicle.TryKill();
             var passengers = (passengersKilled as IList<Entities.Person.Person>) ?? passengersKilled.ToList();
             foreach (var person in passengers)
             {
                 // Skip this step if the passenger isn't dead.
                 if (person.HealthState != HealthStatus.Dead) continue;
-                _postDestroy.AppendLine($"  - {person.Class} ({killVerb})");
+                postDestroy.AppendLine($"  - {person.Class} ({killVerb})");
             }
-            return _postDestroy.ToString();
+            return postDestroy.ToString();
         }
     }
 }

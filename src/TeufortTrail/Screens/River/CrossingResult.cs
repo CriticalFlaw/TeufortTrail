@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Text;
 using TeufortTrail.Entities;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.River
+namespace TeufortTrail.Screens.River
 {
     /// <summary>
     /// Displays the outcome of crossing the river.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class CrossingResult : InputForm<TravelInfo>
     {
         /// <summary>
@@ -26,33 +27,34 @@ namespace TeufortTrail.Screens.Travel.River
         protected override string OnDialogPrompt()
         {
             // Show a different message outcome from crossing the river.
-            var _crossingResult = new StringBuilder();
+            var crossingResult = new StringBuilder();
             switch (UserData.River.CrossingType)
             {
                 case RiverOptions.Float:
-                    _crossingResult.AppendLine(UserData.River.DisasterHappened
+                    crossingResult.AppendLine(UserData.River.DisasterHappened
                         ? $"{Environment.NewLine}Your party is relieved to have reached the other side after some trouble floating across.{Environment.NewLine}"
                         : $"{Environment.NewLine}You had no trouble floating the camper van across the river.{Environment.NewLine}");
                     break;
 
                 case RiverOptions.Ferry:
-                    _crossingResult.AppendLine(UserData.River.DisasterHappened
+                    crossingResult.AppendLine(UserData.River.DisasterHappened
                         ? $"{Environment.NewLine}The ferry operator apologizes for the rough ride.{Environment.NewLine}"
                         : $"{Environment.NewLine}The ferry got your party and camper van safely across the river.{Environment.NewLine}");
                     break;
 
                 case RiverOptions.Help:
-                    _crossingResult.AppendLine(UserData.River.DisasterHappened
+                    crossingResult.AppendLine(UserData.River.DisasterHappened
                         ? $"{Environment.NewLine}The civilians bid you adieu as soon as you reach the shore.{Environment.NewLine}"
                         : $"{Environment.NewLine}The civilians helped your party and camper van safely cross the river.{Environment.NewLine}");
                     break;
 
                 case RiverOptions.None:
                     throw new InvalidOperationException($"Invalid river crossing result choice {UserData.River.CrossingType}.");
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return _crossingResult.ToString();
+            return crossingResult.ToString();
         }
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace TeufortTrail.Screens.Travel.River
         {
             // Clear the river data and continue on the trail.
             UserData.DestroyRiver();
-            GameCore.Instance.TakeTurn(false);
+            GameCore.Instance.TakeTurn();
             SetForm(typeof(ContinueTrail));
         }
     }

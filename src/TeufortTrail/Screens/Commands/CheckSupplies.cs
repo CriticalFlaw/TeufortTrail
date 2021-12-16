@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Text;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Commands
+namespace TeufortTrail.Screens.Commands
 {
     /// <summary>
     /// Displays the party's current resource supply and individual member status.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class CheckSupplies : InputForm<TravelInfo>
     {
         /// <summary>
@@ -28,12 +29,12 @@ namespace TeufortTrail.Screens.Travel.Commands
             GameCore.Instance.TakeTurn(true);
 
             // Generate a table of resources and party status.
-            var _checkSupplies = new StringBuilder();
-            _checkSupplies.AppendLine($"{Environment.NewLine} Your Party:");
-            _checkSupplies.AppendLine($"{Environment.NewLine}{TravelInfo.PartyStatus}");
-            _checkSupplies.AppendLine($"{Environment.NewLine} Your Supplies:");
-            _checkSupplies.AppendLine($"{Environment.NewLine}{TravelInfo.PartySupplies}");
-            return _checkSupplies.ToString();
+            var checkSupplies = new StringBuilder();
+            checkSupplies.AppendLine($"{Environment.NewLine} Your Party:");
+            checkSupplies.AppendLine($"{Environment.NewLine}{TravelInfo.PartyStatus}");
+            checkSupplies.AppendLine($"{Environment.NewLine} Your Supplies:");
+            checkSupplies.AppendLine($"{Environment.NewLine}{TravelInfo.PartySupplies}");
+            return checkSupplies.ToString();
         }
 
         /// <summary>

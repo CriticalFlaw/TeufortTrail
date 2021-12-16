@@ -53,13 +53,13 @@ namespace TeufortTrail.Events.Director
         internal EventProduct CreateInstance(Type eventType)
         {
             // Retrieve an event reference from the dictionary that matches the event inputted type.
-            var eventReference = EventReference.FirstOrDefault(x => x.Value == eventType);
+            var eventReference = EventReference.FirstOrDefault(x => x.Value == eventType).Value;
 
             // Check if the class is abstract base class, we don't want to add that.
-            if (eventReference.Value.GetTypeInfo().IsAbstract) return null;
+            if (eventReference.GetTypeInfo().IsAbstract) return null;
 
             // Create an event product (instance), then execute and return it.
-            var eventInstance = FactoryExtensions.New<EventProduct>.GetUninitializedObject(eventReference.Value) as EventProduct;
+            if (FactoryExtensions.New<EventProduct>.GetUninitializedObject(eventReference) is not EventProduct eventInstance) return null;
             eventInstance.OnEventCreate();
             return eventInstance;
         }
@@ -71,16 +71,10 @@ namespace TeufortTrail.Events.Director
         public EventProduct CreateRandomByType(EventCategory eventCategory)
         {
             // Loop through all the event types to find matching enumeration values.
-            var eventList = new List<Type>();
-            foreach (var type in EventReference)
-                if (type.Key.Category.Equals(eventCategory) && (type.Key.ExecutionType == EventExecution.RandomOrManual))
-                    eventList.Add(type.Value);
+            var eventList = (from type in EventReference where type.Key.Category.Equals(eventCategory) && (type.Key.ExecutionType == EventExecution.RandomOrManual) select type.Value).ToList();
 
-            // Check that at least one event type has been returned.
-            if (eventList.Count <= 0) return null;
-
-            // Create a random event instance of a given type.
-            return CreateInstance(eventList[GameCore.Instance.Random.Next(eventList.Count)]);
+            // Create a random event instance of a given type if there is at least one event type that has been returned.
+            return eventList.Count <= 0 ? null : CreateInstance(eventList[GameCore.Instance.Random.Next(eventList.Count)]);
         }
     }
 }

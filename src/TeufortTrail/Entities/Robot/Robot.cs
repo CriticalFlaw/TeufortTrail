@@ -1,4 +1,4 @@
-﻿using TeufortTrail.Screens.Travel.Hunt;
+﻿using TeufortTrail.Screens.Hunt;
 using WolfCurses;
 
 namespace TeufortTrail.Entities.Robot

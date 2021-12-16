@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Linq;
 using TeufortTrail.Entities;
+using TeufortTrail.Screens.Travel;
 using WolfCurses.Window;
 using WolfCurses.Window.Form;
 using WolfCurses.Window.Form.Input;
 
-namespace TeufortTrail.Screens.Travel.Commands
+namespace TeufortTrail.Screens.Commands
 {
     /// <summary>
     /// Displays the number of days the party has rested at the current location.
     /// </summary>
-    [ParentWindow(typeof(Travel))]
+    [ParentWindow(typeof(Travel.Travel))]
     public sealed class StopToRest : InputForm<TravelInfo>
     {
         /// <summary>
@@ -25,20 +26,20 @@ namespace TeufortTrail.Screens.Travel.Commands
         /// </summary>
         protected override string OnDialogPrompt()
         {
-            int FoodConsumed, FoodConsumedTotal = 0;
+            var foodConsumedTotal = 0;
             // Increment the turn counter depending on the number of days the party has rested.
             for (var i = 0; i < UserData.DaysToRest; i++)
             {
-                GameCore.Instance.TakeTurn(false);
+                GameCore.Instance.TakeTurn();
                 foreach (var person in GameCore.Instance.Vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead))
                 {
                     // Subtract the amount of food consumed from the party member.
                     var vehicle = GameCore.Instance.Vehicle;
                     if (vehicle.Inventory[ItemTypes.Food].Quantity > 0)
                     {
-                        FoodConsumed = GameCore.Instance.Random.Next(1, 3) * vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead).Count();
-                        vehicle.Inventory[ItemTypes.Food].SubtractQuantity(FoodConsumed);
-                        FoodConsumedTotal += FoodConsumed;
+                        var foodConsumed = GameCore.Instance.Random.Next(1, 3) * vehicle.Passengers.Count(x => x.HealthState != HealthStatus.Dead);
+                        vehicle.Inventory[ItemTypes.Food].SubtractQuantity(foodConsumed);
+                        foodConsumedTotal += foodConsumed;
                     }
 
                     // Increase the party member's health.
@@ -46,7 +47,7 @@ namespace TeufortTrail.Screens.Travel.Commands
                         person.Health += GameCore.Instance.Random.Next(1, 10);
                 }
             }
-            return $"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.{Environment.NewLine}In that time they consumed {FoodConsumedTotal} pounds of food.{Environment.NewLine}{Environment.NewLine}";
+            return $"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.{Environment.NewLine}In that time they consumed {foodConsumedTotal} pounds of food.{Environment.NewLine}{Environment.NewLine}";
         }
 
         /// <summary>

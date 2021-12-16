@@ -3,7 +3,7 @@ using System.Text;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 
-namespace TeufortTrail.Events
+namespace TeufortTrail.Events.Prefab
 {
     /// <summary>
     /// Event prefab used when a random amount of items needs to added to the player inventory.
@@ -47,8 +47,8 @@ namespace TeufortTrail.Events
             if (!(createdItems?.Count > 0)) return;
 
             // Loop through the generated items and add them to output string.
-            foreach (var createdItem in createdItems)
-                _itemCreator.AppendLine($"  + {createdItem.Value:N0} {createdItem.Key}");
+            foreach (var (key, value) in createdItems)
+                _itemCreator.AppendLine($"  + {value:N0} {key}");
         }
 
         /// <summary>
