@@ -18,7 +18,7 @@ namespace TeufortTrail.Screens.Menu
         /// <summary>
         /// Sets the kind of prompt response the player can give.
         /// </summary>
-        protected override DialogType DialogType => DialogType.YesNo;
+        protected override DialogTypeEnum DialogType => DialogTypeEnum.YesNo;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -45,9 +45,9 @@ namespace TeufortTrail.Screens.Menu
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
-            SetForm(response == DialogResponse.Yes ? typeof(StorySetup) : typeof(ClassSelect));
+            SetForm(response == DialogResponseEnum.Yes ? typeof(StorySetup) : typeof(ClassSelect));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace TeufortTrail.Screens.River
         /// <summary>
         /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
         /// </summary>
-        protected override DialogType DialogType => (CannotAfford) ? DialogType.Prompt : DialogType.YesNo;
+        protected override DialogTypeEnum DialogType => (CannotAfford) ? DialogTypeEnum.Prompt : DialogTypeEnum.YesNo;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -50,11 +50,11 @@ namespace TeufortTrail.Screens.River
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
             switch (response)
             {
-                case DialogResponse.Yes:
+                case DialogResponseEnum.Yes:
                 {
                     // Using the ferry will cause a time skip.
                     for (var x = 0; x < 3; x++)
@@ -63,8 +63,8 @@ namespace TeufortTrail.Screens.River
                     SetForm(typeof(Crossing));
                     break;
                 }
-                case DialogResponse.No:
-                case DialogResponse.Custom:
+                case DialogResponseEnum.No:
+                case DialogResponseEnum.Custom:
                     UserData.River.CrossingType = RiverOptions.None;
                     SetForm(typeof(River));
                     break;

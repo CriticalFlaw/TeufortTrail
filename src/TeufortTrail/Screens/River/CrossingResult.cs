@@ -60,7 +60,7 @@ namespace TeufortTrail.Screens.River
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
             // Clear the river data and continue on the trail.
             UserData.DestroyRiver();

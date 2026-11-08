@@ -46,7 +46,7 @@ namespace TeufortTrail.Screens.Hunt
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse reponse)
+        protected override void OnDialogResponse(DialogResponseEnum reponse)
         {
             // Clean up the hunting mini-game resources.
             UserData.DestroyHunt();

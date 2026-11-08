@@ -28,7 +28,7 @@ namespace TeufortTrail.Events.Director
             EventReference = new Dictionary<EventKey, Type>();
 
             // Collect and loop through all of the event types.
-            foreach (var eventObject in AttributeExtensions.GetTypesWith<DirectorEventAttribute>(true))
+            foreach (var eventObject in AttributeExtensions.GetTypesWith<DirectorEventAttribute>(typeof(EventFactory).Assembly, true))
             {
                 // Check if the class is abstract base class, we don't want to add that.
                 if (eventObject.GetTypeInfo().IsAbstract) continue;

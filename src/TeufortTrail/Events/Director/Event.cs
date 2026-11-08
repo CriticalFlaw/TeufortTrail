@@ -30,7 +30,7 @@ namespace TeufortTrail.Events.Director
         protected override void OnModeRemoved()
         {
             base.OnModeRemoved();
-            if (GameCore.Instance.EventDirector != null)
+            if (GameCore.Instance?.EventDirector != null)
                 GameCore.Instance.EventDirector.OnEventTriggered -= Director_OnEventTriggered;
         }
 

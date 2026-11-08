@@ -34,7 +34,7 @@ namespace TeufortTrail.Events.Director
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
             // Calls a method to perform an action before the event is closed.
             UserData.DirectorEvent.OnEventClose(UserData);

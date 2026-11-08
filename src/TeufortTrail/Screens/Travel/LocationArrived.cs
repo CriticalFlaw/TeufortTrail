@@ -16,7 +16,7 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
         /// </summary>
-        protected override DialogType DialogType => DialogType.YesNo;
+        protected override DialogTypeEnum DialogType => DialogTypeEnum.YesNo;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -52,9 +52,9 @@ namespace TeufortTrail.Screens.Travel
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
-            if (response == DialogResponse.Yes)
+            if (response == DialogResponseEnum.Yes)
                 ClearForm();
             else
             {

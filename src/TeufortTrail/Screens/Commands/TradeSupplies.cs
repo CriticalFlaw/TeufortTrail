@@ -35,7 +35,7 @@ namespace TeufortTrail.Screens.Commands
         /// <summary>
         /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
         /// </summary>
-        protected override DialogType DialogType => (_tradeOffers is {Count: > 0} && _playerCanTrade) ? DialogType.YesNo : DialogType.Prompt;
+        protected override DialogTypeEnum DialogType => (_tradeOffers is {Count: > 0} && _playerCanTrade) ? DialogTypeEnum.YesNo : DialogTypeEnum.Prompt;
 
         //-------------------------------------------------------------------------------------------------
 
@@ -85,9 +85,9 @@ namespace TeufortTrail.Screens.Commands
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
-            if (response == DialogResponse.Yes)
+            if (response == DialogResponseEnum.Yes)
             {
                 // Subtract the item quantity from the party inventory and add the quantity of the item the player traded for.
                 GameCore.Instance.Vehicle.Inventory[_tradeOffers[_tradeIndex].WantedItem.Category].SubtractQuantity(_tradeOffers[_tradeIndex].WantedItem.Quantity);

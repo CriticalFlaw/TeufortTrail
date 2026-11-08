@@ -33,6 +33,7 @@ namespace TeufortTrail.Screens.Travel
         protected override void OnFormChange()
         {
             base.OnFormChange();
+            if (GameCore.Instance?.Vehicle == null) return;
             UpdateLocation();
         }
 

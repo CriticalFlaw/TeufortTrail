@@ -23,7 +23,7 @@ namespace TeufortTrail.Screens.Toll
         /// <summary>
         /// Sets the kind of prompt response the player can give. Could be Yes, No or Press Any.
         /// </summary>
-        protected override DialogType DialogType => (CannotAfford) ? DialogType.Prompt : DialogType.YesNo;
+        protected override DialogTypeEnum DialogType => (CannotAfford) ? DialogTypeEnum.Prompt : DialogTypeEnum.YesNo;
 
         /// <summary>
         /// Determines if user input is allowed on this screen.
@@ -67,7 +67,7 @@ namespace TeufortTrail.Screens.Toll
         /// <summary>
         /// Called when player input has been detected and an appropriate response needs to be determined.
         /// </summary>
-        protected override void OnDialogResponse(DialogResponse response)
+        protected override void OnDialogResponse(DialogResponseEnum response)
         {
             // Check if the player has enough monies to pay for the toll road.
             if (CannotAfford)
@@ -79,7 +79,7 @@ namespace TeufortTrail.Screens.Toll
             // Depending on player response we will subtract money or continue on trail.
             switch (response)
             {
-                case DialogResponse.Yes:
+                case DialogResponseEnum.Yes:
                     // Remove monies for the cost of the trip on toll road.
                     GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].SubtractQuantity(UserData.Toll.Cost);
 
@@ -93,8 +93,8 @@ namespace TeufortTrail.Screens.Toll
                     SetForm(typeof(ContinueTrail));
                     break;
 
-                case DialogResponse.No:
-                case DialogResponse.Custom:
+                case DialogResponseEnum.No:
+                case DialogResponseEnum.Custom:
                     if (GameCore.Instance.Trail.CurrentLocation is ForkInRoad)
                         SetForm(typeof(ForkRoad));
                     else
