@@ -15,7 +15,7 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnFoodSpoilReason()
         {
-            return "Food spoiled.";
+            return "Some of your sandviches have gone bad.";
         }
     }
 }

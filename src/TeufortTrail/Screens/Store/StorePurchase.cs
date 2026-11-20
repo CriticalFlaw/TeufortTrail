@@ -43,10 +43,11 @@ namespace TeufortTrail.Screens.Store
             base.OnFormPostCreate();
             _purchaseLimit = (int)((GameCore.Instance.Vehicle.Balance - UserData.Store.TotalTransactionCost) / UserData.Store.SelectedItem.Value);
 
-            // Check that the limit is within range.
+            // Check that the limit is within range, leaving out what the party is already carrying.
+            var carrying = GameCore.Instance.Vehicle.Inventory[UserData.Store.SelectedItem.Category].Quantity;
+            var room = UserData.Store.SelectedItem.MaxQuantity - carrying;
+            if (_purchaseLimit > room) _purchaseLimit = room;
             if (_purchaseLimit < 0) _purchaseLimit = 0;
-            if (_purchaseLimit > UserData.Store.SelectedItem.MaxQuantity)
-                _purchaseLimit = UserData.Store.SelectedItem.MaxQuantity;
 
             // Display a message indicating how many of this item the player can buy.
             _storePurchase = new StringBuilder();

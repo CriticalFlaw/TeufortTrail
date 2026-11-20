@@ -33,7 +33,7 @@ namespace TeufortTrail.Events.Prefab
             // Append the pre-create message if it exists.
             var preCreateText = OnPreCreateItems();
             if (!string.IsNullOrEmpty(preCreateText))
-                _itemCreator.AppendLine(preCreateText);
+                _itemCreator.Append(preCreateText);
 
             // Get a list of schema items of random type and quantity.
             var createdItems = GameCore.Instance.Vehicle.CreateRandomItems();
@@ -41,14 +41,14 @@ namespace TeufortTrail.Events.Prefab
             // Append the post-create message if it exists.
             var postCreateText = OnPostCreateItems(createdItems);
             if (!string.IsNullOrEmpty(postCreateText))
-                _itemCreator.Append(postCreateText);
+                _itemCreator.AppendLine(postCreateText);
 
             // Skip this step if no items were created.
             if (!(createdItems?.Count > 0)) return;
 
             // Loop through the generated items and add them to output string.
             foreach (var (key, value) in createdItems)
-                _itemCreator.AppendLine($"  + {value:N0} {key}");
+                _itemCreator.AppendLine($"  + {value:N0} {ItemDestroyer.ItemName(key, value)}");
         }
 
         /// <summary>

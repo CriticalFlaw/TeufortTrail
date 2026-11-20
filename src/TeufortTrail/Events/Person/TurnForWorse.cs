@@ -14,9 +14,9 @@ namespace TeufortTrail.Events.Person
         /// </summary>
         public override void Execute(EventInfo eventExecutor)
         {
-            // We are going to inflict enough damage to probably kill the person.
+            // A serious setback that can kill someone who is already weak.
             var person = eventExecutor.SourceEntity as Entities.Person.Person;
-            person?.Damage(100);
+            person?.Damage(GameBalance.TurnForWorseDamage);
         }
 
         /// <summary>
@@ -25,7 +25,10 @@ namespace TeufortTrail.Events.Person
         protected override string OnRender(EventInfo userData)
         {
             // Skip this step if the source entity is not a person.
-            return (userData.SourceEntity is not Entities.Person.Person person) ? "There was a health scare, but everyone is okay." : $"The {person.Class}'s health has taken a turn for the worse.";
+            if (userData.SourceEntity is not Entities.Person.Person person) return "There was a health scare, but everyone is okay.";
+            return person.HealthState == HealthStatus.Dead
+                ? $"The {person.Class}'s health took a turn for the worse. The {person.Class} has died."
+                : $"The {person.Class}'s health has taken a turn for the worse.";
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TeufortTrail.Events.Special
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return $"The Pyro set your vehicle on fire,{Environment.NewLine}resulting in the loss of:";
+            return "The Pyro set your camper van on fire!";
         }
 
         /// <summary>
@@ -23,8 +23,7 @@ namespace TeufortTrail.Events.Special
         /// </summary>
         protected override string OnPostDestroyItems(IDictionary<ItemTypes, int> destroyedItems)
         {
-            // Change event text depending on if items were destroyed or not.
-            return (destroyedItems.Count > 0) ? TryKillPassengers("burned") : "no loss of items.";
+            return TryHurtPassengers(25, 40, 120, "burned");
         }
     }
 }

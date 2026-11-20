@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TeufortTrail.Entities.Item;
 
 namespace TeufortTrail.Entities.Vehicle
@@ -121,14 +122,28 @@ namespace TeufortTrail.Entities.Vehicle
             // Reduce the mileage in half if things are too slow on the trail.
             if (GameCore.Instance.Random.NextBool() && (Mileage > 0)) Mileage /= 2;
 
-            // Check for a random event that could occur.
-            GameCore.Instance.EventDirector.TriggerEventByType(this, EventCategory.Vehicle);
+            // Roll for at most one random event per day on the trail.
+            TriggerTravelEvent();
 
             // Make sure the mileage is never below or at zero.
             if (Mileage <= 0) Mileage = 10;
 
             // Update the total mileage traveled.
             Odometer += Mileage;
+        }
+
+        /// <summary>
+        /// Roll for a random wild, vehicle or animal event. Animal events happen to a random living party member.
+        /// </summary>
+        private void TriggerTravelEvent()
+        {
+            var director = GameCore.Instance.EventDirector;
+            if (director.TriggerEventByType(this, EventCategory.Wild, GameBalance.WildEventChance)) return;
+            if (director.TriggerEventByType(this, EventCategory.Vehicle, GameBalance.VehicleEventChance)) return;
+
+            var living = Passengers.Where(x => x.HealthState != HealthStatus.Dead).ToList();
+            if (living.Count > 0)
+                director.TriggerEventByType(living[GameCore.Instance.Random.Next(living.Count)], EventCategory.Animal, GameBalance.AnimalEventChance);
         }
 
         /// <summary>
@@ -229,21 +244,22 @@ namespace TeufortTrail.Entities.Vehicle
         }
 
         /// <summary>
-        /// Loop through the party and roll the dice to see if they should be killed.
+        /// Roll the dice for each living party member to see if they get hurt. Badly hurt members may die.
         /// </summary>
-        public IEnumerable<Person.Person> TryKill()
+        /// <param name="percentChance">Chance out of 100 that each member is hurt.</param>
+        /// <param name="minDamage">Smallest amount of health lost.</param>
+        /// <param name="maxDamage">Largest amount of health lost.</param>
+        public IList<Person.Person> TryHurt(int percentChance, int minDamage, int maxDamage)
         {
-            var peopleKilled = new List<Person.Person>();
-            foreach (var person in GameCore.Instance.Vehicle.Passengers)
+            var peopleHurt = new List<Person.Person>();
+            foreach (var person in Passengers)
             {
-                // Roll the dice, proceed if true otherwise continue. Skip if the party member is already dead.
-                if (!GameCore.Instance.Random.NextBool() || (person.HealthState == HealthStatus.Dead)) continue;
-
-                // Kill the party member and add them to list.
-                person.Kill();
-                peopleKilled.Add(person);
+                if (person.HealthState == HealthStatus.Dead || GameCore.Instance.Random.Next(100) >= percentChance) continue;
+                person.Damage(GameCore.Instance.Random.Next(minDamage, maxDamage + 1));
+                person.Injure();
+                peopleHurt.Add(person);
             }
-            return peopleKilled;
+            return peopleHurt;
         }
 
         /// <summary>
@@ -258,14 +274,14 @@ namespace TeufortTrail.Entities.Vehicle
             // Loop through the inventory and decide which items to give to the player.
             foreach (var item in inventoryCopy)
             {
-                // Skip this step if the item quantity is at a maximum.
-                if (item.Value.Quantity >= item.Value.MaxQuantity) continue;
+                // Found supplies never include money, and skip items that are already full.
+                if (item.Key == ItemTypes.Money || item.Value.Quantity >= item.Value.MaxQuantity) continue;
 
                 // Skip this step if the dice roll returns a false.
                 if (GameCore.Instance.Random.NextBool()) continue;
 
                 // Generate a random amount to represent the quantity of items created.
-                var createdAmount = GameCore.Instance.Random.Next(1, item.Value.MaxQuantity / 4);
+                var createdAmount = GameCore.Instance.Random.Next(System.Math.Max(1, item.Value.MaxQuantity / 20), System.Math.Max(2, item.Value.MaxQuantity / 8));
 
                 // Check that the item quantity after the addition is still within range.
                 var simulatedAmountAdd = item.Value.Quantity + createdAmount;
@@ -284,7 +300,8 @@ namespace TeufortTrail.Entities.Vehicle
         /// <summary>
         /// Retrieve a schema item list of random type and quantity to be removed from the player inventory.
         /// </summary>
-        public IDictionary<ItemTypes, int> DestroyRandomItems()
+        /// <param name="includeMoney">TRUE if money can be lost too.</param>
+        public IDictionary<ItemTypes, int> DestroyRandomItems(bool includeMoney = false)
         {
             // Create and empty item list and a copy of the current inventory.
             var destroyedItems = new Dictionary<ItemTypes, int>();
@@ -293,14 +310,14 @@ namespace TeufortTrail.Entities.Vehicle
             // Loop through the inventory and decide which items to take away from the player.
             foreach (var item in inventoryCopy)
             {
-                // Skip this step if the item quantity is at a minimum.
-                if (item.Value.Quantity < 1) continue;
+                // Skip this step if the item quantity is at a minimum, or it's money that can't be lost.
+                if (item.Value.Quantity < 1 || (item.Key == ItemTypes.Money && !includeMoney)) continue;
 
                 // Skip this step if the dice roll returns a false.
                 if (GameCore.Instance.Random.NextBool()) continue;
 
-                // Generate a random amount to represent the quantity of items created.
-                var destroyAmount = GameCore.Instance.Random.Next(1, item.Value.Quantity);
+                // Lose up to a set share of the supply.
+                var destroyAmount = GameCore.Instance.Random.Next(1, System.Math.Max(2, (int)(item.Value.Quantity * GameBalance.EventLossShare) + 1));
 
                 // Remove the generated amount of items from the player inventory.
                 Inventory[item.Key].SubtractQuantity(destroyAmount);

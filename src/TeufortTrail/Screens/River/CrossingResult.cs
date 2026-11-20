@@ -64,7 +64,7 @@ namespace TeufortTrail.Screens.River
         {
             // Clear the river data and continue on the trail.
             UserData.DestroyRiver();
-            GameCore.Instance.TakeTurn();
+            GameCore.Instance.PassDay();
             SetForm(typeof(ContinueTrail));
         }
     }

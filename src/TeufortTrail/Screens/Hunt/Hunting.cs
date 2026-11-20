@@ -41,8 +41,8 @@ namespace TeufortTrail.Screens.Hunt
         {
             base.OnTick(systemTick, skipDay);
 
-            // Tick the mini-game if the timer hasn't run out.
-            if (UserData.Hunt.HuntTime > 0)
+            // Tick the mini-game if the timer hasn't run out and there's ammo left to shoot with.
+            if (UserData.Hunt.HuntTime > 0 && GameCore.Instance.Vehicle.Inventory[Entities.ItemTypes.Ammo].Quantity > 0)
                 UserData.Hunt?.OnTick(systemTick, skipDay);
             else
             {

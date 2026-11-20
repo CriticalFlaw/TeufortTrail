@@ -32,9 +32,10 @@ namespace TeufortTrail.Screens.Store
             storeWelcome.Append($"{Environment.NewLine}We can fix you right up with these fine products.");
             storeWelcome.AppendLine($"{Environment.NewLine}Your satisfaction is guaranteed or we'll beat it into you!");
             storeWelcome.Append($"{Environment.NewLine}So what do you need?");
-            storeWelcome.Append($"{Environment.NewLine} - Sandviches and other food for the trip.");
-            storeWelcome.Append($"{Environment.NewLine} - Hats and clothing for both summer and winter.");
-            storeWelcome.Append($"{Environment.NewLine} - Ammunition to fight off the robots.");
+            storeWelcome.Append($"{Environment.NewLine} - Sandviches and other food. A team of four eats about {4 * Entities.GameBalance.FoodPerPerson(Entities.RationLevel.Filling)} pounds");
+            storeWelcome.Append($"{Environment.NewLine}   a day on filling rations, and the next store is in {TravelInfo.NextStoreName}.");
+            storeWelcome.Append($"{Environment.NewLine} - Hats. Everyone needs {Entities.GameBalance.HatsPerPerson} to stay warm and healthy.");
+            storeWelcome.Append($"{Environment.NewLine} - Ammunition to hunt robots for cash and fight off ambushes.");
             storeWelcome.AppendLine(Environment.NewLine);
             return storeWelcome.ToString();
         }

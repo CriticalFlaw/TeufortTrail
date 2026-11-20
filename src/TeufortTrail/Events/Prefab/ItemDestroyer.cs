@@ -37,21 +37,37 @@ namespace TeufortTrail.Events.Prefab
             if (!string.IsNullOrEmpty(preDestroyText))
                 _itemDestroyer.AppendLine(preDestroyText);
 
-            // Get a list of schema items of random type and quantity.
-            var destroyedItems = GameCore.Instance.Vehicle.DestroyRandomItems();
+            // Get a list of schema items of random type and quantity, and list them.
+            var destroyedItems = GameCore.Instance.Vehicle.DestroyRandomItems(CanLoseMoney);
+            if (destroyedItems.Count > 0)
+            {
+                _itemDestroyer.AppendLine("You lost:");
+                foreach (var (key, value) in destroyedItems)
+                    _itemDestroyer.AppendLine(key == ItemTypes.Money ? $"  - ${value:N0}" : $"  - {value:N0} {ItemName(key, value)}");
+            }
+            else
+                _itemDestroyer.AppendLine("Luckily, no supplies were lost.");
 
             // Append the post-destroy message if it exists.
             var postDestroyText = OnPostDestroyItems(destroyedItems);
             if (!string.IsNullOrEmpty(postDestroyText))
                 _itemDestroyer.Append(postDestroyText);
-
-            // Skip this step if no items were destroyed.
-            if (!(destroyedItems?.Count > 0)) return;
-
-            // Loop through the generated items and add them to output string.
-            foreach (var (key, value) in destroyedItems)
-                _itemDestroyer.AppendLine($"  - {value:N0} {key}");
         }
+
+        /// <summary>
+        /// TRUE if this event can take the party's money.
+        /// </summary>
+        protected virtual bool CanLoseMoney => false;
+
+        /// <summary>
+        /// Name of an item type as shown to the player.
+        /// </summary>
+        internal static string ItemName(ItemTypes itemType, int count = 2) => itemType switch
+        {
+            ItemTypes.Clothing => count == 1 ? "hat" : "hats",
+            ItemTypes.Ammo => "ammo",
+            _ => itemType.ToString().ToLowerInvariant()
+        };
 
         /// <summary>
         /// Called when the event director needs to render the event text to the user interface.
@@ -72,25 +88,21 @@ namespace TeufortTrail.Events.Prefab
         protected abstract string OnPostDestroyItems(IDictionary<ItemTypes, int> destroyedItems);
 
         /// <summary>
-        ///     Rolls the dice and attempts to kill the passengers of the vehicle. If that happens then the killing verb will be
-        ///     applied next to their name.
+        /// Rolls the dice for each passenger to see if they get hurt. Anyone hurt badly enough dies.
         /// </summary>
+        /// <param name="percentChance">Chance out of 100 that each passenger is hurt.</param>
+        /// <param name="minDamage">Smallest amount of health lost.</param>
+        /// <param name="maxDamage">Largest amount of health lost.</param>
         /// <param name="killVerb">Action verb that describes how the person died such as burned, frozen, drowned, etc.</param>
         /// <returns>Formatted string that can be displayed on render for event item destruction.</returns>
-        internal static string TryKillPassengers(string killVerb)
+        internal static string TryHurtPassengers(int percentChance, int minDamage, int maxDamage, string killVerb)
         {
-            // Get a list of vehicle passengers killed in the event.
-            var postDestroy = new StringBuilder();
-            postDestroy.Append(Environment.NewLine);
-            var passengersKilled = GameCore.Instance.Vehicle.TryKill();
-            var passengers = (passengersKilled as IList<Entities.Person.Person>) ?? passengersKilled.ToList();
-            foreach (var person in passengers)
-            {
-                // Skip this step if the passenger isn't dead.
-                if (person.HealthState != HealthStatus.Dead) continue;
-                postDestroy.AppendLine($"  - {person.Class} ({killVerb})");
-            }
-            return postDestroy.ToString();
+            var output = new StringBuilder();
+            foreach (var person in GameCore.Instance.Vehicle.TryHurt(percentChance, minDamage, maxDamage))
+                output.AppendLine(person.HealthState == HealthStatus.Dead
+                    ? $"  - The {person.Class} was {killVerb}."
+                    : $"  - The {person.Class} was injured.");
+            return output.Length > 0 ? Environment.NewLine + output : string.Empty;
         }
     }
 }

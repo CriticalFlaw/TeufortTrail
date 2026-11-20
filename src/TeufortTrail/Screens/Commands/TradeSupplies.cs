@@ -52,7 +52,7 @@ namespace TeufortTrail.Screens.Commands
         protected override string OnDialogPrompt()
         {
             // Increment the turn counter without advancing time.
-            GameCore.Instance.TakeTurn();
+            GameCore.Instance.PassDay();
 
             // Display the party's current resource supply.
             var tradeSupplies = new StringBuilder();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 using TeufortTrail.Events.Prefab;
@@ -7,17 +6,22 @@ using TeufortTrail.Events.Prefab;
 namespace TeufortTrail.Events.River
 {
     /// <summary>
-    /// Player forded the river and it was to deep, they have been washed out by the current and some items destroyed.
+    /// The camper van floods while fording a river, washing away supplies and nearly drowning the party.
     /// </summary>
     [DirectorEvent(EventCategory.River, EventExecution.ManualOnly)]
     public sealed class VehicleFloods : ItemDestroyer
     {
         /// <summary>
+        /// Money can wash away too.
+        /// </summary>
+        protected override bool CanLoseMoney => true;
+
+        /// <summary>
         /// Called before the event has been executed.
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return $"Your vehicle flooded while attempting to cross the river,{Environment.NewLine}resulting in the loss of:";
+            return "Your camper van flooded while fording the river!";
         }
 
         /// <summary>
@@ -25,7 +29,7 @@ namespace TeufortTrail.Events.River
         /// </summary>
         protected override string OnPostDestroyItems(IDictionary<ItemTypes, int> destroyedItems)
         {
-            return (destroyedItems.Count > 0) ? TryKillPassengers("drowned") : "no loss of items.";
+            return TryHurtPassengers(30, 60, 180, "drowned");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace TeufortTrail.Screens.Hunt
         public override void OnFormPostCreate()
         {
             base.OnFormPostCreate();
-            GameCore.Instance.TakeTurn();
+            GameCore.Instance.PassDay();
         }
 
         /// <summary>

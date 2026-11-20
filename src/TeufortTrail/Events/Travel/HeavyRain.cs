@@ -17,7 +17,7 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return "Heavy rain, resulting in the loss of:";
+            return "Heavy rain soaks the camper van.";
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnPostDestroyItems(IDictionary<ItemTypes, int> destroyedItems)
         {
-            return (destroyedItems.Count > 0) ? $"supplies lost:{Environment.NewLine}" : "no items lost.";
+            return string.Empty;
         }
     }
 }

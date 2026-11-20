@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using TeufortTrail.Entities;
 using WolfCurses.Window;
 using WolfCurses.Window.Control;
@@ -61,6 +62,14 @@ namespace TeufortTrail.Screens.Travel
             // Only tick vehicle at an interval.
             base.OnTick(systemTick, skipDay);
             if (systemTick) return;
+
+            // Stop for good if nobody in the party is left alive.
+            if (GameCore.Instance.Vehicle.Passengers.All(x => x.HealthState == HealthStatus.Dead))
+            {
+                GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
+                SetForm(typeof(Menu.GameOver));
+                return;
+            }
 
             // Check the status of the vehicle at the this tick.
             GameCore.Instance.Vehicle.CheckStatus();

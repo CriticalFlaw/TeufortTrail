@@ -59,7 +59,8 @@ namespace TeufortTrail.Screens.Store
             _store.AppendLine("------------------------------------------");
             var totalBill = UserData.Store.TotalTransactionCost;
             var playerBalance = GameCore.Instance.Vehicle.Balance - totalBill;
-            _store.Append($"Total bill:            {totalBill:C2}" + $"{Environment.NewLine}Amount you have:       {playerBalance:C2}");
+            _store.AppendLine($"Total bill:            {totalBill:C2}" + $"{Environment.NewLine}Amount you have:       {playerBalance:C2}");
+            _store.Append($"{Environment.NewLine}Your team eats {TravelInfo.DailyFoodNeeded(GameCore.Instance.Vehicle.Ration)} pounds of food a day. Next store: {TravelInfo.NextStoreName}.");
         }
 
         /// <summary>

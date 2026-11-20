@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 using TeufortTrail.Events.Prefab;
@@ -7,17 +6,24 @@ using TeufortTrail.Events.Prefab;
 namespace TeufortTrail.Events.Travel
 {
     /// <summary>
-    /// Robots attack the player. There is a chance some of your party members may get murdered.
+    /// Robots ambush the party. Having enough ammo to fight back keeps injuries down.
     /// </summary>
     [DirectorEvent(EventCategory.Wild)]
     public sealed class RobotsAttack : ItemDestroyer
     {
+        private bool _couldFightBack;
+
         /// <summary>
         /// Called before the event has been executed.
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return $"Robots ambush your party,{Environment.NewLine}resulting in the loss of:";
+            var ammo = GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo];
+            _couldFightBack = ammo.Quantity >= GameBalance.AmmoToRepelRobots;
+            ammo.SubtractQuantity(GameCore.Instance.Random.Next(5, 16));
+            return _couldFightBack
+                ? "Robots ambush your party! You fight them off."
+                : "Robots ambush your party! Without enough ammo, you can barely fight back.";
         }
 
         /// <summary>
@@ -25,11 +31,9 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnPostDestroyItems(IDictionary<ItemTypes, int> destroyedItems)
         {
-            // Randomly generate the amount of ammo used to kill the robots.
-            GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo].SubtractQuantity(GameCore.Instance.Random.Next(5, 15));
-
-            // Change event text depending on the outcome.
-            return (destroyedItems.Count > 0) ? TryKillPassengers("murdered") : "no loss of items.";
+            return _couldFightBack
+                ? TryHurtPassengers(15, 30, 90, "killed")
+                : TryHurtPassengers(40, 60, 160, "killed");
         }
     }
 }

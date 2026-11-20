@@ -232,7 +232,8 @@ namespace TeufortTrail.Screens.Hunt
         private List<Robot> GenerateRobots()
         {
             var robotList = new List<Robot>();
-            for (var index = 0; index < GameCore.Instance.Random.Next(1, 15); index++)
+            var robotCount = GameCore.Instance.Random.Next(GameBalance.HuntRobotsMin, GameBalance.HuntRobotsMax + 1);
+            for (var index = 0; index < robotCount; index++)
                 robotList.Add(new Robot());
             return robotList.OrderByDescending(x => x.LifetimeMax).Distinct().ToList();
         }
@@ -257,10 +258,13 @@ namespace TeufortTrail.Screens.Hunt
 
             // Subtract ammo from the supply after the player takes a shot.
             var ammoSupply = GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo];
-            ammoSupply.SubtractQuantity((int)ammoSupply.TotalValue - 10 - GameCore.Instance.Random.Next() * 4);
+            ammoSupply.SubtractQuantity(GameCore.Instance.Random.Next(GameBalance.HuntAmmoPerShotMin, GameBalance.HuntAmmoPerShotMax + 1));
 
-            // Check if the player missed their target based on the calculation or if the player fired in less than half the maximum target time.
-            if (100 * GameCore.Instance.Random.Next() < ((int)GameCore.Instance.Vehicle.Passengers.First(x => x.Leader).Class - 13) * _robotTarget.TargetTime ||
+            // The shot misses if the player was too slow, or by bad luck. Snipers rarely miss.
+            var missChance = GameCore.Instance.Vehicle.Passengers.First(x => x.Leader).Class == Classes.Sniper
+                ? GameBalance.HuntMissChanceSniper
+                : GameBalance.HuntMissChance;
+            if (GameCore.Instance.Random.Next(100) < missChance ||
                 _robotTarget.TargetTime > _robotTarget.TargetTimeMax / 2)
             {
                 // Clear the target and mark the robot as escaped if the shot missed.

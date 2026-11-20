@@ -39,8 +39,8 @@ namespace TeufortTrail.Screens.River
         protected override string OnDialogPrompt()
         {
             var ferry = new StringBuilder();
-            ferry.AppendLine($"{Environment.NewLine}The ferry will to put your camper van on top of a flat boat and float it across.");
-            ferry.AppendLine($"The owner of the ferry will bring it across for {UserData.River.FerryCost:C2}.{Environment.NewLine}");
+            ferry.AppendLine($"{Environment.NewLine}The ferry will put your camper van on a flat boat and float it across.");
+            ferry.AppendLine($"The owner will take you across for {UserData.River.FerryCost:C2}, but you'll wait 3 days for your turn.{Environment.NewLine}");
             ferry.Append(CannotAfford
                 ? "You do not have enough monies to take the ferry."
                 : "Do you accept this offer? Y/N");
@@ -58,7 +58,7 @@ namespace TeufortTrail.Screens.River
                 {
                     // Using the ferry will cause a time skip.
                     for (var x = 0; x < 3; x++)
-                        GameCore.Instance.TakeTurn();
+                        GameCore.Instance.PassDay();
                     GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
                     SetForm(typeof(Crossing));
                     break;

@@ -63,13 +63,13 @@ namespace TeufortTrail.Screens.River
             // Park the vehicle if it's not already.
             GameCore.Instance.Vehicle.Status = VehicleStatus.Stopped;
 
-            // Double check that the player can pay to cross the river, subtract the payment from the inventory.
-            if (GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].TotalValue > UserData.River.FerryCost && UserData.River.FerryCost > 0)
+            // Pay for the chosen way of crossing: money for the ferry, hats for the locals.
+            if (UserData.River.CrossingType == RiverOptions.Ferry && UserData.River.FerryCost > 0)
             {
                 GameCore.Instance.Vehicle.Inventory[ItemTypes.Money].SubtractQuantity((int)UserData.River.FerryCost);
                 UserData.River.FerryCost = 0;
             }
-            else if ((GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].Quantity > UserData.River.HelpCost) && (UserData.River.HelpCost > 0))
+            else if (UserData.River.CrossingType == RiverOptions.Help && UserData.River.HelpCost > 0)
             {
                 GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing].SubtractQuantity(UserData.River.HelpCost);
                 UserData.River.HelpCost = 0;
@@ -108,11 +108,15 @@ namespace TeufortTrail.Screens.River
             switch (UserData.River.CrossingType)
             {
                 case RiverOptions.Float:
-                    if (GameCore.Instance.Random.NextBool() && !UserData.River.DisasterHappened &&
-                        (RiverWidthCrossed >= UserData.River.RiverWidth / 2))
+                    // Roll once, halfway across. Wider rivers are more likely to flood the van.
+                    if (!UserData.River.FloodChecked && RiverWidthCrossed >= UserData.River.RiverWidth / 2)
                     {
-                        UserData.River.DisasterHappened = true;
-                        GameCore.Instance.EventDirector.TriggerEvent(GameCore.Instance.Vehicle, typeof(VehicleFloods));
+                        UserData.River.FloodChecked = true;
+                        if (GameCore.Instance.Random.Next(100) < UserData.River.FordFloodChance)
+                        {
+                            UserData.River.DisasterHappened = true;
+                            GameCore.Instance.EventDirector.TriggerEvent(GameCore.Instance.Vehicle, typeof(VehicleFloods));
+                        }
                     }
                     break;
 

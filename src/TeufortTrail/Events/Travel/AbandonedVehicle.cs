@@ -16,7 +16,7 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnPreCreateItems()
         {
-            return "You find an abandoned Mann Co. Supply Truck, ";
+            return "You find an abandoned Mann Co. Supply Truck";
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnPostCreateItems(IDictionary<ItemTypes, int> createdItems)
         {
-            return (createdItems.Count > 0) ? "and from it you find:" : "but it's empty.";
+            return (createdItems.Count > 0) ? ", and inside you find:" : ", but it's empty.";
         }
     }
 }

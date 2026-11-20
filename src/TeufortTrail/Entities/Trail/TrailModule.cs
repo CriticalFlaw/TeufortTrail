@@ -109,7 +109,7 @@ namespace TeufortTrail.Entities.Trail
         public void ArriveAtLocation()
         {
             // Check the player has reached the end of the trail.
-            if (LocationIndex > Locations.Count) return;
+            if (GameCore.Instance.TotalTurns > 0 && NextLocation == null) return;
 
             // Set the distance to the next location.
             NextLocationDistance = CurrentLocation.TotalDistance;

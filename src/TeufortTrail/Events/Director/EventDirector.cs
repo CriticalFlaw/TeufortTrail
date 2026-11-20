@@ -52,17 +52,20 @@ namespace TeufortTrail.Events.Director
         /// </summary>
         /// <param name="gameEntity">Game entity that will be effected by the event.</param>
         /// <param name="eventCategory">Event type to trigger.</param>
-        public void TriggerEventByType(IEntity gameEntity, EventCategory eventCategory)
+        /// <param name="percentChance">Chance out of 100 that an event happens.</param>
+        /// <returns>TRUE if an event was triggered.</returns>
+        public bool TriggerEventByType(IEntity gameEntity, EventCategory eventCategory, int percentChance = 6)
         {
             // Roll the dice to determine if an event is triggered.
-            if (GameCore.Instance.Random.Next(100) > 5) return;
+            if (GameCore.Instance.Random.Next(100) >= percentChance) return false;
 
             // Create a random event based on a given event type enumerable.
             var randomEvent = _eventFactory.CreateRandomByType(eventCategory);
 
             // Check that the created event exists, then invoke it.
-            if (randomEvent == null) return;
+            if (randomEvent == null) return false;
             ExecuteEvent(gameEntity, randomEvent);
+            return true;
         }
 
         /// <summary>

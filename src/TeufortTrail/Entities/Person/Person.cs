@@ -97,20 +97,19 @@ namespace TeufortTrail.Entities.Person
             // Skip if the party member is already dead.
             if (HealthState == HealthStatus.Dead) return;
 
-            // Check for illness if the ration rate is too low.
-            if ((GameCore.Instance.Vehicle.Ration == RationLevel.Bare) ||
-                (GameCore.Instance.Vehicle.Ration == RationLevel.Meager && GameCore.Instance.Random.NextBool()))
-                CheckIllness();
+            var game = GameCore.Instance;
+            var vehicle = game.Vehicle;
 
-            // Check for illness if the amount of hats is too low.
-            var playerClothing = GameCore.Instance.Vehicle.Inventory[ItemTypes.Clothing];
-            if (playerClothing.TotalValue < GameCore.Instance.Random.Next(0, Convert.ToInt32(Math.Round(0.20 * playerClothing.MaxQuantity))))
+            // Small rations wear the party down.
+            if (game.Random.Next(100) < GameBalance.HungerChance(vehicle.Ration))
+                Damage(10, 30);
+
+            // Healthy party members can fall ill, more so without enough hats or food.
+            var enoughHats = vehicle.Inventory[ItemTypes.Clothing].Quantity >= GameBalance.HatsPerPerson * vehicle.Passengers.Count(x => x.HealthState != HealthStatus.Dead);
+            if (!Infected && !Injured && game.Random.Next(1000) < GameBalance.SicknessChance(vehicle.Ration, enoughHats))
+                game.EventDirector.TriggerEvent(this, typeof(Events.Person.Infected));
+            else if ((Infected || Injured) && vehicle.Status == VehicleStatus.Moving)
                 CheckIllness();
-            else
-            {
-                if (GameCore.Instance.Random.NextBool() && GameCore.Instance.Random.NextBool())
-                    CheckIllness();
-            }
 
             // Only consume food if the whole day has passed.
             if (!skipDay) ConsumeFood();
@@ -127,31 +126,62 @@ namespace TeufortTrail.Entities.Person
             var vehicle = GameCore.Instance.Vehicle;
             if (vehicle.Inventory[ItemTypes.Food].Quantity > 0)
             {
-                // Subtract the amount of food consumed from the party inventory. Ration Rate x Passengers (Alive)
-                vehicle.Inventory[ItemTypes.Food].SubtractQuantity((int)vehicle.Ration * vehicle.Passengers.Count(x => x.HealthState != HealthStatus.Dead));
+                vehicle.Inventory[ItemTypes.Food].SubtractQuantity(GameBalance.FoodPerPerson(vehicle.Ration));
                 Heal();
             }
             else
                 // Reduce party member's health if there is no food to eat.
-                Damage(10, 50);
+                Damage(20, 45);
         }
 
         /// <summary>
-        /// Increase party member's health by a random amount.
+        /// Increase party member's health by a random amount, depending on how well they are eating.
         /// </summary>
         private void Heal()
         {
-            // Skip if the party member is already dead or healthy enough.
-            if (HealthState == HealthStatus.Dead || HealthState == HealthStatus.Good) return;
+            // Skip if the party member is dead, sick or already healthy.
+            if (HealthState == HealthStatus.Dead || Infected || Injured || Health >= (int)HealthStatus.Good) return;
 
             // Roll the dice to determine if the party member will be healed.
             if (GameCore.Instance.Random.NextBool()) return;
 
-            // Roll the dice, the person can get better or worse if they are injured.
-            if (Infected || Injured)
-                GameCore.Instance.EventDirector.TriggerEvent(this, GameCore.Instance.Random.NextBool() ? typeof(WellAgain) : typeof(TurnForWorse));
+            var (min, max) = GameBalance.FedHealing(GameCore.Instance.Vehicle.Ration);
+            if (max > 0) AddHealth(GameCore.Instance.Random.Next(min, max + 1));
+        }
+
+        /// <summary>
+        /// Rest for one day: eat, recover health, and maybe shake off an illness or injury.
+        /// </summary>
+        /// <returns>Pounds of food eaten.</returns>
+        public int Rest()
+        {
+            if (HealthState == HealthStatus.Dead) return 0;
+            var game = GameCore.Instance;
+            var food = game.Vehicle.Inventory[ItemTypes.Food];
+            var eaten = 0;
+            if (food.Quantity > 0)
+            {
+                eaten = System.Math.Min(food.Quantity, GameBalance.FoodPerPerson(game.Vehicle.Ration));
+                food.SubtractQuantity(eaten);
+                AddHealth(game.Random.Next(GameBalance.RestHealMin, GameBalance.RestHealMax + 1));
+            }
             else
-                Health += GameCore.Instance.Random.Next(1, 15);
+                Damage(15, 40);
+
+            if ((Infected || Injured) && game.Random.Next(100) < GameBalance.RecoverChanceResting)
+            {
+                Infected = false;
+                Injured = false;
+            }
+            return eaten;
+        }
+
+        /// <summary>
+        /// Increase health without going above Good.
+        /// </summary>
+        private void AddHealth(int amount)
+        {
+            Health = System.Math.Min((int)HealthStatus.Good, System.Math.Max(Health, Health + amount));
         }
 
         /// <summary>
@@ -165,51 +195,30 @@ namespace TeufortTrail.Entities.Person
         }
 
         /// <summary>
-        /// Check the party member for illness or injury.
+        /// Shake off any illness or injury, without restoring lost health.
+        /// </summary>
+        public void Recover()
+        {
+            Infected = false;
+            Injured = false;
+        }
+
+        /// <summary>
+        /// A sick or injured party member travelling on the trail may get better, get worse, or take damage.
         /// </summary>
         private void CheckIllness()
         {
             // Skip if the party member is already dead.
             if (HealthState == HealthStatus.Dead) return;
 
-            // Roll the dice to determine if the party member will be checked for illness.
-            if (GameCore.Instance.Random.NextBool()) return;
-
-            // Reduce the party member's health if the ration level is too low.
-            if (GameCore.Instance.Random.Next(100) <= 40 * ((int)GameCore.Instance.Vehicle.Ration - 1))
-                Damage(10, 50);
-
-            // Reduce the party member's health if they are sick or injured while the party is traveling.
-            switch (HealthState)
-            {
-                case HealthStatus.Great:
-                    if ((Infected || Injured) && (GameCore.Instance.Vehicle.Status != VehicleStatus.Stopped))
-                        Damage(10, 50);
-                    break;
-
-                case HealthStatus.Good:
-                    if ((Infected || Injured) && (GameCore.Instance.Vehicle.Status != VehicleStatus.Stopped))
-                        if (GameCore.Instance.Random.NextBool())
-                            Damage(10, 50);
-                        else if ((!Infected || !Injured) && (GameCore.Instance.Vehicle.Status != VehicleStatus.Stopped))
-                            Heal();
-                    break;
-
-                case HealthStatus.Fair:
-                    if ((Infected || Injured) && (GameCore.Instance.Vehicle.Status != VehicleStatus.Stopped))
-                        Damage(5, 10);
-                    break;
-
-                case HealthStatus.Poor:
-                    Damage(1, 5);
-                    break;
-
-                case (int)HealthStatus.Dead:
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            var game = GameCore.Instance;
+            var roll = game.Random.Next(100);
+            if (roll < GameBalance.RecoverChanceTravelling)
+                game.EventDirector.TriggerEvent(this, typeof(WellAgain));
+            else if (roll < GameBalance.RecoverChanceTravelling + GameBalance.TurnForWorseChance)
+                game.EventDirector.TriggerEvent(this, typeof(TurnForWorse));
+            else if (game.Random.Next(100) < GameBalance.SickDamageChance)
+                Damage(GameBalance.SickDamageMin, GameBalance.SickDamageMax, false);
         }
 
         /// <summary>
@@ -224,7 +233,7 @@ namespace TeufortTrail.Entities.Person
         /// <summary>
         /// Decrease party member's health by an amount between two values.
         /// </summary>
-        private void Damage(int minAmount, int maxAmount)
+        private void Damage(int minAmount, int maxAmount, bool canSicken = true)
         {
             // Skip if the party member is already dead.
             if (HealthState == HealthStatus.Dead) return;
@@ -233,7 +242,7 @@ namespace TeufortTrail.Entities.Person
             Health -= GameCore.Instance.Random.Next(minAmount, maxAmount);
 
             // Chance of injury or illness if the person doesn't already have it.
-            if (!Infected || !Injured)
+            if (canSicken && !Infected && !Injured)
                 GameCore.Instance.EventDirector.TriggerEventByType(this, EventCategory.Person);
 
             // Check if the person health has dropped to death levels.

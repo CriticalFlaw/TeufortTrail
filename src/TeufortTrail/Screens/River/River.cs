@@ -42,6 +42,12 @@ namespace TeufortTrail.Screens.River
             //_river.AppendLine($"{GameCore.Instance.Trail.CurrentLocation.Name}");
             //_river.AppendLine("------------------------------------------");
             _crossingOptions.AppendLine($"{Environment.NewLine}A {UserData.River.RiverWidth} feet wide river separates you from the trail.");
+            _crossingOptions.AppendLine(UserData.River.FordFloodChance switch
+            {
+                < 20 => "The water looks shallow and calm.",
+                < 40 => "The current looks strong.",
+                _ => "The water is deep and the current looks dangerous."
+            });
             _crossingOptions.AppendLine($"You must cross it in order to continue.{Environment.NewLine}");
             _crossingOptions.AppendLine($"  1. {RiverOptions.Float.ToDescriptionAttribute()}");
             if (_river.CrossingOption == RiverOptions.Ferry)
@@ -122,6 +128,20 @@ namespace TeufortTrail.Screens.River
         /// </summary>
         public bool DisasterHappened { get; set; }
 
+        /// <summary>
+        /// Flags that the ford flood roll has been made for this crossing.
+        /// </summary>
+        public bool FloodChecked { get; set; }
+
+        /// <summary>
+        /// Chance out of 100 that fording this river floods the van. Wider rivers are riskier.
+        /// </summary>
+        public int FordFloodChance => GameBalance.FordFloodChanceNarrow +
+            (GameBalance.FordFloodChanceWide - GameBalance.FordFloodChanceNarrow) * (RiverWidth - MinWidth) / (MaxWidth - MinWidth);
+
+        private const int MinWidth = 120;
+        private const int MaxWidth = 1200;
+
         //-------------------------------------------------------------------------------------------------
 
         /// <summary>
@@ -130,13 +150,10 @@ namespace TeufortTrail.Screens.River
         public RiverGenerator()
         {
             var game = GameCore.Instance;
-            var maxHelpCost = (game.Vehicle.Inventory[ItemTypes.Clothing].Quantity >= game.Vehicle.Inventory[ItemTypes.Clothing].MaxQuantity / 2) ? 10 : 20;
-            var maxFerryCost = (game.Vehicle.Inventory[ItemTypes.Money].Quantity > 500) ? 10 : 20;
-
             CrossingType = RiverOptions.None;
-            HelpCost = game.Random.Next(5, maxHelpCost);
-            FerryCost = game.Random.Next(5, maxFerryCost);
-            RiverWidth = game.Random.Next(120, 1200);
+            HelpCost = game.Random.Next(GameBalance.HelpCostMin, GameBalance.HelpCostMax + 1);
+            FerryCost = game.Random.Next(GameBalance.FerryCostMin, GameBalance.FerryCostMax + 1);
+            RiverWidth = game.Random.Next(MinWidth, MaxWidth);
         }
     }
 }

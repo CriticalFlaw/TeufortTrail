@@ -27,27 +27,19 @@ namespace TeufortTrail.Screens.Commands
         protected override string OnDialogPrompt()
         {
             var foodConsumedTotal = 0;
-            // Increment the turn counter depending on the number of days the party has rested.
+            // Rest for a few days: everyone eats, recovers health, and may shake off illness or injury.
             for (var i = 0; i < UserData.DaysToRest; i++)
             {
                 GameCore.Instance.TakeTurn();
                 foreach (var person in GameCore.Instance.Vehicle.Passengers.Where(x => x.HealthState != HealthStatus.Dead))
-                {
-                    // Subtract the amount of food consumed from the party member.
-                    var vehicle = GameCore.Instance.Vehicle;
-                    if (vehicle.Inventory[ItemTypes.Food].Quantity > 0)
-                    {
-                        var foodConsumed = GameCore.Instance.Random.Next(1, 3) * vehicle.Passengers.Count(x => x.HealthState != HealthStatus.Dead);
-                        vehicle.Inventory[ItemTypes.Food].SubtractQuantity(foodConsumed);
-                        foodConsumedTotal += foodConsumed;
-                    }
-
-                    // Increase the party member's health.
-                    if (person.HealthState != HealthStatus.Good)
-                        person.Health += GameCore.Instance.Random.Next(1, 10);
-                }
+                    foodConsumedTotal += person.Rest();
             }
-            return $"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.{Environment.NewLine}In that time they consumed {foodConsumedTotal} pounds of food.{Environment.NewLine}{Environment.NewLine}";
+
+            var rest = new System.Text.StringBuilder();
+            rest.AppendLine($"{Environment.NewLine}Your party has rested for {UserData.DaysToRest} days.");
+            rest.AppendLine($"In that time they consumed {foodConsumedTotal} pounds of food.{Environment.NewLine}");
+            rest.AppendLine(TravelInfo.PartyStatus);
+            return rest.ToString();
         }
 
         /// <summary>

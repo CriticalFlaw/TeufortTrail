@@ -21,8 +21,6 @@ namespace TeufortTrail.Screens.Travel
     /// </summary>
     public sealed class Travel : Window<TravelCommands, TravelInfo>
     {
-        private bool GameOver { get; set; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Travel" /> class.
         /// </summary>
@@ -69,26 +67,24 @@ namespace TeufortTrail.Screens.Travel
         /// </summary>
         private void ArriveAtLocation()
         {
-            if (GameOver) return;
-
             var game = GameCore.Instance;
 
-            // Check if the party has arrived at the last location.
-            if (game.Trail.CurrentLocation.LastLocation)
-            {
-                GameOver = true;
-                SetForm(typeof(GameVictory));
-                return;
-            }
-            
+            // The game is over once the whole party has died.
             if (!game.Vehicle.Passengers.Any(x => x.HealthState > (int)HealthStatus.Dead))
             {
-                GameOver = true;
                 SetForm(typeof(GameOver));
                 return;
             }
-            
-            if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived && !GameOver)
+
+            // Check if the party has arrived at the last location.
+            if (game.Trail.CurrentLocation.LastLocation && game.Trail.CurrentLocation.Status == LocationStatus.Arrived)
+            {
+                SetForm(typeof(GameVictory));
+                return;
+            }
+
+            // Only greet the party once per location, so returning from an event doesn't restart a river crossing.
+            if (game.Trail.CurrentLocation.Status == LocationStatus.Arrived && !game.Trail.CurrentLocation.ArrivalFlag)
             {
                 game.Trail.CurrentLocation.ArrivalFlag = true;
                 SetForm(typeof(LocationArrived));
@@ -296,6 +292,28 @@ namespace TeufortTrail.Screens.Travel
                 trailStatus.AppendLine($"Ration:   {game.Vehicle.Ration}");
                 trailStatus.AppendLine("------------------------------------------");
                 return trailStatus.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Pounds of food the living party eats per day at the given ration.
+        /// </summary>
+        public static int DailyFoodNeeded(RationLevel ration)
+        {
+            var living = GameCore.Instance.Vehicle.Passengers.Count(x => x.HealthState != HealthStatus.Dead);
+            return living * GameBalance.FoodPerPerson(ration);
+        }
+
+        /// <summary>
+        /// Name of the next settlement with a store, or the end of the trail if there are none left.
+        /// </summary>
+        public static string NextStoreName
+        {
+            get
+            {
+                var trail = GameCore.Instance.Trail;
+                var next = trail.Locations.Skip(trail.LocationIndex + 1).FirstOrDefault(x => x.ShoppingAllowed);
+                return next?.Name ?? "nowhere, this is the last one";
             }
         }
 

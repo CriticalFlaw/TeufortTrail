@@ -36,13 +36,9 @@ namespace TeufortTrail.Events.Director
                 // Check the attribute itself from the event we are working on, which gives us the event type enumerable.
                 var eventAttribute = eventObject.GetTypeInfo().GetAttributes<DirectorEventAttribute>(true).First();
 
-                // Initialize the execution history dictionary with every event type.
-                foreach (var modeType in Enum.GetValues(typeof(EventCategory)))
-                {
-                    // Create key for the event execution counter.
-                    var eventKey = new EventKey((EventCategory)modeType, eventObject.Name, eventAttribute.EventExecutionType);
-                    if (!EventReference.ContainsKey(eventKey)) EventReference.Add(eventKey, eventObject);
-                }
+                // Register the event under its own category only.
+                var eventKey = new EventKey(eventAttribute.EventCategory, eventObject.Name, eventAttribute.EventExecutionType);
+                EventReference.Add(eventKey, eventObject);
             }
         }
 

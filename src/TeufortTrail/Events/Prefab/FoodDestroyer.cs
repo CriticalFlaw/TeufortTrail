@@ -18,17 +18,22 @@ namespace TeufortTrail.Events.Prefab
             // Check that the player has enough food to remove.
             if (vehicle.Inventory[Entities.ItemTypes.Food].Quantity < 4) return;
 
-            // Remove a random amount of food from the player's inventory.
+            // Remove up to a quarter of the party's food.
             var spoiledFood = vehicle.Inventory[Entities.ItemTypes.Food].Quantity / 4;
-            vehicle.Inventory[Entities.ItemTypes.Food].SubtractQuantity(GameCore.Instance.Random.Next(3, spoiledFood));
+            _foodLost = GameCore.Instance.Random.Next(1, spoiledFood + 1);
+            vehicle.Inventory[Entities.ItemTypes.Food].SubtractQuantity(_foodLost);
         }
+
+        private int _foodLost;
 
         /// <summary>
         /// Called when the event director needs to render the event text to the user interface.
         /// </summary>
         protected override string OnRender(EventInfo userData)
         {
-            return OnFoodSpoilReason();
+            return _foodLost > 0
+                ? $"{OnFoodSpoilReason()} You lost {_foodLost} pounds of food."
+                : OnFoodSpoilReason();
         }
 
         /// <summary>

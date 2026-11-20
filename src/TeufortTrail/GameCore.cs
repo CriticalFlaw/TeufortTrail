@@ -129,6 +129,16 @@ namespace TeufortTrail
         }
 
         /// <summary>
+        /// Spend a whole day away from the trail (waiting, hunting, trading). The party still eats.
+        /// </summary>
+        public void PassDay()
+        {
+            TakeTurn();
+            foreach (var person in Vehicle.Passengers)
+                person.ConsumeFood();
+        }
+
+        /// <summary>
         /// Load in the vehicle party and starting resources.
         /// </summary>
         /// <param name="startInfo"></param>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TeufortTrail.Entities;
 using TeufortTrail.Events.Director;
 using TeufortTrail.Events.Prefab;
@@ -7,17 +6,23 @@ using TeufortTrail.Events.Prefab;
 namespace TeufortTrail.Events.Travel
 {
     /// <summary>
-    /// Enemy spy sneaks in the middle of the night and steals from the player. There is a chance some of your party members may get backstabbed.
+    /// An enemy spy steals supplies and money in the night.
     /// </summary>
     [DirectorEvent(EventCategory.Wild)]
     public sealed class Thief : ItemDestroyer
     {
         /// <summary>
+        /// Spies go for the wallet too.
+        /// </summary>
+        protected override bool CanLoseMoney => true;
+
+        /// <summary>
         /// Called before the event has been executed.
         /// </summary>
         protected override string OnPreDestroyItems()
         {
-            return $"An enemy spy sneaked in the middle of the night,{Environment.NewLine}resulting in the loss of:";
+            GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo].SubtractQuantity(GameCore.Instance.Random.Next(1, 5));
+            return "An enemy spy sneaked into camp in the middle of the night.";
         }
 
         /// <summary>
@@ -25,11 +30,7 @@ namespace TeufortTrail.Events.Travel
         /// </summary>
         protected override string OnPostDestroyItems(IDictionary<ItemTypes, int> destroyedItems)
         {
-            // Randomly generate the amount of ammo used to kill the spy.
-            GameCore.Instance.Vehicle.Inventory[ItemTypes.Ammo].SubtractQuantity(GameCore.Instance.Random.Next(1, 5));
-
-            // Change event text depending on the outcome.
-            return (destroyedItems.Count > 0) ? TryKillPassengers("backstabbed") : "nothing because you've caught him before he was able to do anything.";
+            return TryHurtPassengers(10, 20, 60, "backstabbed");
         }
     }
 }

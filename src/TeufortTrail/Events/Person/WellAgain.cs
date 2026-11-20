@@ -14,9 +14,9 @@ namespace TeufortTrail.Events.Person
         /// </summary>
         public override void Execute(EventInfo eventExecutor)
         {
-            // Removes all infections, injuries, and heals the person in full.
+            // Removes all infections and injuries. Lost health still has to be recovered by eating well and resting.
             var person = eventExecutor.SourceEntity as Entities.Person.Person;
-            person?.HealFully();
+            person?.Recover();
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace TeufortTrail.Events.Person
         protected override string OnRender(EventInfo userData)
         {
             // Skip if the source entity is not a person.
-            return (userData.SourceEntity is not Entities.Person.Person person) ? "nobody got healed." : $"{person.Class} has fully healed.";
+            return (userData.SourceEntity is not Entities.Person.Person person) ? "nobody got healed." : $"The {person.Class} is feeling better.";
         }
     }
 }
